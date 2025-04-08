@@ -4,9 +4,9 @@ import { USER_INFOS } from "../constants/appConstant";
 // définition du contexte d'authentification avec les données initialisées à vide
 const AuthContext = createContext({
     userId: '', // state pour l'identifiant de l'utilisateur
-    nickname: '', // state pour le pseudo de l'utilisateur
+    username: '', // state pour le pseudo de l'utilisateur
     setUserId: () => {}, // méthode pour mettre à jour l'identifiant de l'utilisateur
-    setNickname: () => {}, // méthode pour mettre à jour le pseudo de l'utilisateur
+    setUsername: () => {}, // méthode pour mettre à jour le pseudo de l'utilisateur
     signIn: async () => {}, // méthode pour se connecter
     signOut: async () => {}, // méthode pour se déconnecter
 });
@@ -14,14 +14,14 @@ const AuthContext = createContext({
 // définition de la mécanique du contexte d'authentification
 const AuthContextProvider = ({ children }) => {
     const [userId, setUserId] = useState('');
-    const [nickname, setNickname] = useState('');
+    const [username, setUsername] = useState('');
 
     // définition de la méthode signIn pour la connexion
     const signIn = async (user) => {
         try {
             // remplissage des states avec les données de l'utilisateur
             setUserId(user.userId);
-            setNickname(user.nickname);
+            setUsername(user.username);
             // stockage des données de l'utilisateur dans le localStorage
             localStorage.setItem(USER_INFOS, JSON.stringify(user));   
         } catch (error) {
@@ -34,7 +34,7 @@ const AuthContextProvider = ({ children }) => {
         try {
             // remise à zéro des states
             setUserId('');
-            setNickname('');
+            setUsername('');
             // suppression des données de l'utilisateur du localStorage
             localStorage.removeItem(USER_INFOS);
         } catch (error) {
@@ -45,9 +45,9 @@ const AuthContextProvider = ({ children }) => {
     // définition des valeurs du contexte
     const value = {
         userId,
-        nickname,
+        username,
         setUserId,
-        setNickname,
+        setUsername,
         signIn,
         signOut
     }
