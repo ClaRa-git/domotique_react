@@ -15,7 +15,7 @@ const App = () => {
     <div className='relative flex flex-col h-screen'>
       <div className='flex-1 flex flex-col'>
         <Topbar />
-        <div className='flex-1 h-fit pb-40'>
+        <div className='flex-1'>
           <Outlet />
         </div>
         <Footbar />

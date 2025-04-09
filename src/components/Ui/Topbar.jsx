@@ -11,11 +11,11 @@ const Topbar = () => {
   const {userId}  = useAuthContext();
 
   return (
-    <div className='h-24 flex items-center m-6'>
+    <div className='h-24 flex items-center m-2'>
       <div className='flex-1 text-white text-lg font-semibold px-4'>
-            <div className='flex justify-between w-full items-center text-primary m-6'>
+            <div className='flex justify-between w-full items-center text-primary p-2'>
                 <Link to='/search'>
-                  <div className='justify-center items-center m-6'>
+                  <div className='justify-center items-center p-4'>
                     <FaSearch size={32}/>
                   </div>
                 </Link>
@@ -25,7 +25,7 @@ const Topbar = () => {
                   </div>
                 </Link>
                 <Link to={`/account/${userId}`}>
-                  <div className='justify-center items-center m-6'>
+                  <div className='justify-center items-center p-4'>
                       <RiAccountCircleFill size={32}/>
                   </div>
                 </Link>
