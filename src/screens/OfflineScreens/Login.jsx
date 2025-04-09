@@ -29,11 +29,11 @@ const Login = () => {
 
   return (
     loading ? <PageLoader /> :
-      <div className="flex flex-col items-center justify-center w-full px-6 py-10">
-        <h1>Connectez-vous !</h1>
+      <div className="flex flex-col items-center justify-center px-6 py-10 bg-primary">
+        <h1 className='text-white text-5xl text-center'>Connectez-vous !</h1>
         <div className='flex flex-wrap justify-center'>
           {allUsers && allUsers.map((user, index) => (
-          <div key={index} onClick={() => handleClick(user) } className="m-4 cursor-pointer border-2 rounded-2xl">
+          <div key={index} onClick={() => handleClick(user) } className="m-4 cursor-pointer border-2 border-white rounded-2xl">
             <ProfileCard data={user}/>
           </div>
           ))}

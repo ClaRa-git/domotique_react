@@ -1,1 +1,21 @@
 @import "tailwindcss";
+@import "@fontsource/montserrat-alternates";
+@import "@fontsource/montserrat-alternates/400.css";
+@import "@fontsource/montserrat-alternates/400-italic.css";
+
+@theme{
+    --color-primary: #272030;
+    --color-secondary-orange: #f08a4f;
+    --color-secondary-pink: #c2858c;
+    --color-white: #e8e0db;
+    --color-black: #010101;
+}
+
+body {
+  font-family: 'Montserrat Alternates', sans-serif;
+  @apply bg-primary;
+}
+
+button {
+    @apply cursor-pointer;
+}
