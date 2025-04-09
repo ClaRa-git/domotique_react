@@ -14,21 +14,21 @@ const Topbar = () => {
     <div className='h-24 flex items-center m-6'>
       <div className='flex-1 text-white text-lg font-semibold px-4'>
             <div className='flex justify-between w-full items-center text-primary m-6'>
-                <div className='justify-center items-center m-6'>
-                    <Link to='/search'>
+                <Link to='/search'>
+                  <div className='justify-center items-center m-6'>
                     <FaSearch size={32}/>
-                    </Link>
-                </div>
-                <div>
-                    <Link to='/'>
+                  </div>
+                </Link>
+                <Link to='/'>
+                  <div>
                     <img src={imgIcon} alt="icone hoomy" />
-                    </Link>
-                </div>
-                <div className='justify-center items-center m-6'>
-                    <Link to={`/account/${userId}`}>
-                    <RiAccountCircleFill size={32}/>
-                    </Link>
-                </div>
+                  </div>
+                </Link>
+                <Link to={`/account/${userId}`}>
+                  <div className='justify-center items-center m-6'>
+                      <RiAccountCircleFill size={32}/>
+                  </div>
+                </Link>
             </div>
         </div>
     </div>
