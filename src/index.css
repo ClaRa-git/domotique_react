@@ -13,7 +13,7 @@
 
 body {
   font-family: 'Montserrat Alternates', sans-serif;
-  @apply bg-primary;
+  @apply bg-[#fefefe];
 }
 
 button {

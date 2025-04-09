@@ -62,7 +62,7 @@ const PopupAccount = ({data, callable}) => {
                 type={'password'}
                 callable={(e) => setPassword(e.target.value)}
               />
-              {error && <p className='text-red-500 text-sm'>{error}</p>}
+              {error && <p className='text-red-500 text-center text-sm m-4'>{error}</p>}
               <div className='flex justify-center'>
                 {isLoading ? (
                   <ButtonLoader />

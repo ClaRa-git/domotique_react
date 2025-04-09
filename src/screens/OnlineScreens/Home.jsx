@@ -1,8 +1,22 @@
 import React from 'react'
 
-const Home = () => {
+const Home = () => { 
+
   return (
-    <div>Home</div>
+    <div className='flex flex-col justify-center items-center'>
+      <div></div>
+      <div>
+        <div></div>
+        <div></div>
+      </div>
+      <div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div></div>
+    </div>
   )
 }
 

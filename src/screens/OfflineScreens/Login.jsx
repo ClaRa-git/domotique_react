@@ -29,7 +29,7 @@ const Login = () => {
 
   return (
     loading ? <PageLoader /> :
-      <div className="flex flex-col items-center justify-center px-6 py-10 bg-primary">
+      <div className="flex flex-col h-screen items-center justify-center px-6 py-10 bg-primary">
         <h1 className='text-white text-5xl text-center'>Connectez-vous !</h1>
         <div className='flex flex-wrap justify-center'>
           {allUsers && allUsers.map((user, index) => (
