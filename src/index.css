@@ -19,3 +19,20 @@ body {
 button {
     @apply cursor-pointer;
 }
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;               /* Hauteur de la barre */
+  background: #f08a4f;       /* Couleur de la barre remplie */
+  border-radius: 5px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;  /* Enlever les styles par défaut */
+  appearance: none;
+  width: 20px;               /* Taille du curseur */
+  height: 20px;
+  background: #f08a4f;       /* Couleur du curseur */
+  border-radius: 50%;        /* Curseur rond */
+  cursor: pointer;           /* Curseur en forme de main */
+  translate: 0 -6px;
+}

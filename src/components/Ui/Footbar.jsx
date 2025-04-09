@@ -10,7 +10,7 @@ const Footbar = () => {
     const currentPath = window.location.pathname
 
     return (
-        <div className={`h-16 ${currentPath === '/' ? 'bg-offwhite' : 'bg-primary'} flex justify-between items-center rounded-t-xl p-4 -mt-4`}>
+        <div className={`h-20 ${currentPath === '/' ? 'bg-offwhite' : 'bg-primary'} flex justify-between items-center rounded-t-xl p-4 -mt-8`}>
           <Link to="/">
             <div className={`${currentPath === '/' ? 'bg-secondary-orange' : 'bg-secondary-pink'} text-white p-2 rounded-full px-4`}>
               <BiHomeAlt size={20} />

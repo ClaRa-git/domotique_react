@@ -11,9 +11,14 @@ const Home = () => {
   const { userId, username } = useAuthContext();
 
   const [isVisible, setIsVisible] = useState(false);
+  const [moral, setMoral] = useState('Pas d\'humeur renseignée');
 
   const handleClick = () => {
 	setIsVisible(true);
+  }
+
+  const handleDataFromMood = (data) => {
+	setMoral(data);
   }
 
   return (
@@ -23,10 +28,12 @@ const Home = () => {
         <p>{username}</p>
       </div>
       <div onClick={handleClick} className='m-4 justify-center bg-primary rounded-lg p-4 text-white'>
-        <MoodCard />
+        <MoodCard 
+			moral={moral}
+		/>
       </div>
       <div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-lg flex-grow'>
-        <div className='grid grid-cols-2 gap-10 p-5 grow'>
+        <div className='grid grid-cols-2 gap-10 p-5 grow mb-4'>
           <MenuCard
             icon={<LuMusic4 size={50} />}
             label={"Playlist"}
@@ -52,6 +59,7 @@ const Home = () => {
 	  {isVisible &&
 	  	<PopupMood 
 			callable={() => setIsVisible(false)}
+			sentToParent={handleDataFromMood}
 		/>
 	  }
     </div>
