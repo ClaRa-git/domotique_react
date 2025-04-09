@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { API_ROOT, IMAGE_URL } from '../../constants/apiConstant'
 import { useAuthContext } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import CustomInput from './CustomInput';
 import axios from 'axios';
 import ButtonLoader from '../Loader/ButtonLoader';
@@ -16,7 +15,6 @@ const PopupAccount = ({data, callable}) => {
   const [error, setError] = useState(null);
 
   const { signIn } = useAuthContext();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
