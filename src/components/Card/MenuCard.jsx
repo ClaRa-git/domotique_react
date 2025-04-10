@@ -11,7 +11,7 @@ const MenuCard = ({icon, label, link}) => {
             </div>
             <div className='flex flex-row w-full justify-between items-center'>
                 <p className='text-center text-xl font-bold'>{label}</p>
-                <Link to={'/'}>
+                <Link to={link}>
                     <div className='p-2 rounded-full px-4 flex items-center justify-center'>
                     <MdArrowForwardIos size={24} />
                     </div>

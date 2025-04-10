@@ -5,6 +5,10 @@ import Home from "../screens/OnlineScreens/Home";
 import Search from "../screens/OnlineScreens/Search";
 import Account from "../screens/OnlineScreens/Account";
 import InterfaceAi from "../screens/OnlineScreens/InterfaceAi";
+import Playlist from "../screens/OnlineScreens/Playlist";
+import Room from "../screens/OnlineScreens/Room";
+import Vibe from "../screens/OnlineScreens/Vibe";
+import Planning from "../screens/OnlineScreens/Planning";
 
 const OnlineRouter = createBrowserRouter([
     {
@@ -26,6 +30,22 @@ const OnlineRouter = createBrowserRouter([
             {
                 path: "/account/:id",
                 element: <Account />,
+            },
+            {
+                path: "/playlist",
+                element: <Playlist />,
+            },
+            {
+                path: "/room",
+                element: <Room />
+            },
+            {
+                path: "/vibe",
+                element: <Vibe />
+            },
+            {
+                path: "/planning",
+                element: <Planning />
             }
         ]
     }

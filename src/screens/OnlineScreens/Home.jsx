@@ -51,23 +51,23 @@ const Home = () => {
         <div className='grid grid-cols-2 gap-10 p-5 grow mb-4'>
           <MenuCard
             icon={<LuMusic4 size={50} />}
-            label={"Playlist"}
-			link={"/"}
+            label={"Playlists"}
+			      link={"/playlist"}
           />
           <MenuCard 
             icon={<FaBed size={50} />}
             label={"Pièces"}
-			link={"/"}
+			      link={"/room"}
           />
           <MenuCard 
             icon={<FaRegCalendarCheck size={50} />}
             label={"Planning"}
-			link={"/"}
+			      link={"/planning"}
           />
           <MenuCard 
             icon={<TbBulbFilled size={50} />}
             label={"Ambiances"}
-			link={"/"}
+			      link={"/vibe"}
           />
         </div>
       </div>
