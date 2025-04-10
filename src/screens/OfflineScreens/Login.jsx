@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllUsers } from '../../store/user/userSlice';
 import selectUserData from '../../store/user/userSelector';
 import PageLoader from '../../components/Loader/PageLoader';
+import LoadingScreen from '../../components/Loader/LoadingScreen';
 
 const Login = () => {
 
@@ -28,7 +29,7 @@ const Login = () => {
   }
 
   return (
-    loading ? <PageLoader /> :
+    loading ? <LoadingScreen /> :
       <div className="flex flex-col h-screen items-center justify-center px-6 py-10 bg-primary">
         <h1 className='text-white text-5xl text-center'>Connectez-vous !</h1>
         <div className='flex flex-wrap justify-center'>

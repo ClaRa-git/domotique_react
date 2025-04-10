@@ -5,7 +5,7 @@ const ButtonLoader = () => {
   return (
     <RingLoader 
         size={50}
-        color='rgba(30, 215, 96, 1)'
+        color='#f08a4f'
     />
   )
 }

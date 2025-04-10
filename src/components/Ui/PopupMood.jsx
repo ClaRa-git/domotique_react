@@ -19,7 +19,6 @@ const PopupMood = ({ callable, sentToParent }) => {
         stress = parseInt(stress, 10);
 
         let score = (mood + tonus - stress);
-        console.log(`Moral: ${mood}, Tonus: ${tonus}, Stress: ${stress}`);
         
         // Calcul du moral en fonction du score
         let result = '';
@@ -36,7 +35,7 @@ const PopupMood = ({ callable, sentToParent }) => {
         } else {
             result = "Très stressé";
         }
-        console.log(`Score: ${score}`);
+
         return result;  // On retourne directement le résultat
     };
 
@@ -47,7 +46,12 @@ const PopupMood = ({ callable, sentToParent }) => {
         const calculatedMoral = determineMood(mood, tonus, stress);
         
         // Passer directement la donnée au parent via sentToParent
-        sentToParent(calculatedMoral);
+        sentToParent({
+            calculatedMoral,
+            mood,
+            tonus,
+            stress
+        });
 
         // Appeler la fonction callable pour fermer la popup
         callable();

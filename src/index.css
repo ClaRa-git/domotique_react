@@ -3,6 +3,10 @@
 @import "@fontsource/montserrat-alternates/400.css";
 @import "@fontsource/montserrat-alternates/400-italic.css";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @theme{
     --color-primary: #272030;
     --color-secondary-orange: #f08a4f;

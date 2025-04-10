@@ -6,19 +6,26 @@ import { LuMusic4 } from 'react-icons/lu';
 import { TbBulbFilled } from 'react-icons/tb';
 import { FaBed, FaRegCalendarCheck } from 'react-icons/fa';
 import PopupMood from '../../components/Ui/PopupMood';
+import MoodPie from '../../components/Mood/MoodPie';
 
 const Home = () => {
   const { userId, username } = useAuthContext();
 
   const [isVisible, setIsVisible] = useState(false);
   const [moral, setMoral] = useState('Pas d\'humeur renseignée');
+  const [stress, setStress] = useState(50);
+  const [tonus, setTonus] = useState(50);
+  const [mood, setMood] = useState(50);
 
   const handleClick = () => {
 	setIsVisible(true);
   }
 
   const handleDataFromMood = (data) => {
-	setMoral(data);
+	  setMoral(data.calculatedMoral);
+    setMood(data.mood);
+    setTonus(data.tonus);
+    setStress(data.stress);
   }
 
   return (
@@ -27,10 +34,18 @@ const Home = () => {
         <p>Hello,</p>
         <p>{username}</p>
       </div>
-      <div onClick={handleClick} className='m-4 justify-center bg-primary rounded-lg p-4 text-white'>
-        <MoodCard 
-			moral={moral}
-		/>
+      <div onClick={handleClick} className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white'>
+        <div className='flex flex-col justify-center align-around'>
+          <p className='mb-5'>Votre mood actuelle :</p>
+          <MoodCard
+            moral={moral}
+          />
+        </div>
+        <MoodPie
+          mood={mood}
+          stress={stress}
+          tonus={tonus}
+        />
       </div>
       <div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-lg flex-grow'>
         <div className='grid grid-cols-2 gap-10 p-5 grow mb-4'>
