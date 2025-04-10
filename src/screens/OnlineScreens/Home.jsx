@@ -72,7 +72,8 @@ const Home = () => {
         </div>
       </div>
 	  {isVisible &&
-	  	<PopupMood 
+	  	<PopupMood
+      data={{mood, stress, tonus}}
 			callable={() => setIsVisible(false)}
 			sentToParent={handleDataFromMood}
 		/>

@@ -3,10 +3,10 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import CustomInput from './CustomInput';
 import ButtonLoader from '../Loader/ButtonLoader';
 
-const PopupMood = ({ callable, sentToParent }) => {
-    const [mood, setMood] = useState(50);
-    const [stress, setStress] = useState(50);
-    const [tonus, setTonus] = useState(50);
+const PopupMood = ({ data, callable, sentToParent }) => {
+    const [mood, setMood] = useState(data.mood || 50);
+    const [stress, setStress] = useState(data.stress || 50);
+    const [tonus, setTonus] = useState(data.tonus || 50);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 

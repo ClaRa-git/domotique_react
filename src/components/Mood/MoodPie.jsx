@@ -16,7 +16,7 @@ const MoodPie = ({ mood, stress, tonus }) => {
 
     return (
         <div className='flex flex-row justify-center items-center'>
-            <PieChart width={300} height={200}>
+            <PieChart width={300} height={220}>
                 <Pie
                     data={data}
                     cx="50%"

@@ -1,15 +1,26 @@
-import React from 'react'
-import { RingLoader } from 'react-spinners'
+import React from "react";
+import { RingLoader } from "react-spinners";
 
-const PageLoader = () => {
-    return (
-        <div className='bg-black flex flex-col items-center justify-center h-screen'>
+const LoadingScreen = () => {
+  return (
+    <div className="flex flex-col items-center justify-center h-screen bg-[#1c1a26] text-white">
+      {/* Logo Hoomy */}
+      <div className="text-center mb-6">
+        <h1 className="text-6xl font-bold tracking-wide">
+          <span className="text-secondary-orange">h</span>oomy
+          <span className="text-secondary-orange">.</span>
+        </h1>
+        <p className="text-sm mt-2 text-[#dfe4ea]">
+          L’émotion au cœur de votre ambiance.
+        </p>
+      </div>
+
             <RingLoader
                 size={100}
-                color='#36d7b7'
+                color='#f08a4f'
             />
-        </div>
-    )
-}
+    </div>
+  );
+};
 
-export default PageLoader
+export default LoadingScreen;
