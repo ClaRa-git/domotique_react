@@ -12,7 +12,7 @@ const PlaylistCard = ({playlist}) => {
 
   return (
     <Link to={`/playlist/${playlist.id}`}>
-      <div className='flex flex-row justify-between m-4 p-4'>
+      <div className='flex flex-row justify-between m-4'>
           <div className='flex flex-col justify-center items-center'>
               <img src={imgPlaylist} alt={`Playlist ${playlist.title}`} className='w-48 h-48 rounded-lg mb-2' />
               <p className='font-bold'>{playlist.title}</p>

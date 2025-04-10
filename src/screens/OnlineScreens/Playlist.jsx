@@ -34,7 +34,7 @@ const Playlist = () => {
             <p>Créer une nouvelle playlist...</p>
             <FaPlus className='mt-1'/>
         </div>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-4'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4'>
             {userPlaylists.member && userPlaylists.member.map((playlist, index) => {
                 return (
                     <div key={index} className='flex justify-center items-center'>

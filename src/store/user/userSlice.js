@@ -9,6 +9,7 @@ const userSlice = createSlice({
         userDetail: {},
         allUsers: [],
         userPlaylists: [],
+        playlist: {},
     },
     reducers: {
         setLoading: (state, action) => {
@@ -23,10 +24,13 @@ const userSlice = createSlice({
         setUserPlaylists: (state, action) => {
             state.userPlaylists = action.payload;
         },
+        setPlaylist: (state, action) => {
+            state.playlist = action.payload;
+        },
     }
 });
 
-export const { setLoading, setUserDetail, setAllUsers, setUserPlaylists } = userSlice.actions;
+export const { setLoading, setUserDetail, setAllUsers, setUserPlaylists, setPlaylist } = userSlice.actions;
 
 // méthodes du slice
 export const fetchAllUsers = () => async (dispatch) => {
@@ -48,6 +52,18 @@ export const fetchUserPlaylists = (userId) => async (dispatch) => {
         dispatch(setUserPlaylists(response.data));
     } catch (error) {
         console.log(`erreur lors du fetchUserPlaylists : ${error}`);
+    } finally {
+        dispatch(setLoading(false));
+    }
+}
+
+export const fetchPlaylist = (playlistId) => async (dispatch) => {
+    try {
+        dispatch(setLoading(true));
+        const response = await axios.get(`${API_URL}/playlists/${playlistId}`);
+        dispatch(setPlaylist(response.data));
+    } catch (error) {
+        console.log(`erreur lors du fetchSongsPlaylist : ${error}`);
     } finally {
         dispatch(setLoading(false));
     }

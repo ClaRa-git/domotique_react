@@ -36,7 +36,7 @@ const Home = () => {
       </div>
       <div onClick={handleClick} className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white'>
         <div className='flex flex-col justify-center align-around'>
-          <p className='mb-5'>Votre mood actuelle :</p>
+          <p className='mb-5 text-center'>Votre mood actuelle :</p>
           <MoodCard
             moral={moral}
           />
