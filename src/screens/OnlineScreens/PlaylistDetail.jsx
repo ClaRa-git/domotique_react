@@ -7,6 +7,7 @@ import { RiArrowLeftSFill } from 'react-icons/ri';
 import { API_ROOT } from '../../constants/apiConstant';
 import { FaPen, FaRegTrashAlt } from 'react-icons/fa';
 import PageLoader from '../../components/Loader/PageLoader';
+import SongCard from '../../components/Card/SongCard';
 
 const PlaylistDetail = () => {
 
@@ -48,26 +49,12 @@ const PlaylistDetail = () => {
                 <FaPen size={30} className='mt-5 bg-secondary-orange h-10 w-10 text-white rounded-lg p-2' />
             </div>
         </div>
-        {songs && songs.map((song, index) => {
-            const imgPath = song.imagePath
-            ? song.imagePath
-            : 'song.jpg';
-
-            const imgSong = `${API_ROOT}/upload/images/songs/${imgPath}`;
-
-            return (
-                <div key={index} className='flex flex-row justify-between text-white items-center mx-10 my-2 bg-primary rounded-lg p-2'>
-                    <div className='flex justify-center items-center'>
-                        <img src={imgSong} alt="image song" className='rounded-lg mb-2 h-20 m-4'/>
-                        <div>
-                            <p className='font-bold'>{song.title}</p>
-                            <p className='text-sm'>{song.artist}</p>
-                        </div>
-                    </div>
-                    <FaRegTrashAlt size={30} className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 mr-2' />
-                </div>
-            )
-        })}
+        {songs && songs.map((song, index) => (
+            <SongCard
+                key={index}
+                song={song}
+            />
+        ))}
     </div>
   )
 }
