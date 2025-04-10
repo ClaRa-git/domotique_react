@@ -5,7 +5,7 @@ import MenuCard from '../../components/Card/MenuCard';
 import { LuMusic4 } from 'react-icons/lu';
 import { TbBulbFilled } from 'react-icons/tb';
 import { FaBed, FaRegCalendarCheck } from 'react-icons/fa';
-import PopupMood from '../../components/Ui/PopupMood';
+import PopupMood from '../../components/Popup/PopupMood';
 import MoodPie from '../../components/Mood/MoodPie';
 
 const Home = () => {
@@ -18,11 +18,11 @@ const Home = () => {
   const [mood, setMood] = useState(50);
 
   const handleClick = () => {
-	setIsVisible(true);
+    setIsVisible(true);
   }
 
   const handleDataFromMood = (data) => {
-	  setMoral(data.calculatedMoral);
+    setMoral(data.calculatedMoral);
     setMood(data.mood);
     setTonus(data.tonus);
     setStress(data.stress);
@@ -52,32 +52,32 @@ const Home = () => {
           <MenuCard
             icon={<LuMusic4 size={50} />}
             label={"Playlists"}
-			      link={"/playlist"}
+            link={"/playlist"}
           />
-          <MenuCard 
+          <MenuCard
             icon={<FaBed size={50} />}
             label={"Pièces"}
-			      link={"/room"}
+            link={"/room"}
           />
-          <MenuCard 
+          <MenuCard
             icon={<FaRegCalendarCheck size={50} />}
             label={"Planning"}
-			      link={"/planning"}
+            link={"/planning"}
           />
-          <MenuCard 
+          <MenuCard
             icon={<TbBulbFilled size={50} />}
             label={"Ambiances"}
-			      link={"/vibe"}
+            link={"/vibe"}
           />
         </div>
       </div>
-	  {isVisible &&
-	  	<PopupMood
-      data={{mood, stress, tonus}}
-			callable={() => setIsVisible(false)}
-			sentToParent={handleDataFromMood}
-		/>
-	  }
+      {isVisible &&
+        <PopupMood
+          data={{ mood, stress, tonus }}
+          callable={() => setIsVisible(false)}
+          sentToParent={handleDataFromMood}
+        />
+      }
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
-import CustomInput from './CustomInput';
+import CustomInput from '../Ui/CustomInput';
 import ButtonLoader from '../Loader/ButtonLoader';
 
 const PopupMood = ({ data, callable, sentToParent }) => {
@@ -19,7 +19,7 @@ const PopupMood = ({ data, callable, sentToParent }) => {
         stress = parseInt(stress, 10);
 
         let score = (mood + tonus - stress);
-        
+
         // Calcul du moral en fonction du score
         let result = '';
         if (score >= 200) {
@@ -44,7 +44,7 @@ const PopupMood = ({ data, callable, sentToParent }) => {
 
         // Appeler la fonction de calcul et obtenir le moral
         const calculatedMoral = determineMood(mood, tonus, stress);
-        
+
         // Passer directement la donnée au parent via sentToParent
         sentToParent({
             calculatedMoral,
@@ -99,13 +99,13 @@ const PopupMood = ({ data, callable, sentToParent }) => {
                         {error && <p className='text-red-500 text-center text-sm m-4'>{error}</p>}
                         <div className='flex justify-center'>
                             {isLoading ? (
-                            <ButtonLoader />
+                                <ButtonLoader />
                             ) : (
                                 <div>
-                                    <button type='submit' className='w-full bg-white font-bold py-3 rounded-lg transition'>
+                                    <button type='submit' className='w-full bg-secondary-orange font-bold py-3 rounded-lg transition'>
                                         Valider
                                     </button>
-                                    <button type='button' onClick={callable} className='w-full bg-gray-500 font-bold py-3 mt-2 rounded-lg transition'>
+                                    <button type='button' onClick={callable} className='w-full bg-secondary-pink font-bold py-3 mt-2 rounded-lg transition'>
                                         Annuler
                                     </button>
                                 </div>

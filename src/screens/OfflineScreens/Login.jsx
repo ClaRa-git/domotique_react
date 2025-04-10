@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ProfileCard from '../../components/Card/ProfileCard';
-import PopupAccount from '../../components/Ui/PopupAccount';
+import PopupAccount from '../../components/Popup/PopupAccount';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllUsers } from '../../store/user/userSlice';
 import selectUserData from '../../store/user/userSelector';

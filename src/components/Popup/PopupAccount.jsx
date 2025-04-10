@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { API_ROOT, IMAGE_URL } from '../../constants/apiConstant'
 import { useAuthContext } from '../../contexts/AuthContext';
-import CustomInput from './CustomInput';
+import CustomInput from '../Ui/CustomInput';
 import axios from 'axios';
 import ButtonLoader from '../Loader/ButtonLoader';
 
@@ -66,10 +66,10 @@ const PopupAccount = ({data, callable}) => {
                   <ButtonLoader />
                   ) : (
                     <div>
-                      <button type='submit' className='w-full bg-white font-bold py-3 rounded-lg transition'>
+                      <button type='submit' className='w-full bg-secondary-orange font-bold py-3 rounded-lg transition'>
                         Se connecter
                       </button>
-                      <button type='button' onClick={callable} className='w-full bg-gray-500 font-bold py-3 mt-2 rounded-lg transition'>
+                      <button type='button' onClick={callable} className='w-full bg-secondary-pink font-bold py-3 mt-2 rounded-lg transition'>
                         Annuler
                       </button>
                     </div>

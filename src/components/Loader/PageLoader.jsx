@@ -1,7 +1,7 @@
 import React from "react";
 import { RingLoader } from "react-spinners";
 
-const LoadingScreen = () => {
+const PageLoader = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-[#1c1a26] text-white">
       {/* Logo Hoomy */}
@@ -23,4 +23,4 @@ const LoadingScreen = () => {
   );
 };
 
-export default LoadingScreen;
+export default PageLoader;
