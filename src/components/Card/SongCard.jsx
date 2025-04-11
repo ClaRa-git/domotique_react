@@ -2,9 +2,9 @@ import React from 'react'
 import { API_ROOT } from '../../constants/apiConstant';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
-const SongCard = ({song}) => {
+const SongCard = ({song, sentToParent}) => {
 
-    console.log(song);
+    console.log('song', song);
     const imgPath = song.imagePath
     ? song.imagePath
     : 'song.jpg';
@@ -20,7 +20,11 @@ const SongCard = ({song}) => {
                     <p className='text-sm'>{song.artist}</p>
                 </div>
             </div>
-            <FaRegTrashAlt size={30} className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 mr-2' />
+            <FaRegTrashAlt 
+                size={30}
+                className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 mr-2 cursor-pointer'
+                onClick={() => sentToParent(song.id)}  
+            />
         </div>
     )
 }

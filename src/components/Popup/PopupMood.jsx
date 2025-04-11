@@ -10,8 +10,6 @@ const PopupMood = ({ data, callable, sentToParent }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const { signIn } = useAuthContext();
-
     // Fonction qui calcule l'humeur
     const determineMood = (mood, tonus, stress) => {
         mood = parseInt(mood, 10);  // Le deuxième paramètre (10) est la base pour la conversion (base 10).
