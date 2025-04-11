@@ -48,24 +48,40 @@ const Home = () => {
         />
       </div>
       <div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-lg flex-grow'>
-        <div className='grid grid-cols-2 gap-10 p-5 grow mb-4'>
+        <div className='grid grid-cols-2 gap-5 p-5 grow place-content-center'>
           <MenuCard
-            icon={<LuMusic4 size={50} />}
+            icon={
+              <LuMusic4
+                className='h-8 w-8 sm:h-12 sm:w-12'
+              />
+            }
             label={"Playlists"}
             link={"/playlist"}
           />
           <MenuCard
-            icon={<FaBed size={50} />}
+            icon={
+              <FaBed
+                className='h-8 w-8 sm:h-12 sm:w-12'  
+              />
+            }
             label={"Pièces"}
             link={"/room"}
           />
           <MenuCard
-            icon={<FaRegCalendarCheck size={50} />}
+            icon={
+              <FaRegCalendarCheck
+                className='h-8 w-8 sm:h-12 sm:w-12'
+              />
+            }
             label={"Planning"}
             link={"/planning"}
           />
           <MenuCard
-            icon={<TbBulbFilled size={50} />}
+            icon={
+              <TbBulbFilled
+                className='h-8 w-8 sm:h-12 sm:w-12'
+              />
+            }
             label={"Ambiances"}
             link={"/vibe"}
           />

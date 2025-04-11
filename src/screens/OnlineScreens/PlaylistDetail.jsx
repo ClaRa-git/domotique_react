@@ -42,19 +42,20 @@ const PlaylistDetail = () => {
             //on doit récupérer le tableau d'ids de la playlist
             // ['/api/songs/1', '/api/songs/2', '/api/songs/3']
             const songIds = playlist?.songs && playlist?.songs?.map(song => song['@id']);
+            console.log(songIds);
             //on va enlever du tableau l'id recu en paramètre
-            const idSong = `/api/songs/${id}`;
             const newSongIds = songIds.filter(songId => songId !== idSong);
+            
             //on va mettre a jour la playlist dans la bdd
             axios.defaults.headers.patch['Content-Type'] = 'application/merge-patch+json';
             const response = await axios.patch(`${API_URL}/playlists/${playlist.id}`, {
                 songs: newSongIds
-        });
+            });
 
-        if(response.status === 200){
-            //on va mettre à jour le store
-            dispatch(fetchPlaylist(playlist.id));
-        }
+            if(response.status === 200){
+                //on va mettre à jour le store
+                dispatch(fetchPlaylist(playlist.id));
+            }
         } catch (error) {
             console.log(`erreur lors de la suppression de la chanson ${id}`, error);
         }

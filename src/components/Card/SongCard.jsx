@@ -22,7 +22,7 @@ const SongCard = ({song, sentToParent}) => {
             <FaRegTrashAlt 
                 size={30}
                 className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 mr-2 cursor-pointer'
-                onClick={() => sentToParent(song.id)}  
+                onClick={() => sentToParent(song['@id'])}  
             />
         </div>
     )
