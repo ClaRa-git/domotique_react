@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuthContext } from '../../contexts/AuthContext'
 import MoodCard from '../../components/Card/MoodCard';
 import MenuCard from '../../components/Card/MenuCard';
@@ -8,6 +8,7 @@ import { FaBed, FaRegCalendarCheck } from 'react-icons/fa';
 import PopupMood from '../../components/Popup/PopupMood';
 import MoodPie from '../../components/Mood/MoodPie';
 import HelloUser from '../../components/Ui/HelloUser';
+import { USER_MOOD } from '../../constants/appConstant';
 
 const Home = () => {
   const { userId, username } = useAuthContext();
@@ -17,6 +18,17 @@ const Home = () => {
   const [stress, setStress] = useState(50);
   const [tonus, setTonus] = useState(50);
   const [mood, setMood] = useState(50);
+
+  // useEffect pour récupérer les données de l'humeur, du stress et du tonus depuis le localStorage
+  useEffect(() => {
+    const savedMoodData = JSON.parse(localStorage.getItem(USER_MOOD));
+    if (savedMoodData) {
+      setMood(savedMoodData.mood || 50);
+      setStress(savedMoodData.stress || 50);
+      setTonus(savedMoodData.tonus || 50);
+      setMoral(savedMoodData.calculatedMoral || 'Pas d\'humeur renseignée');
+    }
+  }, []);
 
   const handleClick = () => {
     setIsVisible(true);

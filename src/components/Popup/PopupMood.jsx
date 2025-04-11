@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
 import CustomInput from '../Ui/CustomInput';
 import ButtonLoader from '../Loader/ButtonLoader';
@@ -12,7 +12,7 @@ const PopupMood = ({ data, callable, sentToParent }) => {
 
     // Fonction qui calcule l'humeur
     const determineMood = (mood, tonus, stress) => {
-        mood = parseInt(mood, 10);  // Le deuxième paramètre (10) est la base pour la conversion (base 10).
+        mood = parseInt(mood, 10);
         tonus = parseInt(tonus, 10);
         stress = parseInt(stress, 10);
 
@@ -43,6 +43,12 @@ const PopupMood = ({ data, callable, sentToParent }) => {
         // Appeler la fonction de calcul et obtenir le moral
         const calculatedMoral = determineMood(mood, tonus, stress);
 
+        // Fonction pour enregistrer les données dans localStorage
+    const saveToLocalStorage = () => {
+        const userMoodData = { mood, stress, tonus, calculatedMoral };
+        localStorage.setItem('userMood', JSON.stringify(userMoodData)); // Sauvegarde dans le localStorage
+    };
+
         // Passer directement la donnée au parent via sentToParent
         sentToParent({
             calculatedMoral,
@@ -51,9 +57,22 @@ const PopupMood = ({ data, callable, sentToParent }) => {
             stress
         });
 
+        // Enregistrer les données dans localStorage
+        saveToLocalStorage();
+
         // Appeler la fonction callable pour fermer la popup
         callable();
     };
+
+    // Fonction pour charger les données du localStorage quand le composant se monte
+    useEffect(() => {
+        const savedMoodData = JSON.parse(localStorage.getItem('userMood'));
+        if (savedMoodData) {
+            setMood(savedMoodData.mood || 50);
+            setStress(savedMoodData.stress || 50);
+            setTonus(savedMoodData.tonus || 50);
+        }
+    }, []);
 
     return (
         <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center'>

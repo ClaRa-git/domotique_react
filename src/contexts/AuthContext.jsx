@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { USER_INFOS } from "../constants/appConstant";
+import { USER_INFOS, USER_MOOD } from "../constants/appConstant";
 
 // définition du contexte d'authentification avec les données initialisées à vide
 const AuthContext = createContext({
@@ -42,6 +42,7 @@ const AuthContextProvider = ({ children }) => {
             setInSession(null);
             // suppression des données de l'utilisateur du localStorage
             localStorage.removeItem(USER_INFOS);
+            localStorage.removeItem(USER_MOOD);
         } catch (error) {
             throw new Error(`Erreur lors de la déconnexion : ${error}`);            
         }   
