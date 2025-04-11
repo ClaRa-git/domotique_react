@@ -45,6 +45,18 @@ export const fetchAllUsers = () => async (dispatch) => {
     }
 }
 
+export const fetchUserDetail = (userId) => async (dispatch) => {
+    try {
+        dispatch(setLoading(true));
+        const response = await axios.get(`${API_URL}/profiles/${userId}`);
+        dispatch(setUserDetail(response.data));
+    } catch (error) {
+        console.log(`Erreur lors de la récupération des détails de l'utilisateur : ${error}`);
+    } finally {
+        dispatch(setLoading(false));
+    }
+}
+
 export const fetchUserPlaylists = (userId) => async (dispatch) => {
     try {
         dispatch(setLoading(true));

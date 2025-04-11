@@ -5,8 +5,10 @@ import { USER_INFOS } from "../constants/appConstant";
 const AuthContext = createContext({
     userId: '', // state pour l'identifiant de l'utilisateur
     username: '', // state pour le pseudo de l'utilisateur
+    inSession: null, // état de la session (connecté ou non)
     setUserId: () => {}, // méthode pour mettre à jour l'identifiant de l'utilisateur
     setUsername: () => {}, // méthode pour mettre à jour le pseudo de l'utilisateur
+    setInSession: () => {}, // méthode pour mettre à jour l'état de la session
     signIn: async () => {}, // méthode pour se connecter
     signOut: async () => {}, // méthode pour se déconnecter
 });
@@ -15,6 +17,7 @@ const AuthContext = createContext({
 const AuthContextProvider = ({ children }) => {
     const [userId, setUserId] = useState('');
     const [username, setUsername] = useState('');
+    const [inSession, setInSession] = useState(null);
 
     // définition de la méthode signIn pour la connexion
     const signIn = async (user) => {
@@ -22,6 +25,7 @@ const AuthContextProvider = ({ children }) => {
             // remplissage des states avec les données de l'utilisateur
             setUserId(user.userId);
             setUsername(user.username);
+            setInSession(true);
             // stockage des données de l'utilisateur dans le localStorage
             localStorage.setItem(USER_INFOS, JSON.stringify(user));   
         } catch (error) {
@@ -35,6 +39,7 @@ const AuthContextProvider = ({ children }) => {
             // remise à zéro des states
             setUserId('');
             setUsername('');
+            setInSession(null);
             // suppression des données de l'utilisateur du localStorage
             localStorage.removeItem(USER_INFOS);
         } catch (error) {
@@ -46,8 +51,10 @@ const AuthContextProvider = ({ children }) => {
     const value = {
         userId,
         username,
+        inSession,
         setUserId,
         setUsername,
+        setInSession,
         signIn,
         signOut
     }

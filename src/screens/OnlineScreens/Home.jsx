@@ -7,6 +7,7 @@ import { TbBulbFilled } from 'react-icons/tb';
 import { FaBed, FaRegCalendarCheck } from 'react-icons/fa';
 import PopupMood from '../../components/Popup/PopupMood';
 import MoodPie from '../../components/Mood/MoodPie';
+import HelloUser from '../../components/Ui/HelloUser';
 
 const Home = () => {
   const { userId, username } = useAuthContext();
@@ -30,10 +31,7 @@ const Home = () => {
 
   return (
     <div className='min-h-screen flex flex-col'>
-      <div className='m-4 justify-start font-bold text-[50px]'>
-        <p>Hello,</p>
-        <p>{username}</p>
-      </div>
+      <HelloUser username={username} />
       <div onClick={handleClick} className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white'>
         <div className='flex flex-col justify-center align-around'>
           <p className='mb-5 text-center'>Votre mood actuelle :</p>
