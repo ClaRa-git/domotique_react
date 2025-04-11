@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { fetchPlaylist } from '../../store/user/userSlice';
 import selectUserData from '../../store/user/userSelector';
 import { RiArrowLeftSFill } from 'react-icons/ri';
@@ -14,6 +14,8 @@ const PlaylistDetail = () => {
 
     const params = useParams();
     const { id } = params;
+
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
 
@@ -59,6 +61,20 @@ const PlaylistDetail = () => {
     }
 
     const handleDeletePlaylist = async () => {
+        const confirm = window.confirm('Voulez-vous vraiment supprimer cette playlist ?');
+
+        if (!confirm) return;
+
+        try {
+            const response = await axios.delete(`${API_URL}/playlists/${playlist.id}`);
+
+            if(response.status === 204){
+                //on va rediriger vers la page des playlists
+                navigate('/playlist');
+            }
+        } catch (error) {
+            console.log(`erreur lors de la suppression de la playlist ${playlist.id}`, error);
+        }
     }
 
   return (
@@ -76,7 +92,11 @@ const PlaylistDetail = () => {
                 <p className='font-bold'>{playlist.title}</p>
             </div>
             <div className='flex flex-col justify-start'>
-                <FaRegTrashAlt size={30} className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 cursor-pointer' />
+                <FaRegTrashAlt
+                    size={30}
+                    className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 cursor-pointer'
+                    onClick={handleDeletePlaylist}
+                />
                 <FaPen size={30} className='mt-5 bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 cursor-pointer' />
             </div>
         </div>

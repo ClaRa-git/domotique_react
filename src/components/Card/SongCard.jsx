@@ -3,8 +3,7 @@ import { API_ROOT } from '../../constants/apiConstant';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
 const SongCard = ({song, sentToParent}) => {
-
-    console.log('song', song);
+    
     const imgPath = song.imagePath
     ? song.imagePath
     : 'song.jpg';
