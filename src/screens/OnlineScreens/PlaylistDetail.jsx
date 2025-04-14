@@ -42,7 +42,6 @@ const PlaylistDetail = () => {
             //on doit récupérer le tableau d'ids de la playlist
             // ['/api/songs/1', '/api/songs/2', '/api/songs/3']
             const songIds = playlist?.songs && playlist?.songs?.map(song => song['@id']);
-            console.log(songIds);
             //on va enlever du tableau l'id recu en paramètre
             const newSongIds = songIds.filter(songId => songId !== idSong);
             

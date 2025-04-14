@@ -11,7 +11,7 @@ const Topbar = () => {
   const {userId}  = useAuthContext();
 
   return (
-    <div className='h-24 flex items-center m-2'>
+    <div className='h-24 flex items-center m-4'>
       <div className='flex-1 text-white text-lg font-semibold px-4'>
             <div className='flex justify-between w-full items-center text-primary p-2'>
                 <Link to='/search'>

@@ -1,5 +1,5 @@
 import React from "react";
-import { RingLoader } from "react-spinners";
+import { BarLoader, RingLoader } from "react-spinners";
 
 const PageLoader = () => {
   return (
@@ -14,11 +14,9 @@ const PageLoader = () => {
           L’émotion au cœur de votre ambiance.
         </p>
       </div>
-
-            <RingLoader
-                size={100}
-                color='#f08a4f'
-            />
+          <BarLoader
+            color='#f08a4f'          
+          />
     </div>
   );
 };

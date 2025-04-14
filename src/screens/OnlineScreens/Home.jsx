@@ -57,7 +57,7 @@ const Home = () => {
           tonus={tonus}
         />
       </div>
-      <div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-lg flex-grow'>
+      <div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-[50px] flex-grow shadow-[0_-8px_0_rgba(194,133,140,1)]'>
         <div className='grid grid-cols-2 gap-5 p-5 grow place-content-center'>
           <MenuCard
             icon={

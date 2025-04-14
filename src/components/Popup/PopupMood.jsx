@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuthContext } from '../../contexts/AuthContext';
 import CustomInput from '../Ui/CustomInput';
 import ButtonLoader from '../Loader/ButtonLoader';
 
@@ -44,10 +43,10 @@ const PopupMood = ({ data, callable, sentToParent }) => {
         const calculatedMoral = determineMood(mood, tonus, stress);
 
         // Fonction pour enregistrer les données dans localStorage
-    const saveToLocalStorage = () => {
-        const userMoodData = { mood, stress, tonus, calculatedMoral };
-        localStorage.setItem('userMood', JSON.stringify(userMoodData)); // Sauvegarde dans le localStorage
-    };
+        const saveToLocalStorage = () => {
+            const userMoodData = { mood, stress, tonus, calculatedMoral };
+            localStorage.setItem('userMood', JSON.stringify(userMoodData)); // Sauvegarde dans le localStorage
+        };
 
         // Passer directement la donnée au parent via sentToParent
         sentToParent({

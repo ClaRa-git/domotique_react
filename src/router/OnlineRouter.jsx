@@ -10,6 +10,7 @@ import Room from "../screens/OnlineScreens/Room";
 import Vibe from "../screens/OnlineScreens/Vibe";
 import Planning from "../screens/OnlineScreens/Planning";
 import PlaylistDetail from "../screens/OnlineScreens/PlaylistDetail";
+import RoomDetail from "../screens/OnlineScreens/RoomDetail";
 
 const OnlineRouter = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ const OnlineRouter = createBrowserRouter([
             {
                 path: "/room",
                 element: <Room />
+            },
+            {
+                path: "/room/:id",
+                element: <RoomDetail />
             },
             {
                 path: "/vibe",
