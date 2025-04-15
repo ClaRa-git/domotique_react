@@ -10,6 +10,7 @@ import PageLoader from '../../components/Loader/PageLoader';
 import SongCard from '../../components/Card/SongCard';
 import axios from 'axios';
 import SongDropdown from '../../components/Ui/SongDropdown';
+import CustomInput from '../../components/Ui/CustomInput';
 
 const PlaylistDetail = () => {
 
@@ -19,6 +20,8 @@ const PlaylistDetail = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [availableSongs, setAvailableSongs] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
 
     const { loading, playlist } = useSelector(selectUserData);
 
@@ -123,6 +126,22 @@ const PlaylistDetail = () => {
         }
     }
 
+    const handleEditTitle = async () => {
+        try {
+            axios.defaults.headers.patch['Content-Type'] = 'application/merge-patch+json';
+            const response = await axios.patch(`${API_URL}/playlists/${playlist.id}`, {
+                title: newTitle
+            });
+    
+            if (response.status === 200) {
+                dispatch(fetchPlaylist(playlist.id));
+                setIsEditing(false); // Ferme la popup
+            }
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du titre de la playlist", error);
+        }
+    };    
+
   return (
     loading ? <PageLoader /> :
     <div className='mb-16'>
@@ -134,8 +153,17 @@ const PlaylistDetail = () => {
                 />
             </Link>
             <div className='flex flex-col justify-center items-center mx-4'>
-                <img src={imgPlaylist} alt="image song" className='rounded-lg mb-2 h-52 w-52'/>
-                <p className='font-bold'>{playlist.title}</p>
+                <img src={imgPlaylist} alt="image song" className='rounded-lg mb-2 sm:h-52 sm:w-52'/>
+                <p className='font-bold flex justify-center items-center'>
+                    {playlist.title}
+                    <FaPen 
+                        className='ml-2 bg-secondary-orange h-4 w-4 text-white rounded-sm p-1 cursor-pointer'
+                        onClick={() => {
+                            setNewTitle(playlist.title); // Pré-remplir avec le titre actuel
+                            setIsEditing(true);
+                        }}
+                    />
+                </p>
             </div>
             <div className='flex flex-col justify-start'>
                 <FaRegTrashAlt
@@ -143,7 +171,6 @@ const PlaylistDetail = () => {
                     className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 cursor-pointer'
                     onClick={handleDeletePlaylist}
                 />
-                <FaPen size={30} className='mt-5 bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 cursor-pointer' />
             </div>
         </div>
         <SongDropdown
@@ -160,6 +187,35 @@ const PlaylistDetail = () => {
                 sentToParent={handleDeleteSong}
             />
         ))}
+        {isEditing && (
+        <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center'>
+            <div className="flex flex-col relative w-full text-white sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary">
+                <h2 className='text-lg font-bold mb-4'>Modifier le titre</h2>
+                    <div className="flex flex-row text-primary align-center">
+                        <CustomInput
+                            state={newTitle}
+                            label={'Titre'}
+                            type={'text'}
+                            callable={(e) => setNewTitle(e.target.value)}
+                        />
+                    </div>
+                    <div className='flex flex-col text-primary justify-center items-center'>
+                        <button 
+                            onClick={handleEditTitle} 
+                            className='w-full bg-secondary-orange font-bold p-3 rounded-lg transition'
+                        >
+                            Sauvegarder
+                        </button>
+                        <button 
+                            onClick={() => setIsEditing(false)} 
+                            className='w-full bg-secondary-pink font-bold p-3 mt-2 rounded-lg transition'
+                        >
+                            Annuler
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>
   )
 }
