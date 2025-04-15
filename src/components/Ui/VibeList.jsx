@@ -1,10 +1,12 @@
 import React from 'react';
 import { RiArrowDownSFill } from 'react-icons/ri';
 import { FaGear } from 'react-icons/fa6';
+import { API_ROOT } from '../../constants/apiConstant';
 
 const VibeList = ({ vibes, openMenuId, toggleMenu, handleData, dataDeviceVibe, roomId }) => {
+console.log('VibeList', vibes);
     return (
-        <ul>
+        <ul className='mb-16'>
             {vibes.map((vibe) => (
                 <div key={vibe.id}>
                     <li className='relative'>
@@ -12,6 +14,7 @@ const VibeList = ({ vibes, openMenuId, toggleMenu, handleData, dataDeviceVibe, r
                             className='flex justify-between items-center bg-white p-4 rounded-lg mb-2 cursor-pointer'
                             onClick={() => toggleMenu(vibe.id)}
                         >
+                            <img src={`${API_ROOT}/images/icons/${vibe.icon.imagePath}`} alt="icone" />
                             {vibe.label}
                             <RiArrowDownSFill 
                                 size={24} 

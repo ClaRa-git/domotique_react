@@ -95,6 +95,7 @@ const RoomDetail = () => {
 
     return (
         <div className='flex flex-col items-center justify-center mb-4'>
+            
             <div className='flex flex-col items-center mb-4'>
                 <img src={imgRoom} alt={`Pièce ${room?.label}`} className='w-48 h-48 rounded-lg mb-2'/>
                 <h1 className='text-2xl font-bold'>{room?.label}</h1>

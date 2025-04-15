@@ -18,9 +18,9 @@ const SongDropdown = ({ isVisible, toggleDropdown, songs, addSongToPlaylist, pla
                     {songs.length > 0 ? (
                         songs.map((song) => (
                             !playlistSongIds.includes(song['@id']) && (
-                                <div>
+                                <div key={song.id}>
                                     <li
-                                        key={song.id}
+                                        
                                         className='text-sm text-gray-800 mb-2 cursor-pointer hover:underline flex items-center justify-between'
                                         onClick={() => addSongToPlaylist(song['@id'])}
                                     >
