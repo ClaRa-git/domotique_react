@@ -15,7 +15,6 @@ const Playlist = () => {
     const { userId } = useAuthContext();
     const { loading, userPlaylists } = useSelector(selectUserData);
     
-
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {

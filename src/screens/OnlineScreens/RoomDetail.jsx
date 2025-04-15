@@ -87,7 +87,6 @@ const RoomDetail = () => {
             });
     
             setDataDeviceVibe(response.data);
-            console.log('données', response.data);
         } catch (error) {
             console.error('Erreur lors de l’envoi des données :', error);
         }
