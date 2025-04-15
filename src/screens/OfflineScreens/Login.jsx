@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllUsers } from '../../store/user/userSlice';
 import selectUserData from '../../store/user/userSelector';
 import PageLoader from '../../components/Loader/PageLoader';
+import { API_ROOT } from '../../constants/apiConstant';
 
 const Login = () => {
 
@@ -27,10 +28,15 @@ const Login = () => {
     setUser(user);
   }
 
+  const imgLogo = `${API_ROOT}/images/logo_name.png`;
+
   return (
     loading ? <PageLoader /> :
       <div className="flex flex-col h-screen items-center justify-center px-6 py-10 bg-primary">
-        <h1 className='text-white text-5xl text-center'>Connectez-vous !</h1>
+        <div>
+          <img src={imgLogo} alt="logo" className='mx-auto mb-8 mt-4' />
+        </div>
+        <h1 className='text-white text-5xl text-center font-bold'>Connectez-vous !</h1>
         <div className='flex flex-wrap justify-center'>
           {allUsers && allUsers.map((user, index) => (
           <div key={index} onClick={() => handleClick(user) } className="m-4 cursor-pointer border-2 border-white rounded-2xl">
