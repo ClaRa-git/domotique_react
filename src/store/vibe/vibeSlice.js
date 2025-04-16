@@ -36,4 +36,16 @@ export const fetchAllVibesForUser = (userId) => async (dispatch) => {
     }
 }
 
+export const fetchVibeDetail = (vibeId) => async (dispatch) => {
+    try {
+        dispatch(setLoadingVibe(true));    
+        const response = await axios.get(`${API_URL}/vibes/${vibeId}`);
+        dispatch(setVibeDetail(response.data));
+    } catch (error) {
+        console.log(`Erreur lors de la récupération des détails de la pièce : ${error}`);
+    } finally {
+        dispatch(setLoadingVibe(false));
+    }
+}
+
 export default vibeSlice.reducer;

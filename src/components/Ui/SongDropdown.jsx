@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiArrowDownSFill } from 'react-icons/ri';
+import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { FaMusic, FaPlus } from 'react-icons/fa6';
 
 const SongDropdown = ({ isVisible, toggleDropdown, songs, addSongToPlaylist, playlistSongIds }) => {
@@ -10,7 +10,7 @@ const SongDropdown = ({ isVisible, toggleDropdown, songs, addSongToPlaylist, pla
                 onClick={toggleDropdown}
             >
                 <p>Ajouter une chanson</p>
-                <RiArrowDownSFill size={24} className='text-secondary-pink' />
+                {isVisible ? <RiArrowDownSFill size={24} className='text-secondary-pink' /> : <RiArrowRightSFill size={24} className='text-secondary-pink' />}
             </div>
 
             {isVisible && (

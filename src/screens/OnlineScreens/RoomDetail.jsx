@@ -4,7 +4,7 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import selectRoomData from '../../store/room/roomSelector';
 import { API_ROOT } from '../../constants/apiConstant';
 import { fetchRoomDetail as fetchRoom } from '../../store/room/roomSlice';
-import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
+import { RiArrowDownSFill, RiArrowLeftSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { fetchAllVibesForUser } from '../../store/vibe/vibeSlice';
 import { useAuthContext } from '../../contexts/AuthContext';
 import selectVibeData from '../../store/vibe/vibeSelector';
@@ -28,7 +28,7 @@ const RoomDetail = () => {
     const [showDevices, setShowDevices] = useState(true);
     const [dataDeviceVibe, setDataDeviceVibe] = useState(null);
 
-    const { loadingRoom, roomDetail: room } = useSelector(selectRoomData);
+    const { loadingRoom, roomDetail } = useSelector(selectRoomData);
     const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
 
     useEffect(() => {
@@ -40,8 +40,8 @@ const RoomDetail = () => {
     }, [dispatch, userId]);
 
     useEffect(() => {
-        if (room?.devices) {
-            const grouped = room.devices.reduce((acc, device) => {
+        if (roomDetail?.devices) {
+            const grouped = roomDetail.devices.reduce((acc, device) => {
                 const typeLabel = device.deviceType.label;
                 if (!acc[typeLabel]) {
                     acc[typeLabel] = [];
@@ -51,9 +51,9 @@ const RoomDetail = () => {
             }, {});
             setGroupedDevices(grouped);
         }
-    }, [room]);    
+    }, [roomDetail]);    
 
-    const imgPath = room?.imagePath;
+    const imgPath = roomDetail?.imagePath;
     const imgRoom = `${API_ROOT}/images/rooms/${imgPath}`;
 
     const toggleMenu = (id) => {
@@ -97,10 +97,17 @@ const RoomDetail = () => {
     return (
         loadingRoom ? <PageLoader />
         : <div className='flex flex-col items-center justify-center mb-4'>
-            
-            <div className='flex flex-col items-center mb-4'>
-                <img src={imgRoom} alt={`Pièce ${room?.label}`} className='w-48 h-48 rounded-lg mb-2'/>
-                <h1 className='text-2xl font-bold'>{room?.label}</h1>
+            <div className='flex w-full p-4 mb-4'>
+                <Link to='/room'>
+                    <RiArrowLeftSFill
+                        size={30}
+                        className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
+                    />
+                </Link>                
+                <div className='flex flex-col items-center mb-4 mr-10 w-full'>
+                    <img src={imgRoom} alt={`Pièce ${roomDetail?.label}`} className='w-48 h-48 rounded-lg mb-2'/>
+                    <h1 className='text-2xl font-bold'>{roomDetail?.label}</h1>
+                </div>
             </div>
 
             <div className='flex flex-col p-4 w-full'>

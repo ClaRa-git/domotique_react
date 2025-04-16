@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import MenuBar from '../../components/Ui/MenuBar';
-import { FaPlus } from 'react-icons/fa6';
+import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6';
 import SwitchToggle from '../../components/Ui/SwitchToggle';
+import { useLocation } from 'react-router-dom';
 
 const Planning = () => {
     const [date, setDate] = useState(new Date());
@@ -12,9 +13,24 @@ const Planning = () => {
 	const [dateEnd, setDateEnd] = useState(new Date());
 	const [switchOn, setSwitchOn] = useState(false);
 	const [allDay, setAllDay] = useState(false);
+	const [linkVibeOpen, setLinkVibeOpen] = useState(false);
+	const [linkRoomOpen, setLinkRoomOpen] = useState(false);
+	const [selectedRooms, setSelectedRooms] = useState([]);
+	const [selectedVibe, setSelectedVibe] = useState('');
 
-	console.log('a',dateStart);
-	console.log('b',dateEnd);
+	const location = useLocation();
+
+	const vibeOptions = ['Ambiance détente', 'Soirée', 'Concentration', 'Réveil']; // à adapter
+
+	const roomOptions = ['Salon', 'Cuisine', 'Chambre', 'Salle de bain']; // à adapter selon ton app
+
+	const toggleRoomSelection = (room) => {
+		if (selectedRooms.includes(room)) {
+			setSelectedRooms(selectedRooms.filter(r => r !== room));
+		} else {
+			setSelectedRooms([...selectedRooms, room]);
+		}
+	};
 
     const tileContent = ({ date: d, view }) => {
         const dots = [];
@@ -35,6 +51,15 @@ const Planning = () => {
 			setAllDay(false);
 		}
 	}
+
+	const goToVibe = () => {
+        navigate(`/vibe`, {
+            state: {
+                from: location,
+                deviceId: null,
+            },
+        });
+    };
 
     return (
         <div className='flex flex-col justify-center mb-16'>
@@ -102,12 +127,67 @@ const Planning = () => {
 												<option value="monthly">Mensuel</option>
 											</select>
 										</div>
-										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg'>
-											<p>Lier l'évènement à une ambiance...</p>
+										{/* Lier à une ambiance */}
+										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer'>
+											<div 
+												onClick={() => setLinkVibeOpen(!linkVibeOpen)}
+												className='flex items-center justify-between'
+											>
+												<p>Lier l'évènement à une ambiance...</p>
+												{linkVibeOpen ? <FaChevronDown /> : <FaChevronRight />}
+											</div>
+											{linkVibeOpen && (
+												<div>
+													<div className="mt-2 pl-2 text-sm">
+														<label htmlFor="vibeSelect" className='block mb-2 text-sm'>Choisir une ambiance</label>
+														<select
+															id="vibeSelect"
+															value={selectedVibe}
+															onChange={(e) => setSelectedVibe(e.target.value)}
+															className="w-full p-2 rounded bg-white text-primary border border-primary"
+														>
+															<option value="">-- Sélectionner --</option>
+															{vibeOptions.map((vibe, idx) => (
+																<option key={idx} value={vibe}>{vibe}</option>
+															))}
+														</select>
+													</div>
+													{/* Bouton pour créer une nouvelle pièce (à implémenter selon ton besoin) */}
+													<button
+														className="mt-2 text-sm underline text-primary hover:text-secondary-orange transition"
+														onClick={goToVibe}
+													>
+														+ Créer une nouvelle pièce
+													</button>
+												</div>
+											)}
 										</div>
-										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg'>
-											<p>Lier l'évènement à une pièce...</p>
+										{/* Lier à une pièce */}
+										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer'>
+											<div 
+												onClick={() => setLinkRoomOpen(!linkRoomOpen)}
+												className='flex items-center justify-between'
+											>
+												<p >Lier l'évènement à une pièce...</p>
+												{linkRoomOpen ? <FaChevronDown /> : <FaChevronRight />}
+											</div>
+											{linkRoomOpen && (
+												<div className="mt-2 pl-2 text-sm">
+													{roomOptions.map((room, index) => (
+														<div key={index} className="flex items-center gap-2 mb-1">
+															<input
+																type="checkbox"
+																id={`room-${index}`}
+																checked={selectedRooms.includes(room)}
+																onChange={() => toggleRoomSelection(room)}
+															/>
+															<label htmlFor={`room-${index}`}>{room}</label>
+														</div>
+													))}
+												</div>
+											)}
 										</div>
+
 										<div className='flex items-center justify-between p-4'>
 											<button type='submit' className='bg-secondary-orange font-bold p-3 rounded-lg transition'>
 												Ajouter

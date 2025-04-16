@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiArrowDownSFill } from 'react-icons/ri';
+import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 
 const DeviceList = ({ groupedDevices, openMenuId, toggleMenu, allVibesForUser }) => {
@@ -15,7 +15,7 @@ const DeviceList = ({ groupedDevices, openMenuId, toggleMenu, allVibesForUser })
                                 onClick={() => toggleMenu(device.id)}
                             >
                                 {device.label}
-                                <RiArrowDownSFill size={24} className='text-secondary-pink' />
+                                {openMenuId === device.id ? <RiArrowDownSFill size={24} className='text-secondary-pink' /> : <RiArrowRightSFill size={24} className='text-secondary-pink' />}
                             </div>
 
                             {openMenuId === device.id && (

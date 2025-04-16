@@ -3,12 +3,11 @@ import { API_ROOT } from '../../constants/apiConstant';
 import { Link } from 'react-router-dom';
 
 const VibeCard = ({vibe}) => {
-  const imgPath = vibe?.icon.imagePath;
+  const imgPath = vibe?.icon?.imagePath;
 
   const imgIcon = `${API_ROOT}/images/icons/${imgPath}`;
 
-  return (
-    <Link to={`/vibe/${vibe.id}`}>
+  return (   
       <div className='flex flex-row justify-between m-4'>
           <div className='flex flex-col justify-center items-center'>
             <div className='flex justify-center w-24 h-20 bg-offwhite rounded-t-full rounded-b-xl shadow-md mx-auto'>
@@ -19,7 +18,6 @@ const VibeCard = ({vibe}) => {
             </div>            
           </div>
       </div>
-    </Link>
   )
 }
 
