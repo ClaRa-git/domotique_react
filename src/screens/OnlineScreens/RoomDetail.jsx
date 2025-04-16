@@ -11,6 +11,7 @@ import selectVibeData from '../../store/vibe/vibeSelector';
 import axios from 'axios';
 import DeviceList from '../../components/Ui/DeviceList';
 import VibeList from '../../components/Ui/VibeList';
+import PageLoader from '../../components/Loader/PageLoader';
 
 const RoomDetail = () => {
 
@@ -94,7 +95,8 @@ const RoomDetail = () => {
     
 
     return (
-        <div className='flex flex-col items-center justify-center mb-4'>
+        loadingRoom ? <PageLoader />
+        : <div className='flex flex-col items-center justify-center mb-4'>
             
             <div className='flex flex-col items-center mb-4'>
                 <img src={imgRoom} alt={`Pièce ${room?.label}`} className='w-48 h-48 rounded-lg mb-2'/>
@@ -107,7 +109,10 @@ const RoomDetail = () => {
                     onClick={toggleView}
                 >
                     {showDevices ? 'Appareils' : 'Ambiances'}
-                    <RiArrowRightSFill size={20} className='text-white ml-2' />
+                    <div className='flex items-center'>
+                        <p className='text-sm'>{showDevices ? 'Ambiances' : 'Appareils'}</p>
+                        <RiArrowRightSFill size={20} className='text-white' />
+                    </div>
                 </button>
 
                 {showDevices ? (
@@ -117,7 +122,7 @@ const RoomDetail = () => {
                         toggleMenu={toggleMenu}
                         allVibesForUser={allVibesForUser}
                     />
-                ) : (
+                ) : ( loadingVibe ? <PageLoader /> :
                     <div>
                         {allVibesForUser.length === 0 ? (
                             <div>

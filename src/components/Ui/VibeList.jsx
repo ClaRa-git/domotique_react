@@ -4,7 +4,7 @@ import { FaGear } from 'react-icons/fa6';
 import { API_ROOT } from '../../constants/apiConstant';
 
 const VibeList = ({ vibes, openMenuId, toggleMenu, handleData, dataDeviceVibe, roomId }) => {
-console.log('VibeList', vibes);
+
     return (
         <ul className='mb-16'>
             {vibes.map((vibe) => (
@@ -32,7 +32,7 @@ console.log('VibeList', vibes);
                                             <h3 className='font-bold'>{setting.deviceLabel}</h3>
                                             <FaGear />
                                         </div>
-                                        - {setting.label}: {setting.value} {setting.symbol ?? ''}
+                                        - {setting.label} : {setting.value} {setting.symbol ?? ''}
                                     </li>
                                 ))}
                             </ul>
