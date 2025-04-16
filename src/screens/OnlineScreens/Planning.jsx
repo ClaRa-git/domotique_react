@@ -1,34 +1,66 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import MenuBar from '../../components/Ui/MenuBar';
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6';
 import SwitchToggle from '../../components/Ui/SwitchToggle';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import selectVibeData from '../../store/vibe/vibeSelector';
+import selectRoomData from '../../store/room/roomSelector';
+import { fetchAllVibesForUser } from '../../store/vibe/vibeSlice';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { fetchAllRooms } from '../../store/room/roomSlice';
+import axios from 'axios';
+import { API_URL } from '../../constants/apiConstant';
+import { fetchAllPlanningsForUser } from '../../store/planning/planningSlice';
+import selectPlanningData from '../../store/planning/planningSelector';
 
 const Planning = () => {
+	const { userId } = useAuthContext();
+
     const [date, setDate] = useState(new Date());
 	const [isVisible, setIsVisible] = useState(false);
+	const [eventName, setEventName] = useState('');
 	const [dateStart, setDateStart] = useState(new Date());
 	const [dateEnd, setDateEnd] = useState(new Date());
+	const [recurrence, setRecurrence] = useState('none');
 	const [switchOn, setSwitchOn] = useState(false);
 	const [allDay, setAllDay] = useState(false);
 	const [linkVibeOpen, setLinkVibeOpen] = useState(false);
 	const [linkRoomOpen, setLinkRoomOpen] = useState(false);
 	const [selectedRooms, setSelectedRooms] = useState([]);
 	const [selectedVibe, setSelectedVibe] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const location = useLocation();
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
-	const vibeOptions = ['Ambiance détente', 'Soirée', 'Concentration', 'Réveil']; // à adapter
+	useEffect(() => {
+	  dispatch(fetchAllVibesForUser(userId));
+	}, [dispatch, userId]);
 
-	const roomOptions = ['Salon', 'Cuisine', 'Chambre', 'Salle de bain']; // à adapter selon ton app
+	const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
+
+	useEffect(() => {
+	  dispatch(fetchAllRooms());
+	}, [dispatch, userId]);
+
+	const { loadingRoom, allRooms } = useSelector(selectRoomData);
+
+	useEffect(() => {
+	  dispatch(fetchAllPlanningsForUser(userId));
+	}, [dispatch, userId]);
+	
+	const { loadingPlanning, allPlannings } = useSelector(selectPlanningData);
 
 	const toggleRoomSelection = (room) => {
-		if (selectedRooms.includes(room)) {
-			setSelectedRooms(selectedRooms.filter(r => r !== room));
+		const roomId = room['@id'];
+		if (selectedRooms.includes(roomId)) {
+			setSelectedRooms(selectedRooms.filter(r => r !== roomId));
 		} else {
-			setSelectedRooms([...selectedRooms, room]);
+			setSelectedRooms([...selectedRooms, roomId]);
 		}
 	};
 
@@ -61,6 +93,49 @@ const Planning = () => {
         });
     };
 
+	const handleAddEvent = async (e) => {
+		e.preventDefault();
+
+		try {
+			const data = {
+				label: eventName,
+				dateStart: dateStart,
+				dateEnd: dateEnd,
+				recurrence: recurrence,
+				vibe: selectedVibe,
+				room: selectedRooms
+			}
+
+			setIsLoading(true);
+
+			if(!eventName || !dateStart || !dateEnd) {
+				console.log('Veuillez remplir tous les champs');
+				return;
+			}
+
+			axios.defaults.headers.post['Content-Type'] = 'application/ld+json';
+			const response = await axios.post(`${API_URL}/plannings`, data);
+
+			if (response.status === 201) {
+				console.log('L\'évènement a bien été créé');
+				setEventName('');
+				setDateStart(new Date());
+				setDateEnd(new Date());
+				setRecurrence('none');
+				setSelectedVibe('');
+				setSelectedRooms([]);
+				setSwitchOn(false);
+				setAllDay(false);
+				setIsVisible(false);
+			} 
+
+		} catch (error) {
+			console.log(`Erreur lors de l'ajout de l'évènement : ${error}`);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
     return (
         <div className='flex flex-col justify-center mb-16'>
           	<MenuBar />
@@ -81,6 +156,18 @@ const Planning = () => {
 						/>
               		</div>
               		<div className="w-full">
+						<div>
+							<p className='text-center text-primary font-bold text-2xl mt-4'>Evènements</p>
+							{allPlannings.map((event, index) => (
+								<Link to={`/planning/${event.id}`} key={index}>
+									<div className="bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg">
+										<div className='flex justify-between'>
+											<p className='text-lg font-bold'>{event.label}</p>
+										</div>
+									</div>
+								</Link>
+							))}
+						</div>
 						<div onClick={handleClick} className={`flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-4 ${isVisible ? 'rounded-t-lg' : 'rounded-lg'}`}>
 							<p>Créer un nouvel évènement...</p>
 							<FaPlus className='mt-1'/>
@@ -89,8 +176,12 @@ const Planning = () => {
 							isVisible &&
 							<div className='flex flex-row justify-between bg-primary text-white mx-4 px-4 py-1 rounded-b-lg'>
 								<div className="w-full my-4">
-									<form>
-										<div className='flex justify-between mb-4'>
+									<form onSubmit={handleAddEvent}>
+										<div className='flex justify-between ml-4 sm:m-4'>
+											<label htmlFor="eventName">Nom de l'évènement</label>
+											<input type="text" name="eventName" id="eventName" className='w-35 sm:w-50 bg-offwhite text-primary rounded py-2 px-3' onChange={(e) => {setEventName(e.target.value)}} />
+										</div>
+										<div className='flex justify-between m-4'>
 											<p>Jour entier</p>
 											<SwitchToggle 
 												sendToParent={handleSwitch}
@@ -100,27 +191,32 @@ const Planning = () => {
 										{
 											allDay ?
 											<div>
-												<div className='flex justify-between my-4'>
+												<div className='flex justify-between m-4'>
 													<label htmlFor="dateStart">Date</label>
 													<input type="date" name="dateStart" id="dateStart" onChange={(e) => {setDateStart(e.target.value); setDateEnd(e.target.value)} }/>
 												</div>
 											</div>
 											:
 											<div>
-												<div className='flex justify-between my-4'>
+												<div className='flex justify-between m-4'>
 													<label htmlFor="dateStart">Début</label>
 													<input type="datetime-local" name="dateStart" id="dateStart" onChange={(e) => {setDateStart(e.target.value)} }/>
 												</div>
-												<div className='flex justify-between my-4'>
+												<div className='flex justify-between m-4'>
 													<label htmlFor="dateEnd">Fin</label>
 													<input type="datetime-local" name="dateEnd" id="dateEnd" onChange={(e) => {setDateEnd(e.target.value)} }/>
 												</div>
 											</div>
 										}
 										<hr />
-										<div className='flex justify-between items-center my-4'>
+										<div className='flex justify-between items-center m-4'>
 											<label htmlFor="recurrence">Récurrence</label>
-											<select name="recurrence" id="recurrence" className='bg-primary rounded py-2 px-3'>
+											<select
+												name="recurrence"
+												id="recurrence"
+												className='bg-primary rounded py-2 px-3'
+												onChange={(e) => {setRecurrence(e.target.value)}}
+											>
 												<option value="none">Aucune</option>
 												<option value="daily">Quotidien</option>
 												<option value="weekly">Hebdomadaire</option>
@@ -142,22 +238,23 @@ const Planning = () => {
 														<label htmlFor="vibeSelect" className='block mb-2 text-sm'>Choisir une ambiance</label>
 														<select
 															id="vibeSelect"
-															value={selectedVibe}
+															value={selectedVibe['@id']}
 															onChange={(e) => setSelectedVibe(e.target.value)}
 															className="w-full p-2 rounded bg-white text-primary border border-primary"
 														>
 															<option value="">-- Sélectionner --</option>
-															{vibeOptions.map((vibe, idx) => (
-																<option key={idx} value={vibe}>{vibe}</option>
+															{allVibesForUser.map((vibe, index) => (
+																<option key={index} value={vibe['@id']}>{vibe.label}</option>
 															))}
 														</select>
 													</div>
 													{/* Bouton pour créer une nouvelle pièce (à implémenter selon ton besoin) */}
 													<button
+														type="button"
 														className="mt-2 text-sm underline text-primary hover:text-secondary-orange transition"
 														onClick={goToVibe}
 													>
-														+ Créer une nouvelle pièce
+														+ Créer une nouvelle ambiance
 													</button>
 												</div>
 											)}
@@ -173,15 +270,15 @@ const Planning = () => {
 											</div>
 											{linkRoomOpen && (
 												<div className="mt-2 pl-2 text-sm">
-													{roomOptions.map((room, index) => (
+													{allRooms.map((room, index) => (
 														<div key={index} className="flex items-center gap-2 mb-1">
 															<input
 																type="checkbox"
 																id={`room-${index}`}
-																checked={selectedRooms.includes(room)}
+																checked={selectedRooms.includes(room['@id'])}
 																onChange={() => toggleRoomSelection(room)}
 															/>
-															<label htmlFor={`room-${index}`}>{room}</label>
+															<label htmlFor={`room-${index}`}>{room.label}</label>
 														</div>
 													))}
 												</div>

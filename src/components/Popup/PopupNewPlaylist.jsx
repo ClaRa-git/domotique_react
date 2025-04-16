@@ -31,7 +31,7 @@ const PopupNewPlaylist = ({callable, userId}) => {
           }
 
           axios.defaults.headers.post['Content-Type'] = 'application/ld+json';
-          const response = await axios.post(`${API_URL}/playlists`, data)
+          const response = await axios.post(`${API_URL}/playlists`, data);
 
           if (response.status === 201) {
             setSuccess('La playlist a bien été créée');

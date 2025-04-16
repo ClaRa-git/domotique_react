@@ -12,6 +12,7 @@ import Planning from "../screens/OnlineScreens/Planning";
 import PlaylistDetail from "../screens/OnlineScreens/PlaylistDetail";
 import RoomDetail from "../screens/OnlineScreens/RoomDetail";
 import VibeDetail from "../screens/OnlineScreens/VibeDetail";
+import PlanningDetail from "../screens/OnlineScreens/PlanningDetail";
 
 const OnlineRouter = createBrowserRouter([
     {
@@ -61,6 +62,10 @@ const OnlineRouter = createBrowserRouter([
             {
                 path: "/planning",
                 element: <Planning />
+            },
+            {
+                path: "/planning/:id",
+                element: <PlanningDetail />
             }
         ]
     }
