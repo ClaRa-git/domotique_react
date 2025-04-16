@@ -95,8 +95,8 @@ const RoomDetail = () => {
     
 
     return (
-        loadingRoom ? <PageLoader />
-        : <div className='flex flex-col items-center justify-center mb-4'>
+        loadingRoom ? <PageLoader /> :
+        <div className='flex flex-col items-center justify-center mb-4'>
             <div className='flex w-full p-4 mb-4'>
                 <Link to='/room'>
                     <RiArrowLeftSFill
