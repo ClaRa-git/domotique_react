@@ -30,21 +30,24 @@ const RoomDetail = () => {
     const [showDevices, setShowDevices] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
 
-    const { loadingRoom, roomDetail } = useSelector(selectRoomData);
-    const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
-    const { loadingDevice, devicesWithoutRoom} = useSelector(selectDeviceData);
 
     useEffect(() => {
         dispatch(fetchRoom(id));
     }, [dispatch, id]);
 
+    const { loadingRoom, roomDetail } = useSelector(selectRoomData);
+
     useEffect(() => {
         dispatch(fetchAllVibesForUser(userId));
     }, [dispatch, userId]);
 
+    const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
+
     useEffect(() => {
         dispatch(fetchDevicesWithoutRoom());
     }, [dispatch]);
+    
+    const { loadingDevice, devicesWithoutRoom} = useSelector(selectDeviceData);
 
     useEffect(() => {
         if (roomDetail?.devices) {

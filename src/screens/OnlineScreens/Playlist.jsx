@@ -11,7 +11,7 @@ import PopupNewPlaylist from '../../components/Popup/PopupNewPlaylist';
 
 // Page d'affichage des playlists de l'utilisateur
 const Playlist = () => {
-
+    
     // Récupération du dispatch
     const dispatch = useDispatch();
 

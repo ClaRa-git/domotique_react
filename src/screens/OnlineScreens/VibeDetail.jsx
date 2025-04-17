@@ -8,15 +8,12 @@ import VibeCard from '../../components/Card/VibeCard';
 import { RiArrowLeftSFill } from 'react-icons/ri';
 import { fetchAllRooms } from '../../store/room/roomSlice';
 import selectRoomData from '../../store/room/roomSelector';
-import axios from 'axios';
-import { API_ROOT } from '../../constants/apiConstant';
 import DeviceListVibe from '../../components/Ui/DeviceListVibe';
 
 const VibeDetail = () => {
 	const params = useParams();
 	const { id } = params;
 
-	const [dataDeviceVibe, setDataDeviceVibe] = useState(null);
 	const [showDevices, setShowDevices] = useState(true);
 
 	const dispatch = useDispatch();
@@ -63,7 +60,7 @@ const VibeDetail = () => {
 								</div>				
 							</div>
 								<div className='flex flex-col items-center w-full'>
-									<DeviceListVibe room={room} />
+									<DeviceListVibe room={ room } />
 								</div>
 						</div>
 					))
