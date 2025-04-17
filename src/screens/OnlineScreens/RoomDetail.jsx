@@ -11,7 +11,9 @@ import selectVibeData from '../../store/vibe/vibeSelector';
 import DeviceList from '../../components/Ui/DeviceList';
 import VibeList from '../../components/Ui/VibeList';
 import PageLoader from '../../components/Loader/PageLoader';
-import { FaPlus } from 'react-icons/fa6';
+import { fetchDevicesWithoutRoom } from '../../store/device/deviceSlice';
+import selectDeviceData from '../../store/device/deviceSelector';
+import DeviceDropdown from '../../components/Ui/DeviceDropdown';
 
 const RoomDetail = () => {
 
@@ -30,6 +32,7 @@ const RoomDetail = () => {
 
     const { loadingRoom, roomDetail } = useSelector(selectRoomData);
     const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
+    const { loadingDevice, devicesWithoutRoom} = useSelector(selectDeviceData);
 
     useEffect(() => {
         dispatch(fetchRoom(id));
@@ -38,6 +41,10 @@ const RoomDetail = () => {
     useEffect(() => {
         dispatch(fetchAllVibesForUser(userId));
     }, [dispatch, userId]);
+
+    useEffect(() => {
+        dispatch(fetchDevicesWithoutRoom());
+    }, [dispatch]);
 
     useEffect(() => {
         if (roomDetail?.devices) {
@@ -74,9 +81,10 @@ const RoomDetail = () => {
         });
     };
 
-    const handleClick = () => {
-        setIsVisible(true);
-    }    
+    const refreshRoomData = () => {
+        dispatch(fetchRoom(id)); // Re-fetch la room pour avoir les devices à jour
+        dispatch(fetchDevicesWithoutRoom()); // Met aussi à jour la liste des devices non assignés
+    };    
 
     return (
         loadingRoom ? <PageLoader /> :
@@ -106,16 +114,16 @@ const RoomDetail = () => {
                     </div>
                 </button>
 
-                { showDevices &&
-                    <div onClick={handleClick} className='flex flex-row justify-between bg-primary text-white mb-4 px-4 py-1 rounded-lg'>
-                        <p>Ajouter un appareil à la pièce</p>
-                        <FaPlus className='mt-1'/>
-                    </div>
-                }
-
-                {isVisible && 
+                {showDevices && 
                     <div>
-
+                        <DeviceDropdown
+                            isVisible={isVisible}
+                            toggleDropdown={() => setIsVisible(!isVisible)}
+                            devices={devicesWithoutRoom}
+                            showDevices={showDevices}
+                            roomId={id}
+                            onDeviceAdded={refreshRoomData}
+                        />
                     </div>
                 }
 
@@ -126,6 +134,7 @@ const RoomDetail = () => {
                         openMenuId={openMenuId}
                         toggleMenu={toggleMenu}
                         allVibesForUser={allVibesForUser}
+                        onDeviceRemoved={refreshRoomData}
                     />
                 ) : ( loadingVibe ? <PageLoader /> :
                     <div>

@@ -5,7 +5,7 @@ import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../../constants/apiConstant';
 
-const DeviceList = ({ groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser }) => {
+const DeviceList = ({ groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser, onDeviceRemoved }) => {
 
     // Supprime un objet d'une pièce
     const deleteFromRoom = async (deviceId) => {
@@ -13,14 +13,13 @@ const DeviceList = ({ groupedDevices, setGroupedDevices, openMenuId, toggleMenu,
 
         if (!confirm) return;
 
-        const confirmSetting = window.confirm('Voulez-vous vraiment supprimer tous les réglages de cet appareil ? Attention cela supprimera tous les réglages des utilisateurs');
+        const confirmSetting = window.confirm('Voulez-vous vraiment supprimer tous les réglages de cet appareil ? Attention cela supprimera tous les réglages de tous les utilisateurs');
 
         try {
             // on va supprimer les settings de ce device
             // on récupère tous les settings
             const responseSetting = await axios.get(`${API_URL}/settings?page=1&device.id=${deviceId}`);
             const settings = responseSetting.data.member;
-            console.log("settings", settings);
             // on va les supprimer un par un
             for (const setting of settings) {
                 const responseDeleteSetting = await axios.delete(`${API_URL}/settings/${setting.id}`);
@@ -50,8 +49,12 @@ const DeviceList = ({ groupedDevices, setGroupedDevices, openMenuId, toggleMenu,
                     }
                 }
 
-                console.log("updatedGroupedDevices", updatedGroupedDevices);
                 setGroupedDevices(updatedGroupedDevices);
+
+                // MAJ globale : rafraîchit les devices sans room
+                if (typeof onDeviceRemoved === 'function') {
+                    onDeviceRemoved();
+                }
             }
         } catch (error) {
             console.log(`Erreur lors de la suppression de l'appareil ${deviceId}`, error);

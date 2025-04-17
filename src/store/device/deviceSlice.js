@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { API_URL } from "../../constants/apiConstant";
 
 const deviceSlice = createSlice({
     name: "devices",
@@ -6,6 +8,7 @@ const deviceSlice = createSlice({
         loadingDevice: false,
         deviceDetail: {},
         allDevices: [],
+        devicesWithoutRoom: []
     },
     reducers: {
         setLoadingDevice: (state, action) => {
@@ -17,16 +20,19 @@ const deviceSlice = createSlice({
         setAllDevices: (state, action) => {
             state.allDevices = action.payload;
         },
+        setDevicesWithoutRoom: (state, action) => {
+            state.devicesWithoutRoom = action.payload;
+        }
     }
 });
 
-export const { setLoadingDevice, setDeviceDetail, setAllDevices } = deviceSlice.actions;
+export const { setLoadingDevice, setDeviceDetail, setAllDevices, setDevicesWithoutRoom } = deviceSlice.actions;
 
-export const fetchDeviceWithoutRoom = () => async (dispatch) => {
+export const fetchDevicesWithoutRoom = () => async (dispatch) => {
     try {
         dispatch(setLoadingDevice(true));
         const response = await axios.get(`${API_URL}/devices?page=1&exists%5Broom%5D=false`);
-        dispatch(setAllDevices(response.data));
+        dispatch(setDevicesWithoutRoom(response.data.member));
     } catch (error) {
         console.log(`Erreur lors de la récupération des appareils : ${error}`);
     } finally {

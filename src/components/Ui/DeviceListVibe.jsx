@@ -17,9 +17,6 @@ const DeviceListVibe = (room) => {
         return acc;
     }, {});
 
-    console.log('devices', devices)
-    console.log('groupedDevices', groupedDevices)
-
   return (
     <div className='flex flex-col items-center justify-center w-full mb-4'>
         {Object.entries(groupedDevices).map(([type, devices]) => (
