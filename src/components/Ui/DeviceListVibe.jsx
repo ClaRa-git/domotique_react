@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { FaGear } from 'react-icons/fa6';
+import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
 
 const DeviceListVibe = (room) => {
 
@@ -33,6 +34,7 @@ const DeviceListVibe = (room) => {
                                 onClick={() => setOpenMenuId(device.id)}
                             >
                                 {device.label}
+                                {openMenuId === device.id ? <RiArrowDownSFill size={24} className='text-secondary-pink' /> : <RiArrowRightSFill size={24} className='text-secondary-pink' />}
                             </div>
                             {openMenuId === device.id && (
                                 <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4'>
@@ -43,7 +45,7 @@ const DeviceListVibe = (room) => {
                                                 <h3 className='font-bold'>{setting.label}</h3>
                                             </div>
                                             <div className='flex justify-between items-center mb-2'>
-                                            - {setting.feature.label} : {setting.value} {setting.feature.unit.symbol ?? ''}
+                                            - {setting.feature.label} : {setting.value} {setting.feature?.unit?.symbol ?? ''}
                                             <FaGear />
                                             </div>
                                         </li>

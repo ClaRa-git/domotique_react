@@ -1,8 +1,64 @@
+import axios from 'axios';
 import React from 'react';
+import { FaRegTrashAlt } from 'react-icons/fa';
 import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../../constants/apiConstant';
 
-const DeviceList = ({ groupedDevices, openMenuId, toggleMenu, allVibesForUser }) => {
+const DeviceList = ({ groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser }) => {
+
+    // Supprime un objet d'une pièce
+    const deleteFromRoom = async (deviceId) => {
+        const confirm = window.confirm('Voulez-vous vraiment supprimer cet appareil de cette pièce ?');
+
+        if (!confirm) return;
+
+        const confirmSetting = window.confirm('Voulez-vous vraiment supprimer tous les réglages de cet appareil ? Attention cela supprimera tous les réglages des utilisateurs');
+
+        try {
+            // on va supprimer les settings de ce device
+            // on récupère tous les settings
+            const responseSetting = await axios.get(`${API_URL}/settings?page=1&device.id=${deviceId}`);
+            const settings = responseSetting.data.member;
+            console.log("settings", settings);
+            // on va les supprimer un par un
+            for (const setting of settings) {
+                const responseDeleteSetting = await axios.delete(`${API_URL}/settings/${setting.id}`);
+                if(responseDeleteSetting.status === 204){
+                    console.log("Réglage supprimé")
+                }
+            }
+
+            // on va détacher le device de la room en mettant l'id de la room à null
+            axios.defaults.headers.patch['Content-Type'] = 'application/merge-patch+json';
+            const response = await axios.patch(`${API_URL}/devices/${deviceId}`, {
+                room: null
+            });
+
+            if(response.status === 200){
+                console.log("Appareil supprimé de la pièce")
+                
+                // on met à jour groupedDevices
+                const updatedGroupedDevices = { ...groupedDevices };
+                // on va supprimer le device de la liste
+                const deviceType = Object.keys(updatedGroupedDevices).find(type => updatedGroupedDevices[type].some(device => device.id === deviceId));
+                if (deviceType) {
+                    updatedGroupedDevices[deviceType] = updatedGroupedDevices[deviceType].filter(device => device.id !== deviceId);
+                    // si le tableau est vide, on supprime la clé
+                    if (updatedGroupedDevices[deviceType].length === 0) {
+                        delete updatedGroupedDevices[deviceType];
+                    }
+                }
+
+                console.log("updatedGroupedDevices", updatedGroupedDevices);
+                setGroupedDevices(updatedGroupedDevices);
+            }
+        } catch (error) {
+            console.log(`Erreur lors de la suppression de l'appareil ${deviceId}`, error);
+        }
+    }
+
+
     return Object.entries(groupedDevices).map(([type, devices]) => (
         <div key={type} className='flex flex-col mb-4 w-full'>
             <h3 className='font-bold bg-secondary-orange text-white text-center p-2 rounded-lg mb-4'>{type}</h3>
@@ -15,7 +71,14 @@ const DeviceList = ({ groupedDevices, openMenuId, toggleMenu, allVibesForUser })
                                 onClick={() => toggleMenu(device.id)}
                             >
                                 {device.label}
-                                {openMenuId === device.id ? <RiArrowDownSFill size={24} className='text-secondary-pink' /> : <RiArrowRightSFill size={24} className='text-secondary-pink' />}
+                                <div className='flex items-center'>
+                                    <FaRegTrashAlt
+                                        size={20}
+                                        className='bg-secondary-orange h-8 w-8 text-white rounded-lg p-2 mr-2 cursor-pointer'
+                                        onClick={() => deleteFromRoom(device.id)}
+                                    />
+                                    {openMenuId === device.id ? <RiArrowDownSFill size={24} className='text-secondary-pink' /> : <RiArrowRightSFill size={24} className='text-secondary-pink' />}
+                                </div>
                             </div>
 
                             {openMenuId === device.id && (

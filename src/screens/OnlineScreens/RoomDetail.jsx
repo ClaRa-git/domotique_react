@@ -4,14 +4,14 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import selectRoomData from '../../store/room/roomSelector';
 import { API_ROOT } from '../../constants/apiConstant';
 import { fetchRoomDetail as fetchRoom } from '../../store/room/roomSlice';
-import { RiArrowDownSFill, RiArrowLeftSFill, RiArrowRightSFill } from 'react-icons/ri';
+import { RiArrowLeftSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { fetchAllVibesForUser } from '../../store/vibe/vibeSlice';
 import { useAuthContext } from '../../contexts/AuthContext';
 import selectVibeData from '../../store/vibe/vibeSelector';
-import axios from 'axios';
 import DeviceList from '../../components/Ui/DeviceList';
 import VibeList from '../../components/Ui/VibeList';
 import PageLoader from '../../components/Loader/PageLoader';
+import { FaPlus } from 'react-icons/fa6';
 
 const RoomDetail = () => {
 
@@ -26,7 +26,7 @@ const RoomDetail = () => {
     const [groupedDevices, setGroupedDevices] = useState({});
     const [openMenuId, setOpenMenuId] = useState(null);
     const [showDevices, setShowDevices] = useState(true);
-    const [dataDeviceVibe, setDataDeviceVibe] = useState(null);
+    const [isVisible, setIsVisible] = useState(false);
 
     const { loadingRoom, roomDetail } = useSelector(selectRoomData);
     const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
@@ -74,25 +74,9 @@ const RoomDetail = () => {
         });
     };
 
-    const handleData = async (roomId, vibeId) => {
-        const data = {
-            roomId: roomId,
-            vibeId: vibeId
-        };
-    
-        try {
-            const response = await axios.post(`${API_ROOT}/service-device`, data, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            setDataDeviceVibe(response.data);
-        } catch (error) {
-            console.error('Erreur lors de l’envoi des données :', error);
-        }
-    };
-    
+    const handleClick = () => {
+        setIsVisible(true);
+    }    
 
     return (
         loadingRoom ? <PageLoader /> :
@@ -122,9 +106,23 @@ const RoomDetail = () => {
                     </div>
                 </button>
 
+                { showDevices &&
+                    <div onClick={handleClick} className='flex flex-row justify-between bg-primary text-white mb-4 px-4 py-1 rounded-lg'>
+                        <p>Ajouter un appareil à la pièce</p>
+                        <FaPlus className='mt-1'/>
+                    </div>
+                }
+
+                {isVisible && 
+                    <div>
+
+                    </div>
+                }
+
                 {showDevices ? (
                     <DeviceList
                         groupedDevices={groupedDevices}
+                        setGroupedDevices={setGroupedDevices}
                         openMenuId={openMenuId}
                         toggleMenu={toggleMenu}
                         allVibesForUser={allVibesForUser}
@@ -146,8 +144,6 @@ const RoomDetail = () => {
                                 vibes={allVibesForUser}
                                 openMenuId={openMenuId}
                                 toggleMenu={toggleMenu}
-                                handleData={handleData}
-                                dataDeviceVibe={dataDeviceVibe}
                                 roomId={id}
                             />
                         )}
