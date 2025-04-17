@@ -7,48 +7,63 @@ import { fetchUserDetail } from '../../../store/user/userSlice';
 import selectUserData from '../../../store/user/userSelector';
 import { FiLogOut } from 'react-icons/fi';
 
+// Affiche le component pour déconnexion
 const Logout = () => {
-  const { signOut } = useAuthContext();
-  const navigate = useNavigate();
-  //on crée la méthode de deconnexion
-  const handleLogout = async () => {
-    await signOut();
 
-    navigate('/');
-  }
-  return (
-    <button onClick={() => {
-      const confirmLogout = window.confirm('Voulez-vous vraiment vous déconnecter ?');
-      if (confirmLogout) handleLogout();
-    }}
-      className='flex bg-secondary-orange text-white rounded-lg p-2 items-center justify-center'>
-        <FiLogOut className='w-6 h-6 mr-2' />
-        <p>Log out</p>
-    </button>
-  )
+	// Récupération de la fonction signOut dans le contexte d'authentification
+	const { signOut } = useAuthContext();
+
+	// Récupération de la fonction navigate
+	const navigate = useNavigate();
+
+	// On crée la méthode de deconnexion
+	const handleLogout = async () => {
+		await signOut();
+
+		navigate( '/' );
+	}
+
+	return (
+		<button
+			onClick={ () => {
+				const confirmLogout = window.confirm( 'Voulez-vous vraiment vous déconnecter ?' );
+				if ( confirmLogout ) handleLogout();
+			}}
+			className='flex bg-secondary-orange text-white rounded-lg p-2 items-center justify-center'
+		>
+			<FiLogOut className='w-6 h-6 mr-2' />
+			<p>
+				Log out
+			</p>
+		</button>
+	)
 }
 
+// Affiche le component de l'utilisateur connecté
 const Account = () => {
 
-  const params = useParams();
-  const userId = params.id;
+	// Récupération de l'id de l'utilisateur dans l'url
+	const params = useParams();
+	const userId = params.id;
 
-  const dispatch = useDispatch();
+	// Récupération de la fonction dispatch
+	const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(fetchUserDetail(userId));
-  }, [dispatch, userId]);
+	// Récupération des informations de l'utilisateur
+	useEffect(() => {
+		dispatch(fetchUserDetail( userId ) );
+	}, [ dispatch, userId ] );
 
-  const { userDetail, loading } = useSelector(selectUserData);
+	const { userDetail, loading } = useSelector( selectUserData );
 
-  return (
-    <div>
-      <HelloUser username={userDetail.username} />
-      <div className='m-5'>
-          <Logout />
-      </div>
-    </div>
-  )
+	return (
+		<div>
+			<HelloUser username={ userDetail.username } />
+			<div className='m-5'>
+				<Logout />
+			</div>
+		</div>
+	)
 }
 
 export default Account

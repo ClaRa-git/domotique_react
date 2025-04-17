@@ -10,102 +10,98 @@ import MoodPie from '../../components/Mood/MoodPie';
 import HelloUser from '../../components/Ui/HelloUser';
 import { USER_MOOD } from '../../constants/appConstant';
 
+// Page d'accueil
 const Home = () => {
-  const { userId, username } = useAuthContext();
 
-  const [isVisible, setIsVisible] = useState(false);
-  const [moral, setMoral] = useState('Pas d\'humeur renseignée');
-  const [stress, setStress] = useState(50);
-  const [tonus, setTonus] = useState(50);
-  const [mood, setMood] = useState(50);
+	// Récupération de l'utilisateur connecté
+	const { userId, username } = useAuthContext();
 
-  // useEffect pour récupérer les données de l'humeur, du stress et du tonus depuis le localStorage
-  useEffect(() => {
-    const savedMoodData = JSON.parse(localStorage.getItem(USER_MOOD));
-    if (savedMoodData) {
-      setMood(savedMoodData.mood || 50);
-      setStress(savedMoodData.stress || 50);
-      setTonus(savedMoodData.tonus || 50);
-      setMoral(savedMoodData.calculatedMoral || 'Pas d\'humeur renseignée');
-    }
-  }, []);
+	// Définition des states
+	const [ isVisible, setIsVisible] = useState( false );
 
-  const handleClick = () => {
-    setIsVisible(true);
-  }
+	const [ moral, setMoral ] = useState( 'Pas d\'humeur renseignée' );
+	const [ stress, setStress ] = useState( 50 );
+	const [ tonus, setTonus ] = useState( 50 );
+	const [ mood, setMood ] = useState( 50 );
 
-  const handleDataFromMood = (data) => {
-    setMoral(data.calculatedMoral);
-    setMood(data.mood);
-    setTonus(data.tonus);
-    setStress(data.stress);
-  }
+	// useEffect pour récupérer les données de l'humeur, du stress et du tonus depuis le localStorage
+	useEffect(() => {
+		const savedMoodData = JSON.parse( localStorage.getItem( USER_MOOD ) );
+		if ( savedMoodData ) {
+		setMood( savedMoodData.mood || 50 );
+		setStress( savedMoodData.stress || 50 );
+		setTonus( savedMoodData.tonus || 50 );
+		setMoral( savedMoodData.calculatedMoral || 'Pas d\'humeur renseignée');
+		}
+	}, []);
 
-  return (
-    <div className='min-h-screen flex flex-col'>
-      <HelloUser username={username} />
-      <div onClick={handleClick} className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white'>
-        <div className='flex flex-col justify-center align-around'>
-          <p className='mb-5 text-center'>Votre mood actuelle :</p>
-          <MoodCard
-            moral={moral}
-          />
-        </div>
-        <MoodPie
-          mood={mood}
-          stress={stress}
-          tonus={tonus}
-        />
-      </div>
-      <div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-[50px] flex-grow shadow-[0_-8px_0_rgba(194,133,140,1)]'>
-        <div className='grid grid-cols-2 gap-5 p-5 grow place-content-center'>
-          <MenuCard
-            icon={
-              <LuMusic4
-                className='h-8 w-8 sm:h-12 sm:w-12'
-              />
-            }
-            label={"Playlists"}
-            link={"/playlist"}
-          />
-          <MenuCard
-            icon={
-              <FaBed
-                className='h-8 w-8 sm:h-12 sm:w-12'  
-              />
-            }
-            label={"Pièces"}
-            link={"/room"}
-          />
-          <MenuCard
-            icon={
-              <FaRegCalendarCheck
-                className='h-8 w-8 sm:h-12 sm:w-12'
-              />
-            }
-            label={"Planning"}
-            link={"/planning"}
-          />
-          <MenuCard
-            icon={
-              <TbBulbFilled
-                className='h-8 w-8 sm:h-12 sm:w-12'
-              />
-            }
-            label={"Ambiances"}
-            link={"/vibe"}
-          />
-        </div>
-      </div>
-      {isVisible &&
-        <PopupMood
-          data={{ mood, stress, tonus }}
-          callable={() => setIsVisible(false)}
-          sentToParent={handleDataFromMood}
-        />
-      }
-    </div>
-  )
+	// Fonction pour afficher / cacher le popup
+	const handleClick = () => {
+		setIsVisible( true );
+	}
+
+	// Fonction pour gérer les données envoyées par le popup
+	const handleDataFromMood = ( data ) => {
+		setMoral( data.calculatedMoral );
+		setMood( data.mood );
+		setTonus( data.tonus );
+		setStress( data.stress );
+	}
+
+	return (
+		<div className='min-h-screen flex flex-col'>
+			<HelloUser username={ username } />
+			<div
+				onClick={ handleClick }
+				className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white'
+			>
+				<div className='flex flex-col justify-center align-around'>
+				<p className='mb-5 text-center'>
+					Votre mood actuelle :
+				</p>
+				<MoodCard
+					moral={ moral }
+				/>
+				</div>
+				<MoodPie
+					mood={ mood }
+					stress={ stress }
+					tonus={ tonus }
+				/>
+			</div>
+			<div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-[50px] flex-grow shadow-[0_-8px_0_rgba(194,133,140,1)]'>
+				<div className='grid grid-cols-2 gap-5 p-5 grow place-content-center'>
+					<MenuCard
+						icon={ <LuMusic4 className='h-8 w-8 sm:h-12 sm:w-12'/> }
+						label={ "Playlists" }
+						link={ "/playlist" }
+					/>
+					<MenuCard
+						icon={ <FaBed className='h-8 w-8 sm:h-12 sm:w-12'/> }
+						label={ "Pièces" }
+						link={ "/room" }
+					/>
+					<MenuCard
+						icon={ <FaRegCalendarCheck className='h-8 w-8 sm:h-12 sm:w-12'/> }
+						label={ "Planning" }
+						link={ "/planning" }
+					/>
+					<MenuCard
+						icon={ <TbBulbFilled className='h-8 w-8 sm:h-12 sm:w-12' /> }
+						label={ "Ambiances" }
+						link={ "/vibe" }
+					/>
+				</div>
+			</div>
+			{isVisible &&
+				<PopupMood
+					data={ { mood, stress, tonus } }
+					callable={ () => setIsVisible( false ) }
+					sentToParent={ handleDataFromMood }
+				/>
+			}
+		</div>
+	)
 }
 
 export default Home
