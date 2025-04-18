@@ -22,20 +22,22 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
 
         if ( !confirm ) return;
 
-        const confirmSetting = window.confirm( 'Voulez-vous vraiment supprimer tous les réglages de cet appareil ? Attention cela supprimera tous les réglages de tous les utilisateurs' );
+        // const confirmSetting = window.confirm( 'Voulez-vous vraiment supprimer tous les réglages de cet appareil ? Attention cela supprimera tous les réglages de tous les utilisateurs' );
+
+        // if ( !confirmSetting ) return;
 
         try {
             // On va supprimer les settings de ce device
             // On récupère tous les settings
-            const responseSetting = await axios.get( `${ API_URL }/settings?page=1&device.id=${ deviceId }` );
-            const settings = responseSetting.data.member;
+            // const responseSetting = await axios.get( `${ API_URL }/settings?page=1&device.id=${ deviceId }` );
+            // const settings = responseSetting.data.member;
             // On va les supprimer un par un
-            for ( const setting of settings ) {
-                const responseDeleteSetting = await axios.delete( `${ API_URL }/settings/${ setting.id }` );
-                if( responseDeleteSetting.status === 204 ){
-                    console.log( "Réglage supprimé" )
-                }
-            }
+            // for ( const setting of settings ) {
+            //     const responseDeleteSetting = await axios.delete( `${ API_URL }/settings/${ setting.id }` );
+            //     if( responseDeleteSetting.status === 204 ){
+            //         console.log( "Réglage supprimé" )
+            //     }
+            // }
 
             // On va détacher le device de la room en mettant l'id de la room à null
             axios.defaults.headers.patch[ 'Content-Type' ] = 'application/merge-patch+json';
