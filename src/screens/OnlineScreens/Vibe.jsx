@@ -9,33 +9,48 @@ import { FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext';
 
+// Page d'accueil des ambiances
 const Vibe = () => {
+
+    // Récupération de dispatch
     const dispatch = useDispatch();
 
+    // Récupération de l'ID de l'utilisateur via le contexte
     const { userId } = useAuthContext();
 
-    const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
-
+    // Récupération de toutes les ambiances de l'utilisateur
     useEffect(() => {
-        dispatch(fetchAllVibesForUser(userId));
-    }, [dispatch, userId]);
+        dispatch( fetchAllVibesForUser( userId ) );
+    }, [ dispatch, userId ] );
 
+    const { loadingVibe, allVibesForUser } = useSelector( selectVibeData );
+
+    // Fonction pour gérer le clic sur le bouton "Créer une nouvelle ambiance"
     const handleClick = () => {
     }
 
     return (
-        loadingVibe ? <PageLoader /> :
+        loadingVibe ? <PageLoader />
+        :
         <div>
             <MenuBar />
-            <div onClick={handleClick} className='flex flex-row justify-between bg-primary text-white m-4 px-4 py-1 rounded-lg'>
-                <p>Créer une nouvelle vibe...</p>
+            <div
+                onClick={ handleClick }
+                className='flex flex-row justify-between bg-primary text-white m-4 px-4 py-1 rounded-lg'
+            >
+                <p>
+                    Créer une nouvelle vibe...
+                </p>
                 <FaPlus className='mt-1'/>
             </div>
-            <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 mb-16'>
-                { allVibesForUser && allVibesForUser.map((vibe, index) => (
-                    <Link to={`/vibe/${vibe.id}`} key={index}>
-                        <div className='flex flex-col justify-center items-center'>
-                            <VibeCard vibe={vibe} />
+            <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 mb-16' >
+                { allVibesForUser && allVibesForUser.map( ( vibe, index ) => (
+                    <Link
+                        to={ `/vibe/${ vibe.id }` }
+                        key={ index }
+                    >
+                        <div className='flex flex-col justify-center items-center' >
+                            <VibeCard vibe={ vibe } />
                         </div>
                     </Link>
                 ))}

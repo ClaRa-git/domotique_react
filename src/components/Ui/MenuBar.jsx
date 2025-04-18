@@ -7,9 +7,8 @@ const MenuBar = () => {
     const location = window.location.pathname;
     
   return (
-    <div className='flex flex-col justify-around font-bold my-4 items-center sm:flex-row'>
-        <Link
-            to="/playlist">
+    <div className='flex flex-col justify-around font-bold my-4 items-center sm:flex-row' >
+        <Link to="/playlist" >
             <div className={ `${
                 location === '/playlist' ?
                 'bg-secondary-pink text-white font-normal rounded-lg'
@@ -20,8 +19,7 @@ const MenuBar = () => {
                 Playlists
             </div>
         </Link>
-        <Link
-            to="/room">
+        <Link to="/room" >
             <div className={ `${
                 location === '/room' ?
                 'bg-secondary-pink text-white font-normal rounded-lg'
@@ -32,8 +30,7 @@ const MenuBar = () => {
                 Pièces
             </div>
         </Link>
-        <Link
-            to="/vibe">
+        <Link to="/vibe" >
             <div className={ `${
                 location === '/vibe' ?
                 'bg-secondary-pink text-white font-normal rounded-lg'
@@ -44,8 +41,7 @@ const MenuBar = () => {
                 Ambiances
             </div>
         </Link>
-        <Link
-            to="/planning">
+        <Link to="/planning" >
             <div className={ `${
                 location === '/planning' ?
                 'bg-secondary-pink text-white font-normal rounded-lg'

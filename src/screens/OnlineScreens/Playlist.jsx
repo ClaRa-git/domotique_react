@@ -34,7 +34,8 @@ const Playlist = () => {
     }
 
   return (
-    loading ? <PageLoader /> :
+    loading ? <PageLoader />
+    :
     <div>
         <MenuBar />
         <div
@@ -44,9 +45,9 @@ const Playlist = () => {
             <p>
                 Créer une nouvelle playlist...
             </p>
-            <FaPlus className='mt-1'/>
+            <FaPlus className='mt-1' />
         </div>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 mb-16'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 mb-16' >
             { userPlaylists.member && 
                 userPlaylists.member.map( ( playlist, index ) => {
                     return (

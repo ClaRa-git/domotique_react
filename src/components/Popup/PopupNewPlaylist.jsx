@@ -67,13 +67,13 @@ const PopupNewPlaylist = ( { callable, userId } ) => {
 	}
 
 	return (
-		<div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center'>
-			<div className="flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary">
-				<h2 className='m-8 text-2xl text-white font-bold'>
+		<div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
+			<div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary' >
+				<h2 className='m-8 text-2xl text-white font-bold' >
 					Créer une nouvelle playlist
 				</h2>
-				<div className='flex flex-col items-center justify-center w-2/3'>
-					<form onSubmit={ handleSubmit }>
+				<div className='flex flex-col items-center justify-center w-2/3' >
+					<form onSubmit={ handleSubmit } >
 						<CustomInput
 							state={ playlistName }
 							label={ 'Nom' }
@@ -81,17 +81,18 @@ const PopupNewPlaylist = ( { callable, userId } ) => {
 							callable={ ( e ) => setPlaylistName( e.target.value ) }
 						/>
 						{ success && 
-							<p className='text-green-500 text-center'>
+							<p className='text-green-500 text-center' >
 								{ success }
 							</p>
 						}
 						{ error && 
-							<p className='text-red-500 text-center'>
+							<p className='text-red-500 text-center' >
 								{ error }
 							</p>
 						}
-						<div className='flex justify-center'>
-							{ isLoading ? (
+						<div className='flex justify-center' >
+							{ isLoading ?
+							(
 							<ButtonLoader />
 							)
 							:

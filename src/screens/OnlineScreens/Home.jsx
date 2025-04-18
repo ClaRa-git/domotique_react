@@ -49,14 +49,14 @@ const Home = () => {
 	}
 
 	return (
-		<div className='min-h-screen flex flex-col'>
+		<div className='min-h-screen flex flex-col' >
 			<HelloUser username={ username } />
 			<div
 				onClick={ handleClick }
 				className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white'
 			>
-				<div className='flex flex-col justify-center align-around'>
-				<p className='mb-5 text-center'>
+				<div className='flex flex-col justify-center align-around' >
+				<p className='mb-5 text-center' >
 					Votre mood actuelle :
 				</p>
 				<MoodCard
@@ -69,20 +69,20 @@ const Home = () => {
 					tonus={ tonus }
 				/>
 			</div>
-			<div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-[50px] flex-grow shadow-[0_-8px_0_rgba(194,133,140,1)]'>
-				<div className='grid grid-cols-2 gap-5 p-5 grow place-content-center'>
+			<div className='flex flex-col justify-center my-4 p-4 bg-primary rounded-t-[50px] flex-grow shadow-[0_-8px_0_rgba(194,133,140,1)]' >
+				<div className='grid grid-cols-2 gap-5 p-5 grow place-content-center' >
 					<MenuCard
-						icon={ <LuMusic4 className='h-8 w-8 sm:h-12 sm:w-12'/> }
+						icon={ <LuMusic4 className='h-8 w-8 sm:h-12 sm:w-12' /> }
 						label={ "Playlists" }
 						link={ "/playlist" }
 					/>
 					<MenuCard
-						icon={ <FaBed className='h-8 w-8 sm:h-12 sm:w-12'/> }
+						icon={ <FaBed className='h-8 w-8 sm:h-12 sm:w-12' /> }
 						label={ "Pièces" }
 						link={ "/room" }
 					/>
 					<MenuCard
-						icon={ <FaRegCalendarCheck className='h-8 w-8 sm:h-12 sm:w-12'/> }
+						icon={ <FaRegCalendarCheck className='h-8 w-8 sm:h-12 sm:w-12' /> }
 						label={ "Planning" }
 						link={ "/planning" }
 					/>

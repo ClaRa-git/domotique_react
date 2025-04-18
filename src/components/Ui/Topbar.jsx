@@ -15,15 +15,15 @@ const Topbar = () => {
 	const { userId }  = useAuthContext();
 
 	return (
-		<div className='h-24 flex items-center m-4'>
-			<div className='flex-1 text-white text-lg font-semibold px-4'>
-				<div className='flex justify-between w-full items-center text-primary p-2'>
-					<Link to='/search'>
-						<div className='justify-center items-center p-4'>
-							<FaSearch size={ 32 }/>
+		<div className='h-24 flex items-center m-4' >
+			<div className='flex-1 text-white text-lg font-semibold px-4' >
+				<div className='flex justify-between w-full items-center text-primary p-2' >
+					<Link to='/search' >
+						<div className='justify-center items-center p-4' >
+							<FaSearch size={ 32 } />
 						</div>
 					</Link>
-					<Link to='/'>
+					<Link to='/' >
 						<div>
 							<img
 								src={ imgIcon }
@@ -31,9 +31,9 @@ const Topbar = () => {
 							/>
 						</div>
 					</Link>
-					<Link to={ `/account/${ userId }` }>
-						<div className='justify-center items-center p-4'>
-							<RiAccountCircleFill size={ 32 }/>
+					<Link to={ `/account/${ userId }` } >
+						<div className='justify-center items-center p-4' >
+							<RiAccountCircleFill size={ 32 } />
 						</div>
 					</Link>
 				</div>

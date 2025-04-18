@@ -5,23 +5,24 @@ import Topbar from './components/Ui/Topbar';
 import Footbar from './components/Ui/Footbar';
 
 const App = () => {
-  // récupération des informations de l'utilisateur depuis le localStorage
-  const user = JSON.parse(localStorage.getItem('USER_INFOS'));
 
-  // vérification que l'utilisateur en session est bien le bon
-  useAuthCheck(user);
+	// Récupération des informations de l'utilisateur depuis le localStorage
+	const user = JSON.parse( localStorage.getItem( 'USER_INFOS' ) );
 
-  return (
-    <div className='relative flex flex-col h-screen'>
-      <div className='flex-1 flex flex-col'>
-        <Topbar />
-        <div className='flex-1'>
-          <Outlet />
-        </div>
-        <Footbar />
-      </div>
-    </div>
-  )
+	// Vérification que l'utilisateur en session est bien le bon
+	useAuthCheck( user );
+
+	return (
+		<div className='relative flex flex-col h-screen'>
+			<div className='flex-1 flex flex-col'>
+				<Topbar />
+					<div className='flex-1'>
+						<Outlet />
+					</div>
+				<Footbar />
+			</div>
+		</div>
+	)
 }
 
 export default App

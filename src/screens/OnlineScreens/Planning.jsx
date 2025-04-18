@@ -86,9 +86,12 @@ const Planning = () => {
 	// Gestion de l'affichage du calendrier (un point se rajoute si la date est déjà occupée)
     const tileContent = ( { date: d, view } ) => {
         const dots = [];
-        return view === 'month' && dots.includes( d.getDate() ) ? (
+        return view === 'month' && dots.includes( d.getDate() ) ?
+		(
             <div className="w-1 h-1 bg-orange-400 rounded-full mx-auto mt-1" />
-        ) : null;
+        )
+		:
+		null;
     };
 
 	// Gestion du click pour la visibilité
@@ -185,21 +188,21 @@ const Planning = () => {
 	}
 
     return (
-        <div className='flex flex-col justify-center mb-16'>
+        <div className='flex flex-col justify-center mb-16' >
           	<MenuBar />
 			{ success && 
-				<p className='text-green-500 text-center'>
+				<p className='text-green-500 text-center' >
 					{ success }
 				</p>
 			}
 			{ error && 
-				<p className='text-red-500 text-center'>
+				<p className='text-red-500 text-center' >
 					{ error }
 				</p>
 			}
           	<div>
-            	<div className='flex flex-col justify-center items-center mt-4'>
-              		<div className="bg-[#eee4df] p-4 rounded-xl w-fit shadow-md">
+            	<div className='flex flex-col justify-center items-center mt-4' >
+              		<div className='bg-[#eee4df] p-4 rounded-xl w-fit shadow-md' >
 						<Calendar
 							onChange={ setDate }
 							value={ date }
@@ -213,9 +216,9 @@ const Planning = () => {
 							className="REACT-CALENDAR"
 						/>
               		</div>
-              		<div className="w-full">
+              		<div className='w-full' >
 						<div>
-							<p className='text-center text-primary font-bold text-2xl mt-4'>
+							<p className='text-center text-primary font-bold text-2xl mt-4' >
 								Evènements
 							</p>
 							{ allPlannings.map( ( event, index ) => (
@@ -223,9 +226,9 @@ const Planning = () => {
 									to={ `/planning/${ event.id }` }
 									key={ index }
 								>
-									<div className="bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg">
-										<div className='flex justify-between'>
-											<p className='text-lg font-bold'>
+									<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg' >
+										<div className='flex justify-between' >
+											<p className='text-lg font-bold' >
 												{ event.label }
 											</p>
 										</div>
@@ -245,14 +248,14 @@ const Planning = () => {
 							<p>
 								Créer un nouvel évènement...
 							</p>
-							<FaPlus className='mt-1'/>
+							<FaPlus className='mt-1' />
 						</div>
 						{ isVisible &&
-							<div className='flex flex-row justify-between bg-primary text-white mx-4 px-4 py-1 rounded-b-lg'>
-								<div className="w-full my-4">
+							<div className='flex flex-row justify-between bg-primary text-white mx-4 px-4 py-1 rounded-b-lg' >
+								<div className='w-full my-4' >
 									<form onSubmit={ handleAddEvent }>
-										<div className='flex justify-between ml-4 sm:m-4'>
-											<label htmlFor="eventName">
+										<div className='flex justify-between ml-4 sm:m-4' >
+											<label htmlFor="eventName" >
 												Nom de l'évènement
 											</label>
 											<input
@@ -263,7 +266,7 @@ const Planning = () => {
 												onChange={( e ) => { setEventName( e.target.value ) } }
 											/>
 										</div>
-										<div className='flex justify-between m-4'>
+										<div className='flex justify-between m-4' >
 											<p>
 												Jour entier
 											</p>
@@ -272,8 +275,8 @@ const Planning = () => {
 										<hr />
 										{ allDay ?
 											<div>
-												<div className='flex justify-between m-4'>
-													<label htmlFor="dateStart">
+												<div className='flex justify-between m-4' >
+													<label htmlFor="dateStart" >
 														Date
 													</label>
 													<input
@@ -289,8 +292,8 @@ const Planning = () => {
 											</div>
 											:
 											<div>
-												<div className='flex justify-between m-4'>
-													<label htmlFor="dateStart">
+												<div className='flex justify-between m-4' >
+													<label htmlFor="dateStart" >
 														Début
 													</label>
 													<input
@@ -300,7 +303,7 @@ const Planning = () => {
 														onChange={ ( e ) => { setDateStart( e.target.value ) } }
 													/>
 												</div>
-												<div className='flex justify-between m-4'>
+												<div className='flex justify-between m-4' >
 													<label htmlFor="dateEnd">
 														Fin
 													</label>
@@ -314,8 +317,8 @@ const Planning = () => {
 											</div>
 										}
 										<hr />
-										<div className='flex justify-between items-center m-4'>
-											<label htmlFor="recurrence">
+										<div className='flex justify-between items-center m-4' >
+											<label htmlFor="recurrence" >
 												Récurrence
 											</label>
 											<select
@@ -324,22 +327,22 @@ const Planning = () => {
 												className='bg-primary rounded py-2 px-3'
 												onChange={( e ) => { setRecurrence( e.target.value ) } }
 											>
-												<option value="none">
+												<option value="none" >
 													Aucune
 												</option>
-												<option value="daily">
+												<option value="daily" >
 													Quotidien
 												</option>
-												<option value="weekly">
+												<option value="weekly" >
 													Hebdomadaire
 												</option>
-												<option value="monthly">
+												<option value="monthly" >
 													Mensuel
 												</option>
 											</select>
 										</div>
 										{/* Lier à une ambiance */}
-										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer'>
+										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer' >
 											<div 
 												onClick={ () => setLinkVibeOpen( !linkVibeOpen ) }
 												className='flex items-center justify-between'
@@ -356,7 +359,7 @@ const Planning = () => {
 											{ linkVibeOpen &&
 											(
 												<div>
-													<div className="mt-2 pl-2 text-sm">
+													<div className='mt-2 pl-2 text-sm' >
 														<label
 															htmlFor="vibeSelect"
 															className='block mb-2 text-sm'
@@ -369,7 +372,7 @@ const Planning = () => {
 															onChange={ ( e ) => setSelectedVibe( e.target.value ) }
 															className="w-full p-2 rounded bg-white text-primary border border-primary"
 														>
-															<option value="">
+															<option value="" >
 																-- Sélectionner --
 															</option>
 															{ allVibesForUser.map( ( vibe, index ) => (
@@ -382,19 +385,17 @@ const Planning = () => {
 															))}
 														</select>
 													</div>
-													{/* Bouton pour créer une nouvelle pièce (à implémenter selon ton besoin) */}
 													<button
 														type="button"
-														className="mt-2 text-sm underline text-primary hover:text-secondary-orange transition"
+														className='mt-2 text-sm underline text-primary hover:text-secondary-orange transition'
 														onClick={ goToVibe }
 													>
-														+ Créer une nouvelle ambiance
+														Créer une nouvelle ambiance
 													</button>
 												</div>
 											)}
 										</div>
-										{/* Lier à une pièce */}
-										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer'>
+										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer' >
 											<div 
 												onClick={ () => setLinkRoomOpen( !linkRoomOpen ) }
 												className='flex items-center justify-between'
@@ -407,11 +408,11 @@ const Planning = () => {
 												}
 											</div>
 											{ linkRoomOpen && (
-												<div className="mt-2 pl-2 text-sm">
+												<div className='mt-2 pl-2 text-sm' >
 													{ allRooms.map( ( room, index ) => (
 														<div
 															key={index}
-															className="flex items-center gap-2 mb-1"
+															className='flex items-center gap-2 mb-1'
 														>
 															<input
 																type="checkbox"
@@ -428,7 +429,7 @@ const Planning = () => {
 											)}
 										</div>
 
-										<div className='flex items-center justify-between p-4'>
+										<div className='flex items-center justify-between p-4' >
 											<button
 												type='submit'
 												className='bg-secondary-orange font-bold p-3 rounded-lg transition'

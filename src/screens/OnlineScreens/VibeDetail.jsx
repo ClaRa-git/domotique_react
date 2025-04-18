@@ -10,62 +10,79 @@ import { fetchAllRooms } from '../../store/room/roomSlice';
 import selectRoomData from '../../store/room/roomSelector';
 import DeviceListVibe from '../../components/Ui/DeviceListVibe';
 
+// Page de détails d'une ambiance
 const VibeDetail = () => {
+
+	// Récupération de l'ID de l'ambiance depuis l'URL
 	const params = useParams();
 	const { id } = params;
 
-	const [showDevices, setShowDevices] = useState(true);
+	// State pour afficher ou non les appareils
+	const [ showDevices, setShowDevices ] = useState( true );
 
+	// Récupération de dispatch
 	const dispatch = useDispatch();
 
+	// Récupération des détails de l'ambiance
 	useEffect(() => {
-		dispatch(fetchVibeDetail(id));
-	}, [dispatch, id]);	
+		dispatch( fetchVibeDetail( id ) );
+	}, [ dispatch, id ] );	
 	
-	const { loadingVibe, vibeDetail } = useSelector(selectVibeData);
+	const { loadingVibe, vibeDetail } = useSelector( selectVibeData );
 
+	// Récupération des pièces
 	useEffect(() => {
 	  dispatch(fetchAllRooms());
 	}, [dispatch]);
 	
-	const { loadingRoom, allRooms } = useSelector(selectRoomData);
+	const { loadingRoom, allRooms } = useSelector( selectRoomData );
 
+	// Affichage ou non des appareils
 	const toggleView = () => {
-        setShowDevices(!showDevices);
-        setOpenMenuId(null); // Ferme tout en changeant de vue
+        setShowDevices( !showDevices );
+        setOpenMenuId( null ); // Ferme tout en changeant de vue
     };
 
   return (
-	loadingVibe ? <PageLoader /> :
-	<div className='flex flex-col items-center justify-center mb-4'>
-		<div className='flex w-full p-4 mb-4'>
-			<Link to='/vibe'>
+	loadingVibe ? <PageLoader />
+	:
+	<div className='flex flex-col items-center justify-center mb-4' >
+		<div className='flex w-full p-4 mb-4' >
+			<Link to='/vibe' >
 				<RiArrowLeftSFill
-					size={30}
+					size={ 30 }
 					className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
 				/>
 			</Link>                
-			<div className='flex flex-col items-center mb-4 mr-10 w-full'>
-				<VibeCard vibe={vibeDetail} />
+			<div className='flex flex-col items-center mb-4 mr-10 w-full' >
+				<VibeCard vibe={ vibeDetail } />
 			</div>
          </div>
-		 <div className='flex flex-col p-4 w-full'>
+		 <div className='flex flex-col p-4 w-full' >
 			{
-				allRooms.length > 0 ? (
-					allRooms.map((room, index) => (
-						<div className='flex flex-col items-center' key={index}>
+				allRooms.length > 0 ?
+				(
+					allRooms.map(( room, index ) => (
+						<div
+							className='flex flex-col items-center'
+							key={ index }
+						>
 							<div className='flex flex-col w-full justify-center items-center font-bold bg-primary text-xl text-white text-center p-2 rounded-lg mb-4' >
-								<div className='flex justify-center items-center'>
-									<p className='text-xl'>{room.label}</p>
+								<div className='flex justify-center items-center' >
+									<p className='text-xl'>
+										{ room.label }
+									</p>
 								</div>				
 							</div>
-								<div className='flex flex-col items-center w-full'>
+								<div className='flex flex-col items-center w-full' >
 									<DeviceListVibe room={ room } />
 								</div>
 						</div>
 					))
 				) : (
-					<p className='text-sm'>Aucune pièce disponible</p>
+					<p className='text-sm' >
+						Aucune pièce disponible
+					</p>
 				)
 			}
 		 </div>

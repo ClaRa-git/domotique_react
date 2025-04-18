@@ -15,68 +15,84 @@ import { fetchDevicesWithoutRoom } from '../../store/device/deviceSlice';
 import selectDeviceData from '../../store/device/deviceSelector';
 import DeviceDropdown from '../../components/Ui/DeviceDropdown';
 
+// Affichage des détails d'une pièce
 const RoomDetail = () => {
 
+    // Récupération de l'ID de la pièce depuis l'URL
     const params = useParams();
     const { id } = params;
 
-    const dispatch = useDispatch();
+    // Récupération de l'ID de l'utilisateur depuis le contexte d'authentification
     const { userId } = useAuthContext();
+
+    // Récupération du dispatch et de la navigation
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [groupedDevices, setGroupedDevices] = useState({});
-    const [openMenuId, setOpenMenuId] = useState(null);
-    const [showDevices, setShowDevices] = useState(true);
-    const [isVisible, setIsVisible] = useState(false);
+    // État pour gérer les appareils regroupés par type, de la visibilité du menu et de l'affichage des appareils
+    const [ groupedDevices, setGroupedDevices ] = useState( {} );
+    const [ openMenuId, setOpenMenuId ] = useState( null );
+    const [ showDevices, setShowDevices ] = useState( true );
+
+    // État pour gérer la visibilité du dropdown
+    const [ isVisible, setIsVisible ] = useState( false );
 
 
-    useEffect(() => {
-        dispatch(fetchRoom(id));
-    }, [dispatch, id]);
+    // Effet pour récupérer les détails de la pièce
+    useEffect( () => {
+        dispatch( fetchRoom( id ) );
+    }, [ dispatch, id ] );
 
-    const { loadingRoom, roomDetail } = useSelector(selectRoomData);
+    const { loadingRoom, roomDetail } = useSelector( selectRoomData );
 
-    useEffect(() => {
-        dispatch(fetchAllVibesForUser(userId));
-    }, [dispatch, userId]);
+    // Effet pour récupérer les ambiances de l'utilisateur
+    useEffect( () => {
+        dispatch(fetchAllVibesForUser( userId ) );
+    }, [ dispatch, userId ] );
 
-    const { loadingVibe, allVibesForUser } = useSelector(selectVibeData);
+    const { loadingVibe, allVibesForUser } = useSelector( selectVibeData );
 
-    useEffect(() => {
-        dispatch(fetchDevicesWithoutRoom());
-    }, [dispatch]);
+    // Effet pour récupérer les appareils non assignés à une pièce
+    useEffect( () => {
+        dispatch( fetchDevicesWithoutRoom() );
+    }, [ dispatch ] );
     
-    const { loadingDevice, devicesWithoutRoom} = useSelector(selectDeviceData);
+    const { loadingDevice, devicesWithoutRoom } = useSelector( selectDeviceData );
 
+    // Effet pour regrouper les appareils par type
     useEffect(() => {
-        if (roomDetail?.devices) {
-            const grouped = roomDetail.devices.reduce((acc, device) => {
+        if ( roomDetail?.devices ) {
+            const grouped = roomDetail.devices.reduce( ( acc, device ) => {
                 const typeLabel = device.deviceType.label;
-                if (!acc[typeLabel]) {
-                    acc[typeLabel] = [];
+                if ( !acc[ typeLabel ] ) {
+                    acc[ typeLabel ] = [];
                 }
-                acc[typeLabel].push(device);
+                acc[ typeLabel ].push( device );
                 return acc;
             }, {});
-            setGroupedDevices(grouped);
+            setGroupedDevices( grouped );
         }
     }, [roomDetail]);    
 
+    // Récupération du chemin de l'image de la pièce
     const imgPath = roomDetail?.imagePath;
-    const imgRoom = `${API_ROOT}/images/rooms/${imgPath}`;
+    const imgRoom = `${ API_ROOT }/images/rooms/${ imgPath }`;
 
-    const toggleMenu = (id) => {
-        setOpenMenuId((prevId) => (prevId === id ? null : id));
+    // Fonction pour gérer l'ouverture et la fermeture du menu
+    const toggleMenu = ( id ) => {
+        setOpenMenuId( ( prevId ) => ( prevId === id ? null : id ) );
     };
 
+    // Fonction pour gérer l'affichage des appareils ou des ambiances
     const toggleView = () => {
-        setShowDevices(!showDevices);
-        setOpenMenuId(null); // Ferme tout en changeant de vue
+        setShowDevices( !showDevices );
+        setOpenMenuId( null ); // Ferme tout en changeant de vue
     };
 
+    // Fonction pour naviguer vers la page de création d'ambiance
     const goToVibe = () => {
-        navigate(`/vibe`, {
+        navigate( `/vibe`, {
             state: {
                 from: location,
                 deviceId: null,
@@ -84,40 +100,60 @@ const RoomDetail = () => {
         });
     };
 
+    // Fonction pour rafraîchir les données de la pièce
     const refreshRoomData = () => {
         dispatch(fetchRoom(id)); // Re-fetch la room pour avoir les devices à jour
         dispatch(fetchDevicesWithoutRoom()); // Met aussi à jour la liste des devices non assignés
     };    
 
     return (
-        loadingRoom ? <PageLoader /> :
-        <div className='flex flex-col items-center justify-center mb-4'>
-            <div className='flex w-full p-4 mb-4'>
-                <Link to='/room'>
+        loadingRoom ? <PageLoader />
+        :
+        <div className='flex flex-col items-center justify-center mb-4' >
+            <div className='flex w-full p-4 mb-4' >
+                <Link to='/room' >
                     <RiArrowLeftSFill
                         size={30}
                         className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
                     />
                 </Link>                
-                <div className='flex flex-col items-center mb-4 mr-10 w-full'>
-                    <img src={imgRoom} alt={`Pièce ${roomDetail?.label}`} className='w-48 h-48 rounded-lg mb-2'/>
-                    <h1 className='text-2xl font-bold'>{roomDetail?.label}</h1>
+                <div className='flex flex-col items-center mb-4 mr-10 w-full' >
+                    <img
+                        src={ imgRoom }
+                        alt={`Pièce ${ roomDetail?.label }` }
+                        className='w-48 h-48 rounded-lg mb-2' />
+                    <h1 className='text-2xl font-bold' >
+                        { roomDetail?.label }
+                    </h1>
                 </div>
             </div>
 
-            <div className='flex flex-col p-4 w-full'>
+            <div className='flex flex-col p-4 w-full' >
                 <button 
                     className='flex justify-between items-center font-bold bg-primary text-xl text-white text-center p-2 rounded-lg mb-4' 
-                    onClick={toggleView}
+                    onClick={ toggleView }
                 >
-                    {showDevices ? 'Appareils' : 'Ambiances'}
-                    <div className='flex items-center'>
-                        <p className='text-sm'>{showDevices ? 'Ambiances' : 'Appareils'}</p>
-                        <RiArrowRightSFill size={20} className='text-white' />
+                    { showDevices ?
+                        'Appareils'
+                        :
+                        'Ambiances'
+                    }
+                    <div className='flex items-center' >
+                        <p className='text-sm' >
+                            { showDevices ?
+                                'Ambiances'
+                                :
+                                'Appareils'
+                            }
+                        </p>
+                        <RiArrowRightSFill
+                            size={20}
+                            className='text-white'
+                        />
                     </div>
                 </button>
 
-                {showDevices && 
+                { showDevices && 
                     <div>
                         <DeviceDropdown
                             isVisible={isVisible}
@@ -130,33 +166,43 @@ const RoomDetail = () => {
                     </div>
                 }
 
-                {showDevices ? (
+                { showDevices ?
+                (
                     <DeviceList
-                        groupedDevices={groupedDevices}
-                        setGroupedDevices={setGroupedDevices}
-                        openMenuId={openMenuId}
-                        toggleMenu={toggleMenu}
-                        allVibesForUser={allVibesForUser}
-                        onDeviceRemoved={refreshRoomData}
+                        groupedDevices={ groupedDevices }
+                        setGroupedDevices={ setGroupedDevices }
+                        openMenuId={ openMenuId }
+                        toggleMenu={ toggleMenu }
+                        allVibesForUser={ allVibesForUser }
+                        onDeviceRemoved={ refreshRoomData }
                     />
-                ) : ( loadingVibe ? <PageLoader /> :
+                )
+                :
+                ( loadingVibe ?
+                    <PageLoader />
+                    :
                     <div>
-                        {allVibesForUser.length === 0 ? (
+                        { allVibesForUser.length === 0 ?
+                        (
                             <div>
-                                <p className='text-center mb-4'>Vous n'avez pas encore d'ambiance. Créez-en une !</p>
+                                <p className='text-center mb-4' >
+                                    Vous n'avez pas encore d'ambiance. Créez-en une !                                
+                                </p>
                                 <button 
                                     className='font-bold bg-secondary-pink text-white p-2 rounded-lg w-full'
-                                    onClick={goToVibe}
+                                    onClick={ goToVibe }
                                 >
                                     Créer une Vibe
                                 </button>
                             </div>
-                        ) : (
+                        )
+                        :
+                        (
                             <VibeList
-                                vibes={allVibesForUser}
-                                openMenuId={openMenuId}
-                                toggleMenu={toggleMenu}
-                                roomId={id}
+                                vibes={ allVibesForUser }
+                                openMenuId={ openMenuId }
+                                toggleMenu={ toggleMenu }
+                                roomId={ id }
                             />
                         )}
                     </div>

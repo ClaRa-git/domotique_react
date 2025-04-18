@@ -59,7 +59,7 @@ const Account = () => {
 	return (
 		<div>
 			<HelloUser username={ userDetail.username } />
-			<div className='m-5'>
+			<div className='m-5' >
 				<Logout />
 			</div>
 		</div>

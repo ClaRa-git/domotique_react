@@ -46,9 +46,10 @@ const VibeSetting = ( { vibe, openMenuId, toggleMenu , roomId } ) => {
     }, [ roomId, vibe.id ] );
 
   return (
-    isLoading ? <PageLoader /> :
+    isLoading ? <PageLoader />
+    :
     <div>
-        <li className='relative'>
+        <li className='relative' >
             <div 
                 className='flex justify-between items-center bg-white p-4 rounded-lg mb-2 cursor-pointer'
                 onClick={ () => toggleMenu( vibe.id ) }
@@ -72,8 +73,8 @@ const VibeSetting = ( { vibe, openMenuId, toggleMenu , roomId } ) => {
             </div>
 
             { openMenuId === vibe.id && (
-                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4'>
-                    <p className='text-sm font-semibold mb-2'>
+                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4' >
+                    <p className='text-sm font-semibold mb-2' >
                         Réglages :
                     </p>
                     { dataDeviceVibe?.map( ( setting, index ) => (
@@ -81,8 +82,8 @@ const VibeSetting = ( { vibe, openMenuId, toggleMenu , roomId } ) => {
                             key={ index }
                             className='text-sm text-gray-700 mb-2 border-2 rounded-lg p-2'
                         >
-                            <div className='flex justify-between items-center mb-2 w-full underline'>
-                                <h3 className='font-bold'>
+                            <div className='flex justify-between items-center mb-2 w-full underline' >
+                                <h3 className='font-bold' >
                                     { setting.deviceLabel }
                                 </h3>
                                 <FaGear />
@@ -93,7 +94,7 @@ const VibeSetting = ( { vibe, openMenuId, toggleMenu , roomId } ) => {
                 </ul>
             )}
         </li>
-        <hr className='border-t border-gray-300 my-2'/>
+        <hr className='border-t border-gray-300 my-2' />
     </div>
   )
 }

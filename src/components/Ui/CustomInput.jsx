@@ -4,7 +4,7 @@ import React from 'react'
 const CustomInput = ( { state, label, type, callable } ) => {
 	
 	return (
-		<div className="mb-4">
+		<div className='mb-4'>
 			<label 
 				htmlFor={ state }
 				className='block text-white font-bold mb-2'

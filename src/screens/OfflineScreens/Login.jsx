@@ -39,7 +39,7 @@ const Login = () => {
 	return (
 		loading ? <PageLoader />
 		:
-		<div className="flex flex-col h-screen items-center justify-center px-6 py-10 bg-primary">
+		<div className='flex flex-col h-screen items-center justify-center px-6 py-10 bg-primary' >
 			<div>
 				<img
 					src={ imgLogo }
@@ -47,7 +47,7 @@ const Login = () => {
 					className='mx-auto mb-8 mt-4'
 				/>
 			</div>
-			<h1 className='text-white text-5xl text-center font-bold'>
+			<h1 className='text-white text-5xl text-center font-bold' >
 				Connectez-vous !
 			</h1>
 			<div className='flex flex-wrap justify-center'>
@@ -55,9 +55,9 @@ const Login = () => {
 				<div
 					key={ index }
 					onClick={ () => handleClick( user ) }
-					className="m-4 cursor-pointer border-2 border-white rounded-2xl"
+					className='m-4 cursor-pointer border-2 border-white rounded-2xl'
 				>
-					<ProfileCard data={ user }/>
+					<ProfileCard data={ user } />
 				</div>
 				))}
 			</div>

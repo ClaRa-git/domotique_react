@@ -19,7 +19,7 @@ const MoodPie = ( { mood, stress, tonus } ) => {
     ];
 
     return (
-        <div className='flex flex-row justify-center items-center w-50 sm:w-1/2'>
+        <div className='flex flex-row justify-center items-center w-50 sm:w-1/2' >
             <PieChart
                 width={ 300 }
                 height={ 220 }
@@ -39,10 +39,10 @@ const MoodPie = ( { mood, stress, tonus } ) => {
                 </Pie>
                 {/* <Tooltip />
                 <Legend 
-                    payload={data.map((entry, index) => ({
+                    payload={data.map( ( entry, index ) => ({
                         value: entry.name, 
                         type: 'square', 
-                        color: COLORS[index % COLORS.length]
+                        color: COLORS[ index % COLORS.length ]
                     }))}
                 /> */}
             </PieChart>

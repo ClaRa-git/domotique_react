@@ -69,34 +69,34 @@ const PopupAccount = ( { data, callable } ) => {
 	}
 
 	return (
-		<div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center'>
-			<div className="flex relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-gray-800 border-2 border-white">
-				<div className='flex flex-col w-1/3 m-6 justify-center items-center'>
+		<div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
+			<div className='flex relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-gray-800 border-2 border-white' >
+				<div className='flex flex-col w-1/3 m-6 justify-center items-center' >
 					<img
 						src={ imgAvatar }
 						alt="avatar"
 						className='w-full h-full object-cover rounded-full border-2 border-white'
 						/>
-					<h1 className='text-2xl font-bold text-white'>
+					<h1 className='text-2xl font-bold text-white' >
 						{ data.username }
 					</h1>
 				</div>
-				<div className='flex flex-col items-center justify-center w-2/3 h-full'>
-					<form onSubmit={ handleSubmit }>
+				<div className='flex flex-col items-center justify-center w-2/3 h-full' >
+					<form onSubmit={ handleSubmit } >
 						<CustomInput
 							state={ password }
 							label={ 'Mot de passe' }
 							type={ 'password' }
 							callable={ ( e ) => setPassword( e.target.value ) }
 						/>
-						{/* On affiche le message d'erreur si il y en a un */}
 						{ error &&
-							<p className='text-red-500 text-center text-sm m-4'>
+							<p className='text-red-500 text-center text-sm m-4' >
 								{ error }
 							</p>
 						}
-						<div className='flex justify-center'>
-							{isLoading ? (
+						<div className='flex justify-center' >
+							{isLoading ?
+							(
 								<ButtonLoader />
 							)
 							:

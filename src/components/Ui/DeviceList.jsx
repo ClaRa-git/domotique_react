@@ -2,15 +2,19 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
 import { API_URL } from '../../constants/apiConstant';
+import { FaGear } from 'react-icons/fa6';
 
 // Affiche la liste des appareils
 const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser, onDeviceRemoved } ) => {
     
+    console.log( "groupedDevices", groupedDevices )
     // Messages d'erreur et de succès
     const [ error, setError ] = useState( null );
     const [ success, setSuccess ] = useState( null );
+
+    // Affiche la visibilité des réglages
+    const [ showSettings, setShowSettings ] = useState( false );
 
     // Supprime un objet d'une pièce
     const deleteFromRoom = async ( deviceId ) => {
@@ -86,29 +90,30 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
             key={ type }
             className='flex flex-col mb-4 w-full'
         >
-            <h3 className='font-bold bg-secondary-orange text-white text-center p-2 rounded-lg mb-4'>
+            <h3 className='font-bold bg-secondary-orange text-white text-center p-2 rounded-lg mb-4' >
                 { type }
             </h3>
             { error && 
-                <p className='text-red-500 text-center text-sm m-4'>
+                <p className='text-red-500 text-center text-sm m-4' >
                     { error }
                 </p>
             }
             { success && 
-                <p className='text-green-500 text-center text-sm m-4'>
+                <p className='text-green-500 text-center text-sm m-4' >
                     { success }
                 </p>
             }
             <ul>
                 { devices.map( ( device ) => (
-                    <div key={ device.id }>
-                        <li className='relative'>
+                    console.log( "device", device ),
+                    <div key={ device.id } >
+                        <li className='relative' >
                             <div 
                                 className='flex justify-between items-center bg-white p-4 rounded-lg mb-2 cursor-pointer'
                                 onClick={ () => toggleMenu( device.id ) }
                             >
                                 { device.label }
-                                <div className='flex items-center'>
+                                <div className='flex items-center' >
                                     <FaRegTrashAlt
                                         size={ 20} 
                                         className='bg-secondary-orange h-8 w-8 text-white rounded-lg p-2 mr-2 cursor-pointer'
@@ -128,28 +133,58 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
                                 </div>
                             </div>
                             { openMenuId === device.id && (
-                                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4'>
-                                    <p className='text-sm font-semibold mb-2'>
+                                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4' >
+                                    <p className='font-semibold mb-2' >
                                         Vibes :
                                     </p>
-                                    { allVibesForUser.length > 0 ? (
-                                        allVibesForUser.map( ( vibe, index ) => (
-                                            <li
-                                                key={ index }
-                                                className='text-sm hover:underline'
-                                            >
-                                                <Link to={ `/` }>
-                                                    { vibe.label }
-                                                </Link>
-                                            </li>
-                                        ))
-                                    )
-                                    :
+                                    {allVibesForUser.length > 0 ?
                                     (
-                                        <li className='text-sm text-gray-500'>
+                                        allVibesForUser.map((vibe, index) => {
+                                            // Filtrer les réglages liés à cette vibe
+                                            const vibeSettings = device.settings?.filter(setting => setting.vibe?.id === vibe.id) || [];
+
+                                            return (
+                                                <li key={index} className='border-2 rounded-lg p-2 mb-2' >
+                                                    <div
+                                                        onClick={() => setShowSettings(prev => prev === vibe.id ? null : vibe.id)}
+                                                        className='cursor-pointer text-sm font-semibold'
+                                                    >
+                                                        {vibe.label}
+                                                    </div>
+
+                                                    {showSettings === vibe.id && (
+                                                        <div className='ml-2 mt-2' >
+                                                            {vibeSettings.length > 0 ?
+                                                            (
+                                                                vibeSettings.map((setting, i) => (
+                                                                    <div
+                                                                        className='flex items-center justify-between text-xs text-gray-600 mb-1'
+                                                                        key={i}
+                                                                    >
+                                                                        <span>
+                                                                            - {setting.feature.label} : {setting.value} {setting.feature.unit?.symbol}
+                                                                        </span>
+                                                                        <FaGear className='ml-2' />
+                                                                    </div>
+                                                                ))
+                                                            )
+                                                            :
+                                                            (
+                                                                <p className='text-xs text-gray-400 italic' >
+                                                                    Aucun réglage
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </li>
+                                            );
+                                        })
+                                    ) : (
+                                        <li className='text-sm text-gray-500' >
                                             Aucune vibe
                                         </li>
                                     )}
+
                                 </ul>
                             )}
                         </li>

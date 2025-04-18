@@ -39,7 +39,7 @@ const Footbar = () => {
 					'bg-secondary-pink'
 					} text-white p-2 rounded-full px-4` }
 				>
-					<p className='text-xs pr-2'>
+					<p className='text-xs pr-2' >
 						Demander à Noctys ...
 					</p>
 					<img

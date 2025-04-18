@@ -15,18 +15,18 @@ const SongCard = ( { song, sentToParent } ) => {
     const imgSong = `${ API_ROOT }/upload/images/songs/${ imgPath }`;
 
     return (
-        <div className='flex flex-row justify-between text-white items-center mx-10 my-2 bg-primary rounded-lg p-2'>
-            <div className='flex justify-center items-center'>
+        <div className='flex flex-row justify-between text-white items-center mx-10 my-2 bg-primary rounded-lg p-2' >
+            <div className='flex justify-center items-center' >
                 <img
                     src={ imgSong }
                     alt="image song"
                     className='rounded-lg mb-2 h-20 m-4'
                 />
                 <div>
-                    <p className='font-bold'>
+                    <p className='font-bold' >
                         { song.title }
                     </p>
-                    <p className='text-sm'>
+                    <p className='text-sm' >
                         { song.artist }
                     </p>
                 </div>

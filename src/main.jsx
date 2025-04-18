@@ -7,11 +7,11 @@ import AppRouter from './router/AppRouter.jsx'
 import store from './store/store.js'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <AuthContextProvider>
-      <Provider store={store}>
-        <AppRouter />
-      </Provider>
-    </AuthContextProvider>
-  </StrictMode>,
+	<StrictMode>
+		<AuthContextProvider>
+			<Provider store={store}>
+				<AppRouter />
+			</Provider>
+		</AuthContextProvider>
+	</StrictMode>,
 )

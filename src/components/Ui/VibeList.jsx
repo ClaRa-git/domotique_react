@@ -5,7 +5,7 @@ import VibeSetting from './VibeSetting';
 const VibeList = ( { vibes, openMenuId, toggleMenu, roomId } ) => {
 
     return (
-        <ul className='mb-16'>
+        <ul className='mb-16' >
             {vibes.map( ( vibe ) => (
                 <VibeSetting
                     key={ vibe.id }

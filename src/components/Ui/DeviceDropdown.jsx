@@ -46,20 +46,21 @@ const DeviceDropdown = ( { isVisible, toggleDropdown, devices, showDevices, room
                 </div>
             }
             { error && 
-                <p className='text-red-500 text-center text-sm m-4'>
+                <p className='text-red-500 text-center text-sm m-4' >
                     { error }
                 </p>
             }
             { success && 
-                <p className='text-green-500 text-center text-sm m-4'>
+                <p className='text-green-500 text-center text-sm m-4' >
                     { success }
                 </p>
             }
             { isVisible && (
-                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4 shadow-inner'>
-                    { devices.length > 0 ? (
+                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4 shadow-inner' >
+                    { devices.length > 0 ?
+                    (
                         devices.map( ( device ) => (
-                            <div key={ device.id }>
+                            <div key={ device.id } >
                                 <li
                                     className='text-sm text-gray-800 mb-2 cursor-pointer flex items-center justify-between'
                                 >
@@ -76,7 +77,7 @@ const DeviceDropdown = ( { isVisible, toggleDropdown, devices, showDevices, room
                     )
                     :
                     (
-                        <li className='text-sm text-gray-500'>
+                        <li className='text-sm text-gray-500' >
                             Aucun appareil disponible
                         </li>
                     )}

@@ -12,9 +12,9 @@ const RoomCard = ( { room } ) => {
 	const imgRoom = `${ API_ROOT }/images/rooms/${ imgPath }`;
 
 	return (
-		<Link to={ `/room/${ room.id }` }>
-			<div className='flex flex-row justify-between m-4'>
-				<div className='flex flex-col justify-center items-center'>
+		<Link to={ `/room/${ room.id }` } >
+			<div className='flex flex-row justify-between m-4' >
+				<div className='flex flex-col justify-center items-center' >
 					<img
 						src={ imgRoom }
 						alt={ `Room ${ room.label }` }
