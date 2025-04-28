@@ -8,6 +8,7 @@ const vibeSlice = createSlice({
         loadingVibe: false,
         vibeDetail: {},
         allVibesForUser: [],
+        allIcons: [],
     },
     reducers: {
         setLoadingVibe: (state, action) => {
@@ -19,16 +20,18 @@ const vibeSlice = createSlice({
         setAllVibesForUser: (state, action) => {
             state.allVibesForUser = action.payload;
         },
+        setAllIcons: (state, action) => {
+            state.allIcons = action.payload;
+        },
     }
 });
 
-export const { setLoadingVibe, setVibeDetail, setAllVibesForUser } = vibeSlice.actions;
+export const { setLoadingVibe, setVibeDetail, setAllVibesForUser, setAllIcons } = vibeSlice.actions;
 
 export const fetchAllVibesForUser = (userId) => async (dispatch) => {
     try {
         dispatch(setLoadingVibe(true));
         const response = await axios.get(`${API_URL}/vibes?page=1&profile.id=${userId}`);
-        console.log(response.data);
         dispatch(setAllVibesForUser(response.data.member));
     } catch (error) {
         console.log(`Erreur lors de la récupération des détails de la pièce : ${error}`);

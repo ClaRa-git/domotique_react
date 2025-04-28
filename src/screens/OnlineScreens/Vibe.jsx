@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import MenuBar from '../../components/Ui/MenuBar'
 import { useDispatch, useSelector } from 'react-redux';
 import selectVibeData from '../../store/vibe/vibeSelector';
@@ -8,6 +8,7 @@ import VibeCard from '../../components/Card/VibeCard';
 import { FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext';
+import PopupNewVibe from '../../components/Popup/PopupNewVibe';
 
 // Page d'accueil des ambiances
 const Vibe = () => {
@@ -18,6 +19,9 @@ const Vibe = () => {
     // Récupération de l'ID de l'utilisateur via le contexte
     const { userId } = useAuthContext();
 
+    // Création des states
+    const [ isVisible, setIsVisible ] = useState( false );
+
     // Récupération de toutes les ambiances de l'utilisateur
     useEffect(() => {
         dispatch( fetchAllVibesForUser( userId ) );
@@ -27,6 +31,7 @@ const Vibe = () => {
 
     // Fonction pour gérer le clic sur le bouton "Créer une nouvelle ambiance"
     const handleClick = () => {
+        setIsVisible( true );
     }
 
     return (
@@ -36,7 +41,7 @@ const Vibe = () => {
             <MenuBar />
             <div
                 onClick={ handleClick }
-                className='flex flex-row justify-between bg-primary text-white m-4 px-4 py-1 rounded-lg'
+                className='flex flex-row justify-between bg-primary text-white m-4 px-4 py-1 rounded-lg cursor-pointer'
             >
                 <p>
                     Créer une nouvelle vibe...
@@ -55,6 +60,12 @@ const Vibe = () => {
                     </Link>
                 ))}
             </div>
+            { isVisible && 
+                <PopupNewVibe
+                    callable={ () => setIsVisible( false) }
+                    userId={ userId }
+                />
+            }
         </div>
     )
 }

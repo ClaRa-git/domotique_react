@@ -65,7 +65,7 @@ export const fetchUserPlaylists = (userId) => async (dispatch) => {
     try {
         dispatch(setLoading(true));
         const response = await axios.get(`${API_URL}/playlists?page=1&user=${userId}`);
-        dispatch(setUserPlaylists(response.data));
+        dispatch(setUserPlaylists(response.data.member));
     } catch (error) {
         console.log(`erreur lors du fetchUserPlaylists : ${error}`);
     } finally {

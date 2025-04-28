@@ -182,7 +182,7 @@ const Information = () => {
                             {allAvatars.map((image) => (
                                 <div
                                     key={image.id}
-                                    className={`p-2 hover:bg-gray-100 cursor-pointer ${isSelected === image.id ? 'bg-secondary-orange rounded-2xl' : ''}`}
+                                    className={`p-2 cursor-pointer ${isSelected === image.id ? 'bg-secondary-orange rounded-2xl' : ''}`}
                                     onClick={() => { setIsSelected(image.id); setPath(image['@id']); }}>
                                     <img
                                         src={`${ AVATAR_URL }/${image.imagePath}`}

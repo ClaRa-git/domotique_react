@@ -11,3 +11,6 @@ export const IMAGE_URL = `${API_ROOT}/images`;
 
 // url pour les avatars
 export const AVATAR_URL = `${IMAGE_URL}/avatars`;
+
+// url pour les icônes
+export const ICON_URL = `${IMAGE_URL}/icons`;
