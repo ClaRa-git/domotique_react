@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios, { all } from "axios";
 import { API_URL } from "../../constants/apiConstant";
 
 const userSlice = createSlice({
@@ -10,6 +10,7 @@ const userSlice = createSlice({
         allUsers: [],
         userPlaylists: [],
         playlist: {},
+        allAvatars: [],
     },
     reducers: {
         setLoading: (state, action) => {
@@ -27,10 +28,13 @@ const userSlice = createSlice({
         setPlaylist: (state, action) => {
             state.playlist = action.payload;
         },
+        setAllAvatars: (state, action) => {
+            state.allAvatars = action.payload;
+        },
     }
 });
 
-export const { setLoading, setUserDetail, setAllUsers, setUserPlaylists, setPlaylist } = userSlice.actions;
+export const { setLoading, setUserDetail, setAllUsers, setUserPlaylists, setPlaylist, setAllAvatars } = userSlice.actions;
 
 // méthodes du slice
 export const fetchAllUsers = () => async (dispatch) => {
@@ -76,6 +80,18 @@ export const fetchPlaylist = (playlistId) => async (dispatch) => {
         dispatch(setPlaylist(response.data));
     } catch (error) {
         console.log(`erreur lors du fetchSongsPlaylist : ${error}`);
+    } finally {
+        dispatch(setLoading(false));
+    }
+}
+
+export const fetchAllAvatars = () => async (dispatch) => {
+    try {
+        dispatch(setLoading(true));
+        const response = await axios.get(`${API_URL}/avatars`);
+        dispatch(setAllAvatars(response.data.member));
+    } catch (error) {
+        console.log(`erreur lors du fetchAllAvatars : ${error}`);
     } finally {
         dispatch(setLoading(false));
     }

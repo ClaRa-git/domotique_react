@@ -13,6 +13,8 @@ import PlaylistDetail from "../screens/OnlineScreens/PlaylistDetail";
 import RoomDetail from "../screens/OnlineScreens/RoomDetail";
 import VibeDetail from "../screens/OnlineScreens/VibeDetail";
 import PlanningDetail from "../screens/OnlineScreens/PlanningDetail";
+import Information from "../screens/OnlineScreens/Account/Information";
+import Password from "../screens/OnlineScreens/Account/Password";
 
 const OnlineRouter = createBrowserRouter([
     {
@@ -31,10 +33,20 @@ const OnlineRouter = createBrowserRouter([
                 path: "/ai",
                 element: <InterfaceAi />,
             },
+
             {
                 path: "/account/:id",
                 element: <Account />,
             },
+            {
+                path: "/account/informations",
+                element: <Information />,
+            },
+            {
+                path: "/account/password",
+                element: <Password />,
+            },
+
             {
                 path: "/playlist",
                 element: <Playlist />,

@@ -8,14 +8,17 @@ import { FaBed, FaRegCalendarCheck } from 'react-icons/fa';
 import PopupMood from '../../components/Popup/PopupMood';
 import MoodPie from '../../components/Mood/MoodPie';
 import HelloUser from '../../components/Ui/HelloUser';
-import { USER_MOOD } from '../../constants/appConstant';
+import { USER_INFOS, USER_MOOD } from '../../constants/appConstant';
+import PageLoader from '../../components/Loader/PageLoader';
 
 // Page d'accueil
 const Home = () => {
 
-	// Récupération de l'utilisateur connecté
-	const { userId, username } = useAuthContext();
+	// Récupération de l'utilisateur connecté dans le localStorage
+	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
 
+	const [ username ] = useState( user.username );
+	
 	// Définition des states
 	const [ isVisible, setIsVisible] = useState( false );
 
@@ -50,7 +53,7 @@ const Home = () => {
 
 	return (
 		<div className='min-h-screen flex flex-col' >
-			<HelloUser username={ username } />
+			<HelloUser username = { username } />
 			<div
 				onClick={ handleClick }
 				className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white'

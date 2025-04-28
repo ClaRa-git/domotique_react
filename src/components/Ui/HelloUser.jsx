@@ -1,4 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { fetchUserDetail } from '../../store/user/userSlice';
+import selectUserData from '../../store/user/userSelector';
+import PageLoader from '../Loader/PageLoader';
 
 const HelloUser = ( { username } ) => {
 	
@@ -8,7 +13,7 @@ const HelloUser = ( { username } ) => {
 				Hello,
 			</p>
 			<p>
-				{ username ? username : 'User' }
+				{ username }
 			</p>
 		</div>
 	)
