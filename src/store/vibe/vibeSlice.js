@@ -28,6 +28,7 @@ export const fetchAllVibesForUser = (userId) => async (dispatch) => {
     try {
         dispatch(setLoadingVibe(true));
         const response = await axios.get(`${API_URL}/vibes?page=1&profile.id=${userId}`);
+        console.log(response.data);
         dispatch(setAllVibesForUser(response.data.member));
     } catch (error) {
         console.log(`Erreur lors de la récupération des détails de la pièce : ${error}`);

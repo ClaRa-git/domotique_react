@@ -14,6 +14,7 @@ import PageLoader from '../../components/Loader/PageLoader';
 import { fetchDevicesWithoutRoom } from '../../store/device/deviceSlice';
 import selectDeviceData from '../../store/device/deviceSelector';
 import DeviceDropdown from '../../components/Ui/DeviceDropdown';
+import RoomDetailTopbar from '../../components/Ui/RoomDetailTopbar';
 
 // Affichage des détails d'une pièce
 const RoomDetail = () => {
@@ -75,10 +76,6 @@ const RoomDetail = () => {
         }
     }, [roomDetail]);    
 
-    // Récupération du chemin de l'image de la pièce
-    const imgPath = roomDetail?.imagePath;
-    const imgRoom = `${ API_ROOT }/images/rooms/${ imgPath }`;
-
     // Fonction pour gérer l'ouverture et la fermeture du menu
     const toggleMenu = ( id ) => {
         setOpenMenuId( ( prevId ) => ( prevId === id ? null : id ) );
@@ -104,29 +101,18 @@ const RoomDetail = () => {
     const refreshRoomData = () => {
         dispatch(fetchRoom(id)); // Re-fetch la room pour avoir les devices à jour
         dispatch(fetchDevicesWithoutRoom()); // Met aussi à jour la liste des devices non assignés
-    };    
+    };
+
+    // Fonction pour rafraîchir les données des ambiances
+    const refreshVibesData = () => {
+        dispatch(fetchAllVibesForUser(userId));
+    };
 
     return (
         loadingRoom ? <PageLoader />
         :
         <div className='flex flex-col items-center justify-center mb-4' >
-            <div className='flex w-full p-4 mb-4' >
-                <Link to='/room' >
-                    <RiArrowLeftSFill
-                        size={30}
-                        className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
-                    />
-                </Link>                
-                <div className='flex flex-col items-center mb-4 mr-10 w-full' >
-                    <img
-                        src={ imgRoom }
-                        alt={`Pièce ${ roomDetail?.label }` }
-                        className='w-48 h-48 rounded-lg mb-2' />
-                    <h1 className='text-2xl font-bold' >
-                        { roomDetail?.label }
-                    </h1>
-                </div>
-            </div>
+            <RoomDetailTopbar roomDetail={roomDetail} />
 
             <div className='flex flex-col p-4 w-full' >
                 <button 
@@ -175,6 +161,7 @@ const RoomDetail = () => {
                         toggleMenu={ toggleMenu }
                         allVibesForUser={ allVibesForUser }
                         onDeviceRemoved={ refreshRoomData }
+                        refreshVibes={ refreshRoomData }
                     />
                 )
                 :
