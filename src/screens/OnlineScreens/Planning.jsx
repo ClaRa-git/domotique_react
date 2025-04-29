@@ -206,8 +206,11 @@ const Planning = () => {
 				dateEnd: dateEnd,
 				recurrence: recurrence,
 				vibe: selectedVibe,
-				room: selectedRooms
+				rooms: selectedRooms,
+				profile: `/api/profiles/${ userId }`
 			}
+
+			console.log( 'data', data );
 
 			// Loading
 			setIsLoading( true );
@@ -241,6 +244,8 @@ const Planning = () => {
 				setSuccess( 'L\'évènement a bien été créé' );
 				setError( null );
 				resetMessage();
+
+				dispatch( fetchAllPlanningsForUser( userId ) );
 			} 
 
 		} catch ( error ) {
@@ -318,14 +323,13 @@ const Planning = () => {
 												</span>
 											</p>
 											<p className='text-sm' >
-												{ event.dateStart && event.dateEnd && event.recurrence !== 'none' &&
+												{ event.dateStart && event.dateEnd && event.dateStart !== event.dateEnd ?
 													<span className='text-sm font-normal' >
 														{ new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) } - { new Date( event.dateEnd ).toLocaleDateString( 'fr-FR' ) }
 													</span>
-												}
-												{ event.dateEnd && event.recurrence === 'none' &&
+													:
 													<span className='text-sm font-normal' >
-														{ new Date( event.dateEnd ).toLocaleDateString( 'fr-FR' ) }
+														{ new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) }
 													</span>
 												}
 											</p>

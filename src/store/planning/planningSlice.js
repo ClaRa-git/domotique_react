@@ -34,6 +34,18 @@ export const fetchAllPlanningsForUser = (userId) => async (dispatch) => {
     } finally {
         dispatch(setLoadingPlanning(false));
     }
-}  
+}
+
+export const fetchPlanningDetail = (planningId) => async (dispatch) => { 
+    try {
+        dispatch(setLoadingPlanning(true));
+        const response = await axios.get(`${API_URL}/plannings/${planningId}`);
+        dispatch(setPlanningDetail(response.data));
+    } catch (error) {
+        console.log(`Erreur lors de la récupération du planning : ${error}`);
+    } finally {
+        dispatch(setLoadingPlanning(false));
+    }
+}
 
 export default planningSlice.reducer;
