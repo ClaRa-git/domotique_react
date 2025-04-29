@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import MenuBar from '../../components/Ui/MenuBar';
@@ -15,6 +15,8 @@ import axios from 'axios';
 import { API_URL } from '../../constants/apiConstant';
 import { fetchAllPlanningsForUser } from '../../store/planning/planningSlice';
 import selectPlanningData from '../../store/planning/planningSelector';
+import PlanningsByDate from '../../components/Ui/PlanningsByDate';
+import { RiArrowRightSFill } from 'react-icons/ri';
 
 // Affiche la page de planning
 const Planning = () => {
@@ -48,6 +50,11 @@ const Planning = () => {
 	const [ switchOn, setSwitchOn ] = useState( false );
 	const [ allDay, setAllDay ] = useState( false );
 
+	const [ dotsNone, setDotsNone ] = useState( [] );
+	const [ dotsDaily, setDotsDaily ] = useState( [] );
+	const [ dotsWeekly, setDotsWeekly ] = useState( [] );
+	const [ dotsMonthly, setDotsMonthly ] = useState( [] );
+
 	// State pour gérer les messages d'erreur et de succès
 	const [ error, setError ] = useState( null );
 	const [ success, setSuccess ] = useState( null );
@@ -73,6 +80,57 @@ const Planning = () => {
 	
 	const { loadingPlanning, allPlannings } = useSelector( selectPlanningData );
 
+	// Récupération des plannings par date
+	const { planningsByDate } = useSelector(selectPlanningData);
+
+	useEffect(() => {
+		const generateEventDots = () => {
+			const daily = new Set();
+			const weekly = new Set();
+			const monthly = new Set();
+			const none = new Set();
+	
+			allPlannings.forEach((event) => {
+				const start = new Date(event.dateStart);
+				const end = new Date(event.dateEnd);
+				const recurrence = event.recurrence;
+				const now = new Date();
+	
+				switch (recurrence) {
+					case 'daily':
+						for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+							daily.add(d.toDateString());
+						}
+						break;
+					case 'weekly':
+						for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 7)) {
+							weekly.add(d.toDateString());
+						}
+						break;
+					case 'monthly':
+						for (let d = new Date(start); d <= end; d.setMonth(d.getMonth() + 1)) {
+							monthly.add(d.toDateString());
+						}
+						break;
+					default:
+						for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+							none.add(d.toDateString());
+						}
+						break;
+				}
+			});
+	
+			setDotsDaily([...daily]);
+			setDotsWeekly([...weekly]);
+			setDotsMonthly([...monthly]);
+			setDotsNone([...none]);
+		};
+	
+		if (allPlannings.length) {
+			generateEventDots();
+		}
+	}, [allPlannings]);	
+
 	// Gestion de la sélection des rooms
 	const toggleRoomSelection = ( room ) => {
 		const roomId = room[ '@id' ];
@@ -84,15 +142,23 @@ const Planning = () => {
 	};
 
 	// Gestion de l'affichage du calendrier (un point se rajoute si la date est déjà occupée)
-    const tileContent = ( { date: d, view } ) => {
-        const dots = [];
-        return view === 'month' && dots.includes( d.getDate() ) ?
-		(
-            <div className="w-1 h-1 bg-orange-400 rounded-full mx-auto mt-1" />
-        )
-		:
-		null;
-    };
+    const tileContent = ({ date: d, view }) => {
+		if (view !== 'month') return null;
+	
+		const dateStr = d.toDateString();
+	
+		if (
+			dotsNone.includes(dateStr) ||
+			dotsDaily.includes(dateStr) ||
+			dotsWeekly.includes(dateStr) ||
+			dotsMonthly.includes(dateStr)
+		) {
+			return <div className="w-1 h-1 bg-orange-400 rounded-full mx-auto mt-1" />;
+		}
+	
+		return null;
+	};
+
 
 	// Gestion du click pour la visibilité
     const handleClick = () => {
@@ -187,6 +253,15 @@ const Planning = () => {
 		}
 	}
 
+	// Fonction pour gérer les labels de récurrence
+	const recurrenceLabels = {
+		none: "Ponctuel",
+		daily: "Quotidien",
+		weekly: "Hebdomadaire",
+		monthly: "Mensuel",
+	  };
+	  
+
     return (
         <div className='flex flex-col justify-center mb-16' >
           	<MenuBar />
@@ -216,6 +291,12 @@ const Planning = () => {
 							className="REACT-CALENDAR"
 						/>
               		</div>
+					{ date &&
+						<PlanningsByDate
+							date={ date }
+							callable={ setIsLoading}
+						/>
+					}
               		<div className='w-full' >
 						<div>
 							<p className='text-center text-primary font-bold text-2xl mt-4' >
@@ -226,12 +307,32 @@ const Planning = () => {
 									to={ `/planning/${ event.id }` }
 									key={ index }
 								>
-									<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg' >
-										<div className='flex justify-between' >
-											<p className='text-lg font-bold' >
+									<div className='flex justify-between bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg' >
+										<div className='flex justify-between items-center' >
+											<p className='text-lg font-bold mx-4' >
 												{ event.label }
 											</p>
+											<p className='text-sm mx-4' >
+												<span className='text-sm font-normal' >
+													( { recurrenceLabels[ event.recurrence ] } )
+												</span>
+											</p>
+											<p className='text-sm' >
+												{ event.dateStart && event.dateEnd && event.recurrence !== 'none' &&
+													<span className='text-sm font-normal' >
+														{ new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) } - { new Date( event.dateEnd ).toLocaleDateString( 'fr-FR' ) }
+													</span>
+												}
+												{ event.dateEnd && event.recurrence === 'none' &&
+													<span className='text-sm font-normal' >
+														{ new Date( event.dateEnd ).toLocaleDateString( 'fr-FR' ) }
+													</span>
+												}
+											</p>
 										</div>
+										<RiArrowRightSFill
+											size={ 24 }
+										/>
 									</div>
 								</Link>
 							))}

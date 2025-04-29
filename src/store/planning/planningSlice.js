@@ -7,7 +7,7 @@ const planningSlice = createSlice({
     initialState: {
         loadingPlanning: false,
         planningDetail: {},
-        allPlannings: [],
+        allPlannings: []
     },
     reducers: {
         setLoadingPlanning: (state, action) => {
@@ -18,7 +18,7 @@ const planningSlice = createSlice({
         },
         setAllPlannings: (state, action) => {
             state.allPlannings = action.payload;
-        },
+        }
     }
 });
 
@@ -34,6 +34,6 @@ export const fetchAllPlanningsForUser = (userId) => async (dispatch) => {
     } finally {
         dispatch(setLoadingPlanning(false));
     }
-}
+}  
 
 export default planningSlice.reducer;
