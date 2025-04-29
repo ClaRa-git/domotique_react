@@ -46,6 +46,8 @@ const Planning = () => {
     const [ date, setDate] = useState( new Date() );
 	const [ dateStart, setDateStart ] = useState( new Date() );
 	const [ dateEnd, setDateEnd ] = useState( new Date() );
+	const [ hourStart, setHourStart ] = useState( '' );
+	const [ hourEnd, setHourEnd ] = useState( '' );
 	const [ recurrence, setRecurrence ] = useState( 'none' );
 	const [ switchOn, setSwitchOn ] = useState( false );
 	const [ allDay, setAllDay ] = useState( false );
@@ -79,9 +81,6 @@ const Planning = () => {
 	}, [ dispatch, userId ] );
 	
 	const { loadingPlanning, allPlannings } = useSelector( selectPlanningData );
-
-	// Récupération des plannings par date
-	const { planningsByDate } = useSelector(selectPlanningData);
 
 	useEffect(() => {
 		const generateEventDots = () => {
@@ -198,12 +197,21 @@ const Planning = () => {
 		// Empêche le comportement par défaut du formulaire
 		e.preventDefault();
 
+		if ( allDay ) {
+			// l'heure de début est à 00:00
+			setHourStart( '00:00' );
+			// l'heure de fin est à 23:59
+			setHourEnd( '23:59' );
+		}
+
 		try {
 			// Récupération des données du formulaire
 			const data = {
 				label: eventName,
 				dateStart: dateStart,
 				dateEnd: dateEnd,
+				hourStart: hourStart,
+				hourEnd: hourEnd,
 				recurrence: recurrence,
 				vibe: selectedVibe,
 				rooms: selectedRooms,
@@ -266,7 +274,6 @@ const Planning = () => {
 		monthly: "Mensuel",
 	  };
 	  
-
     return (
         <div className='flex flex-col justify-center mb-16' >
           	<MenuBar />
@@ -378,49 +385,55 @@ const Planning = () => {
 											<SwitchToggle sendToParent={ handleSwitch } />
 										</div>
 										<hr />
-										{ allDay ?
+										{ !allDay &&
 											<div>
 												<div className='flex justify-between m-4' >
 													<label htmlFor="dateStart" >
-														Date
+														Heure de début
 													</label>
 													<input
-														type="date"
-														name="dateStart"
-														id="dateStart"
-														onChange={ ( e ) => {
-															setDateStart( e.target.value );
-															setDateEnd( e.target.value ) }
-														}
-													/>
-												</div>
-											</div>
-											:
-											<div>
-												<div className='flex justify-between m-4' >
-													<label htmlFor="dateStart" >
-														Début
-													</label>
-													<input
-														type="datetime-local"
-														name="dateStart"
-														id="dateStart"
-														onChange={ ( e ) => { setDateStart( e.target.value ) } }
+														type="time"
+														name="hourStart"
+														id="hourStart"
+														onChange={ ( e ) => { setHourStart( e.target.value ) } }
 													/>
 												</div>
 												<div className='flex justify-between m-4' >
 													<label htmlFor="dateEnd">
-														Fin
+														Heure de fin
 													</label>
 													<input
-														type="datetime-local"
-														name="dateEnd"
-														id="dateEnd"
-														onChange={ ( e ) => { setDateEnd( e.target.value ) } }
+														type="time"
+														name="hourEnd"
+														id="hourEnd"
+														onChange={ ( e ) => { setHourEnd( e.target.value ) } }
 													/>
 												</div>
 											</div>
 										}
+										<hr />
+										<div className='flex justify-between m-4' >
+											<label htmlFor="dateStart" >
+												Date de début
+											</label>
+											<input
+												type="date"
+												name="dateStart"
+												id="dateStart"
+												onChange={ ( e ) => { setDateStart( e.target.value ) } }
+											/>
+										</div>
+										<div className='flex justify-between m-4' >
+											<label htmlFor="dateEnd">
+												Date de fin
+											</label>
+											<input
+												type="date"
+												name="dateEnd"
+												id="dateEnd"
+												onChange={ ( e ) => { setDateEnd( e.target.value ) } }
+											/>
+										</div>
 										<hr />
 										<div className='flex justify-between items-center m-4' >
 											<label htmlFor="recurrence" >
