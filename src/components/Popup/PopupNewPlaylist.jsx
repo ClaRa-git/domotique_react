@@ -3,9 +3,14 @@ import CustomInput from '../Ui/CustomInput';
 import axios from 'axios';
 import { API_URL } from '../../constants/apiConstant';
 import ButtonLoader from '../Loader/ButtonLoader';
+import { useDispatch } from 'react-redux';
+import { fetchUserPlaylists } from '../../store/user/userSlice';
 
 // Afficher le popup de création d'une nouvelle playlist
 const PopupNewPlaylist = ( { callable, userId } ) => {
+
+	// Appel de dispatch
+	const dispatch = useDispatch();
 
 	// State pour le nom de la playlist
     const [ playlistName, setPlaylistName ] = useState( '' );
@@ -47,6 +52,7 @@ const PopupNewPlaylist = ( { callable, userId } ) => {
 				setError( '' );
 				setPlaylistName( '' );
 				resetMessage();
+				dispatch( fetchUserPlaylists( userId ) );
 				callable();
 			}
         } catch ( error ) {

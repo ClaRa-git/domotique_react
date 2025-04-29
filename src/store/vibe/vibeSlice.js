@@ -9,6 +9,8 @@ const vibeSlice = createSlice({
         vibeDetail: {},
         allVibesForUser: [],
         allIcons: [],
+        settingsForVibe: [],
+        planningsForVibe: []
     },
     reducers: {
         setLoadingVibe: (state, action) => {
@@ -23,10 +25,16 @@ const vibeSlice = createSlice({
         setAllIcons: (state, action) => {
             state.allIcons = action.payload;
         },
+        setSettingsForVibe: (state, action) => {
+            state.settingsForVibe = action.payload;
+        },
+        setPlanningsForVibe: (state, action) => {
+            state.planningsForVibe = action.payload;
+        }
     }
 });
 
-export const { setLoadingVibe, setVibeDetail, setAllVibesForUser, setAllIcons } = vibeSlice.actions;
+export const { setLoadingVibe, setVibeDetail, setAllVibesForUser, setAllIcons, setSettingsForVibe, setPlanningsForVibe } = vibeSlice.actions;
 
 export const fetchAllVibesForUser = (userId) => async (dispatch) => {
     try {
@@ -47,6 +55,30 @@ export const fetchVibeDetail = (vibeId) => async (dispatch) => {
         dispatch(setVibeDetail(response.data));
     } catch (error) {
         console.log(`Erreur lors de la récupération des détails de la pièce : ${error}`);
+    } finally {
+        dispatch(setLoadingVibe(false));
+    }
+}
+
+export const fetchSettingsForVibe = (vibeId) => async (dispatch) => {
+    try {
+        dispatch(setLoadingVibe(true));
+        const response = await axios.get(`${API_URL}/settings?page=1&vibe.id=${vibeId}`);
+        dispatch(setSettingsForVibe(response.data.member));
+    } catch (error) {
+        console.log(`Erreur lors de la récupération des paramètres de la pièce : ${error}`);
+    } finally {
+        dispatch(setLoadingVibe(false));
+    }
+}
+
+export const fetchPlanningsForVibe = (vibeId) => async (dispatch) => {
+    try {
+        dispatch(setLoadingVibe(true));
+        const response = await axios.get(`${API_URL}/plannings?page=1&vibe.id=${vibeId}`);
+        dispatch(setPlanningsForVibe(response.data.member));
+    } catch (error) {
+        console.log(`Erreur lors de la récupération des plannings de la pièce : ${error}`);
     } finally {
         dispatch(setLoadingVibe(false));
     }

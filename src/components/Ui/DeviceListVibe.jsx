@@ -6,7 +6,6 @@ import SelectInterface from '../Interface/SelectInterface';
 
 // Affiche la liste des appareils
 const DeviceListVibe = ( { room } ) => {
-    console.log("gfetgfd");
 
     // State pour gérer l'ouverture et la fermeture des menus
 	const [ openMenuId, setOpenMenuId ] = useState( null );

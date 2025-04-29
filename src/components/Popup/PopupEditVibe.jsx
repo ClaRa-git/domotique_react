@@ -9,8 +9,12 @@ import selectUserData from '../../store/user/userSelector';
 import { API_URL, ICON_URL } from '../../constants/apiConstant';
 import axios from 'axios';
 import { fetchAllVibesForUser } from '../../store/vibe/vibeSlice';
+import { useAuthContext } from '../../contexts/AuthContext';
 
-const PopupNewVibe = ( { callable, userId } ) => {
+const PopupEditVibe = ( { callable, vibeDetail } ) => {
+
+    // Récupération de l'id de l'utilisateur
+    const { userId } = useAuthContext();
 
     // Récupération de dispatch
     const dispatch = useDispatch();
@@ -28,17 +32,17 @@ const PopupNewVibe = ( { callable, userId } ) => {
     const { userPlaylists } = useSelector( selectUserData );
 
     // Création des states
-    const [ mood, setMood ] = useState( 50 );
-    const [ stress, setStress ] = useState( 50 );
-    const [ tonus, setTonus ] = useState( 50 );
+    const [ mood, setMood ] = useState( vibeDetail ? vibeDetail.criteria.mood : 50 );
+    const [ stress, setStress ] = useState( vibeDetail ? vibeDetail.criteria.stress : 50 );
+    const [ tonus, setTonus ] = useState( vibeDetail ? vibeDetail.criteria.tone : 50 );
 
-    const [ label, setLabel ] = useState( '' );
-    const [ iconPath, setIconPath ] = useState( '' );
-    const [ playlistPath, setPlaylistPath ] = useState( '' );
+    const [ label, setLabel ] = useState( vibeDetail ? vibeDetail.label : '' );
+    const [ iconPath, setIconPath ] = useState( vibeDetail ? vibeDetail.icon['@id'] : '' );
+    const [ playlistPath, setPlaylistPath ] = useState( vibeDetail ? vibeDetail.playlist['@id'] : '' );
 
     const [ openMenuId, setOpenMenuId ] = useState( null );
-    const [ isSelectedPlaylist, setIsSelectedPlaylist ] = useState( null );
-    const [ isSelectedIcon, setIsSelectedIcon ] = useState( null );
+    const [ isSelectedPlaylist, setIsSelectedPlaylist ] = useState( vibeDetail ? vibeDetail.playlist.id : null );
+    const [ isSelectedIcon, setIsSelectedIcon ] = useState( vibeDetail ? vibeDetail.icon.id : null );
     const [ isLoading, setIsLoading ] = useState( false );
 
     const [ error, setError ] = useState( null );
@@ -71,11 +75,15 @@ const PopupNewVibe = ( { callable, userId } ) => {
                 tone: tonus
             }
 
-            axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
-            const criteriaResponse = await axios.post( `${ API_URL }/criterias`, criteria );
+            console.log( 'criteria', criteria );
+            console.log( vibeDetail.criteria.id );
+            console.log( `${ API_URL }/criterias/${vibeDetail.criteria.id}` );
 
-            if ( criteriaResponse.status !== 201 ) {
-                setError( 'Erreur lors de la création du critère' );
+            axios.defaults.headers.patch[ 'Content-Type' ] = 'application/merge-patch+json';
+            const criteriaResponse = await axios.patch( `${ API_URL }/criterias/${vibeDetail.criteria.id}`, criteria );
+
+            if ( criteriaResponse.status !== 200 ) {
+                setError( 'Erreur lors de la modification du critère' );
                 resetMessage();
                 return;
             }
@@ -91,11 +99,11 @@ const PopupNewVibe = ( { callable, userId } ) => {
                 icon: iconPath
             };
 
-            axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
-            const vibeResponse = await axios.post( `${ API_URL }/vibes`, vibe );
+            axios.defaults.headers.patch[ 'Content-Type' ] = 'application/merge-patch+json';
+            const vibeResponse = await axios.patch( `${ API_URL }/vibes/${vibeDetail.id}`, vibe );
 
-            if ( vibeResponse.status !== 201 ) {
-                setError( 'Erreur lors de la création de l\'ambiance' );
+            if ( vibeResponse.status !== 200 ) {
+                setError( 'Erreur lors de la modifcation de l\'ambiance' );
                 resetMessage();
                 return;
             }
@@ -108,8 +116,8 @@ const PopupNewVibe = ( { callable, userId } ) => {
             callable();
 
         } catch (error) {
-            console.error( `Erreur lors de la création de l'ambiance : ${error}` );
-            setError( 'Erreur lors de la création de l\'ambiance' );
+            console.error( `Erreur lors de la modifcation de l'ambiance : ${error}` );
+            setError( 'Erreur lors de la modification de l\'ambiance' );
             resetMessage();
             return;
         }
@@ -121,7 +129,7 @@ const PopupNewVibe = ( { callable, userId } ) => {
         <div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-2/3 p-4 rounded-2xl bg-primary text-white' >
             <form onSubmit={ handleSubmit } >
                 <h2 className='text-2xl text-center font-bold mb-4 flex-shrink-0' >
-                    Créer une ambiance
+                    Modifier une ambiance
                 </h2>
                 { error &&
                     <div className='flex justify-center items-center mb-4'>
@@ -298,7 +306,7 @@ const PopupNewVibe = ( { callable, userId } ) => {
                                 type='submit'
                                 className='w-full bg-secondary-orange font-bold py-3 rounded-lg transition'
                             >
-                                Créer
+                                Modifier
                             </button>
                             <button
                                 type='button'
@@ -316,4 +324,4 @@ const PopupNewVibe = ( { callable, userId } ) => {
   )
 }
 
-export default PopupNewVibe
+export default PopupEditVibe
