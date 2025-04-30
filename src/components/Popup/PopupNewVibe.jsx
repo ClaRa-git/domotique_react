@@ -118,7 +118,7 @@ const PopupNewVibe = ( { callable, userId } ) => {
 
   return (
     <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-        <div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-2/3 p-4 rounded-2xl bg-primary text-white' >
+        <div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-2/3 p-4 rounded-lg bg-primary text-white' >
             <form onSubmit={ handleSubmit } >
                 <h2 className='text-2xl text-center font-bold mb-4 flex-shrink-0' >
                     Créer une ambiance
@@ -275,7 +275,7 @@ const PopupNewVibe = ( { callable, userId } ) => {
                             {allIcons.map((icon) => (
                                 <div
                                     key={icon.id}
-                                    className={`flex justify-center cursor-pointer ${isSelectedIcon === icon.id ? 'bg-secondary-orange rounded-2xl' : ''}`}
+                                    className={`flex justify-center cursor-pointer ${isSelectedIcon === icon.id ? 'bg-secondary-orange rounded-lg' : ''}`}
                                     onClick={() => { setIsSelectedIcon(icon.id); setIconPath(icon['@id']); }}>
                                     <img
                                         src={`${ ICON_URL }/${icon.imagePath}`}

@@ -55,7 +55,7 @@ const Login = () => {
 				<div
 					key={ index }
 					onClick={ () => handleClick( user ) }
-					className='m-4 cursor-pointer border-2 border-white rounded-2xl'
+					className='m-4 cursor-pointer border-2 border-white rounded-lg'
 				>
 					<ProfileCard data={ user } />
 				</div>

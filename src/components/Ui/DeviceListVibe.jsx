@@ -99,7 +99,7 @@ const DeviceListVibe = ( { room } ) => {
                                                     { selectedSetting === setting &&
                                                     (
                                                         <div className='z-30 fixed inset-0 backdrop-blur flex items-center justify-center' >
-                                                            <div className='flex flex-col relative w-11/12 max-w-md rounded-2xl justify-center items-center bg-primary text-white shadow-lg' >
+                                                            <div className='flex flex-col relative w-11/12 max-w-md rounded-lg justify-center items-center bg-primary text-white shadow-lg' >
                                                                 <div className='flex flex-col w-full justify-center' >
                                                                     <div className='flex justify-end' >
                                                                         <IoClose

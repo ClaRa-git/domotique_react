@@ -73,18 +73,19 @@ const PopupNewPlaylist = ( { callable, userId } ) => {
 	}
 
 	return (
-		<div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-			<div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary' >
-				<h2 className='m-8 text-2xl text-white font-bold' >
-					Créer une nouvelle playlist
-				</h2>
-				<div className='flex flex-col items-center justify-center w-2/3' >
-					<form onSubmit={ handleSubmit } >
+		<div className='flex items-center justify-center px-4' >
+			<div className='flex flex-col relative w-full rounded-b-2xl justify-center items-center bg-primary' >
+				<div className='flex flex-col items-center justify-center w-full' >
+					<form 
+						onSubmit={ handleSubmit } 
+						className='flex flex-col items-center justify-center w-full p-4'
+					>
 						<CustomInput
 							state={ playlistName }
 							label={ 'Nom' }
 							type={ 'text' }
 							callable={ ( e ) => setPlaylistName( e.target.value ) }
+							textColor='text-white'
 						/>
 						{ success && 
 							<p className='text-green-500 text-center' >
@@ -96,26 +97,26 @@ const PopupNewPlaylist = ( { callable, userId } ) => {
 								{ error }
 							</p>
 						}
-						<div className='flex justify-center' >
+						<div className='flex justify-center w-full' >
 							{ isLoading ?
 							(
 							<ButtonLoader />
 							)
 							:
 							(
-								<div>
-									<button
-										type='submit'
-										className='w-full bg-secondary-orange font-bold py-3 rounded-lg transition'
-									>
-										Créer
-									</button>
+								<div className='flex w-full justify-between text-white'>
 									<button
 										type='button'
 										onClick={ callable }
-										className='w-full bg-secondary-pink font-bold py-3 mt-2 rounded-lg transition'
+										className='bg-secondary-orange px-4 py-2 rounded-lg transition'
 									>
 										Annuler
+									</button>
+									<button
+										type='submit'
+										className='bg-secondary-orange px-4 py-2 font-bold rounded-lg transition'
+									>
+										Ajouter
 									</button>
 								</div>								
 							)}

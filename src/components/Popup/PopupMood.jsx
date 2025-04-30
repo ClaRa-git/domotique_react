@@ -86,7 +86,7 @@ const PopupMood = ( { data, callable, sentToParent } ) => {
 
     return (
         <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-            <div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary' >
+            <div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-lg justify-center items-center bg-primary' >
                 <h1 className='text-white mt-4 text-2xl font-bold' >
                     Quelle est votre humeur ?
                 </h1>

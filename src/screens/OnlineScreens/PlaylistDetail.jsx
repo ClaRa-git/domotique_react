@@ -186,84 +186,102 @@ const PlaylistDetail = () => {
     loading ? <PageLoader />
     :
     <div className='mb-16' >
-        <div className='flex justify-between m-10' >
-            <Link to='/playlist' >
-                <RiArrowLeftSFill
-                    size={ 30 }
-                    className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
-                />
-            </Link>
-            <div className='flex flex-col justify-center items-center mx-4' >
-                <img
-                    src={ imgPlaylist }
-                    alt="image song"
-                    className='rounded-lg mb-2 sm:h-52 sm:w-52'
-                />
-                <p className='font-bold flex justify-center items-center' >
-                    { playlist.title }
-                    <FaPen 
-                        className='ml-2 bg-secondary-orange h-4 w-4 text-white rounded-sm p-1 cursor-pointer'
-                        onClick={ () => {
-                            setNewTitle( playlist.title );
-                            setIsEditing( true );
-                        }}
-                    />
-                </p>
-            </div>
-            <div className='flex flex-col justify-start' >
-                <FaRegTrashAlt
-                    size={ 30 }
-                    className='bg-secondary-orange h-10 w-10 text-white rounded-lg p-2 cursor-pointer'
-                    onClick={ handleDeletePlaylist }
-                />
-            </div>
-        </div>
-        <SongDropdown
-            isVisible={ isVisible }
-            toggleDropdown={ () => setIsVisible( !isVisible ) }
-            songs={ availableSongs }
-            addSongToPlaylist={ handleAddSong }
-            playlistSongIds={ playlist?.songs?.map( song => song[ '@id' ] ) || [] }
-        />
-        { songs && songs.map( ( song, index ) => (
-            <SongCard
-                key={ index }
-                song={ song }
-                sentToParent={ handleDeleteSong }
-            />
-        ))}
-        { isEditing && 
-        (
-            <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-                <div className='flex flex-col relative w-full text-white sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary' >
-                    <h2 className='text-lg font-bold mb-4' >
-                        Modifier le titre
-                    </h2>
-                    <div className='flex flex-row text-primary align-center' >
-                        <CustomInput
-                            state={ newTitle }
-                            label={ 'Titre' }
-                            type={ 'text' }
-                            callable={( e ) => setNewTitle( e.target.value ) }
+        { !isEditing ?
+            <div>
+                <div className='flex justify-between m-4' >
+                    <Link to='/playlist' >
+                        <RiArrowLeftSFill
+                            size={ 30 }
+                            className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
+                        />
+                    </Link>
+                    <div className='flex flex-col justify-center items-center mx-4' >
+                        <img
+                            src={ imgPlaylist }
+                            alt="image song"
+                            className='rounded-lg mb-2 sm:h-52 sm:w-52'
+                        />
+                        <p className='font-bold flex justify-center items-center' >
+                            { playlist.title }
+                            <FaPen
+                                className='ml-2 bg-secondary-orange h-4 w-4 text-white rounded-sm p-1 cursor-pointer'
+                                onClick={ () => {
+                                    setNewTitle( playlist.title );
+                                    setIsEditing( true );
+                                }}
+                            />
+                        </p>
+                    </div>
+                    <div className='flex flex-col justify-start' >
+                        <FaRegTrashAlt
+                            size={ 30 }
+                            className='bg-primary h-10 w-10 text-white rounded-lg p-2 cursor-pointer'
+                            onClick={ handleDeletePlaylist }
                         />
                     </div>
-                    <div className='flex flex-col text-primary justify-center items-center' >
-                        <button 
-                            onClick={ handleEditTitle } 
-                            className='w-full bg-secondary-orange font-bold p-3 rounded-lg transition'
-                        >
-                            Sauvegarder
-                        </button>
-                        <button 
-                            onClick={ () => setIsEditing( false ) } 
-                            className='w-full bg-secondary-pink font-bold p-3 mt-2 rounded-lg transition'
-                        >
-                            Annuler
-                        </button>
+                </div>
+                <SongDropdown
+                    isVisible={ isVisible }
+                    toggleDropdown={ () => setIsVisible( !isVisible ) }
+                    songs={ availableSongs }
+                    addSongToPlaylist={ handleAddSong }
+                    playlistSongIds={ playlist?.songs?.map( song => song[ '@id' ] ) || [] }
+                />
+                { songs && songs.map( ( song, index ) => (
+                    <SongCard
+                        key={ index }
+                        song={ song }
+                        sentToParent={ handleDeleteSong }
+                    />
+                ))}
+            </div>
+        :
+            <div className="m-4">
+                <div className='flex flex-col items-center justify-center w-full h-full' >
+                    <div className='flex w-full justify-between' >
+                        <div className='flex'>
+                            <div
+                                className='flex justify-start items-center'
+                                onClick={ () => {
+                                        setIsEditing( false );
+                                        setNewTitle( playlist.title );
+                                    }
+                                }
+                            >
+                                <RiArrowLeftSFill
+                                    size={30}
+                                    className='text-white bg-secondary-pink rounded-lg h-10 w-10 cursor-pointer'
+                                />
+                            </div>
+                            <div className='flex justify-center items-center font-bold'>
+                                <h2 className='ml-10 text-2xl text-primary pr-10' >
+                                    Modification du titre de la playlist
+                                </h2>
+                            </div>
+                        </div>
+                        <div className='flex text-white justify-center items-center' >
+                            <button
+                                onClick={ handleEditTitle }
+                                className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 '
+                            >
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                
+                    <div className='flex flex-col items-center rounded-lg w-full h-full mb-16' >
+                        <div className='flex mt-16'>
+                            <CustomInput
+                                state={ newTitle }
+                                label={ 'Titre' }
+                                type={ 'text' }
+                                callable={ ( e ) => setNewTitle( e.target.value ) }
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-        )}
+            </div>      
+        }
     </div>
   )
 }

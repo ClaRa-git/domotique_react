@@ -54,24 +54,37 @@ const Password = () => {
     loading ? <PageLoader />
     :
     <div className='flex flex-col items-center justify-center w-full h-full' >
-        <div className='flex w-full ml-4' >
-            <div className='flex justify-start items-center' >
-                <Link to={`/account/${userId}`} >
-                    <RiArrowLeftSFill
-                        size={30}
-                        className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
-                    />
-                </Link>
-            </div>
-            <div className='flex w-full justify-center'>
-                <h2 className='m-8 text-5xl text-primary font-bold pr-10' >
-                    Modification du mot de passe
-                </h2>
-            </div>
-        </div>
+        <div className='flex w-full justify-between' >
+                    <div className='flex'>
+                        <div className='flex justify-start items-center' >
+                            <Link
+                                to={`/account/${userId}`}
+                                className='ml-4'
+                            >
+                                <RiArrowLeftSFill
+                                    size={30}
+                                    className='text-white bg-secondary-pink rounded-lg h-10 w-10 cursor-pointer'
+                                />
+                            </Link>
+                        </div>
+                        <div className='flex justify-center items-center font-bold'>
+                            <h2 className='ml-10 text-2xl text-primary pr-10' >
+                                Modification du mot de passe
+                            </h2>
+                        </div>
+                    </div>
+                    <div className='flex text-white justify-center items-center' >
+                        <button
+                            onClick={ handleEdit }
+                            className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 '
+                        >
+                            Done
+                        </button>
+                    </div>
+                </div>
         
-        <div className='flex flex-col items-center justify-center rounded-lg bg-primary w-2/3 h-full p-16 text-primary mb-16' >
-            <div className='flex'>
+        <div className='flex flex-col items-center rounded-lg w-full h-full mb-16' >
+            <div className='flex mt-16'>
                 <CustomInput
                     state={ password }
                     label={ 'Mot de passe' }
@@ -82,26 +95,16 @@ const Password = () => {
                     { isVisible ?
                         <FaEye
                             size={ 20 }
-                            className='text-white'
                             onClick={ () => setIsVisible( !isVisible ) }
                         />
                         :
                         <FaEyeSlash
                             size={ 20 }
-                            className='text-white'
                             onClick={ () => setIsVisible( !isVisible ) }
                         />
                     }
                 </div>
             </div>
-            <div className='flex flex-col justify-center items-center mb-4' >
-                <button
-                    onClick={ handleEdit }
-                    className='w-full bg-secondary-orange font-bold p-3 rounded-lg transition'
-                >
-                    Sauvegarder
-                </button>
-            </div>  
         </div>
                   
     </div>

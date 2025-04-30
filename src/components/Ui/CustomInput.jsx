@@ -1,13 +1,13 @@
 import React from 'react'
 
 // Créer un composant d'input personnalisé
-const CustomInput = ( { state, label, type, callable } ) => {
+const CustomInput = ( { state, label, type, callable, textColor = 'text-black' } ) => {
 	
 	return (
 		<div className='mb-4'>
 			<label 
 				htmlFor={ state }
-				className='block text-white font-bold mb-2'
+				className={`block font-bold mb-2 ${ textColor }`}
 				>
 				{ label }
 			</label>

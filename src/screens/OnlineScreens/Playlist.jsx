@@ -6,7 +6,7 @@ import { fetchUserPlaylists } from '../../store/user/userSlice';
 import selectUserData from '../../store/user/userSelector';
 import PageLoader from '../../components/Loader/PageLoader';
 import PlaylistCard from '../../components/Card/PlaylistCard';
-import { FaPlus } from 'react-icons/fa6';
+import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6';
 import PopupNewPlaylist from '../../components/Popup/PopupNewPlaylist';
 
 // Page d'affichage des playlists de l'utilisateur
@@ -30,7 +30,7 @@ const Playlist = () => {
 
     // Gestion du click pour afficher le popup
     const handleClick = () => {
-        setIsVisible( true );
+        setIsVisible( !isVisible );
     }
 
   return (
@@ -40,13 +40,30 @@ const Playlist = () => {
         <MenuBar />
         <div
             onClick={ handleClick }
-            className='flex flex-row justify-between bg-primary text-white m-4 px-4 py-1 rounded-lg hover:cursor-pointer'
+            className={`flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-1 ${ isVisible ? 'rounded-t-lg' : 'rounded-lg' } hover:cursor-pointer`}
         >
-            <p>
-                Créer une nouvelle playlist...
-            </p>
-            <FaPlus className='mt-1' />
+            <div className='flex w-full justify-between p-2'>
+                <div className='flex items-center'>
+                    <FaPlus className='mr-2' />
+                    <div className='flex items-center'>
+                        Créer une nouvelle playlist
+                    </div>
+                </div>            
+                <div className='flex items-center'>
+                    { isVisible ?
+                        <FaChevronDown />
+                        :
+                        <FaChevronRight />
+                    }
+                </div>
+            </div>
         </div>
+        { isVisible &&
+            <PopupNewPlaylist
+                callable={ () => setIsVisible( false) }
+                userId={ userId }
+            />
+        }
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 mb-16' >
             { userPlaylists && 
                 userPlaylists.map( ( playlist, index ) => {
@@ -60,12 +77,6 @@ const Playlist = () => {
                     )
             })}
         </div>
-        { isVisible &&
-            <PopupNewPlaylist
-                callable={ () => setIsVisible( false) }
-                userId={ userId }
-            />
-        }
     </div>
   )
 }

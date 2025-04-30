@@ -114,7 +114,7 @@ const Information = () => {
                     </Link>
                 </div>
                 <div className='flex justify-center items-center font-bold'>
-                    <h2 className='ml-10 text-xl text-primary pr-10' >
+                    <h2 className='ml-10 text-2xl text-primary pr-10' >
                         Modification du profil
                     </h2>
                 </div>
@@ -127,7 +127,7 @@ const Information = () => {
                     Done
                 </button>
             </div>
-            </div>
+        </div>
         
         <div className='flex flex-col rounded-lg w-full h-full mb-16' >
             <div className='flex mt-8 justify-center' >
@@ -138,10 +138,10 @@ const Information = () => {
                 />
             </div>
             <div className='flex flex-row items-center justify-center '>
-                <div className='flex flex-row text-primary align-center mb-4' >
+                <div className='flex flex-row text-primary align-center m-10' >
                     <CustomInput
                         state={ nickname }
-                        label={ 'Nom' }
+                        label={ '' }
                         type={ 'text' }
                         callable={( e ) => setNickname( e.target.value ) }
                     />
@@ -176,7 +176,7 @@ const Information = () => {
                             {allAvatars.map((image) => (
                                 <div
                                     key={image.id}
-                                    className={`p-2 cursor-pointer ${isSelected === image.id ? 'bg-secondary-orange rounded-2xl' : ''}`}
+                                    className={`p-2 cursor-pointer ${isSelected === image.id ? 'bg-secondary-orange rounded-lg' : ''}`}
                                     onClick={() => {
                                         setIsSelected( image.id );
                                         setPath(image['@id']); 
