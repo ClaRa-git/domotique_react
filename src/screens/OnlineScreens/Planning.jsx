@@ -45,8 +45,8 @@ const Planning = () => {
 	// State pour gérer les données de l'évènement
 	const [ eventName, setEventName ] = useState( '' );
     const [ date, setDate] = useState( new Date() );
-	const [ dateStart, setDateStart ] = useState( new Date() );
-	const [ dateEnd, setDateEnd ] = useState( new Date() );
+	const [ createdAt, setCreatedAt ] = useState( new Date() );
+	const [ dayCreation, setDayCreation ] = useState( '' );
 	const [ hourStart, setHourStart ] = useState( '' );
 	const [ hourEnd, setHourEnd ] = useState( '' );
 	const [ recurrence, setRecurrence ] = useState( 'none' );
@@ -70,6 +70,16 @@ const Planning = () => {
             default: return -1; // à surveiller
         }
     };
+
+	const daysOfWeek = [
+        'Dimanche',
+        'Lundi',
+        'Mardi',
+        'Mercredi',
+        'Jeudi',
+        'Vendredi',
+        'Samedi'
+    ];
 
 	// Récupération des vibes de l'utilisateur
 	useEffect( () => {
@@ -102,7 +112,7 @@ const Planning = () => {
 		const dates = new Set();
 
 		allPlannings.forEach((planning) => {
-			const startDate = new Date(planning.dateStart);
+			const startDate = new Date(planning.createdAt);
 			const recurrencePlanning = planning.recurrence;
 			const nbRecurrence = recurrenceNumber(recurrencePlanning);
 
@@ -158,8 +168,8 @@ const Planning = () => {
 			setAllDay( false );
 			setRecurrence( 'none' );
 			setEventName( '' );
-			setDateStart( new Date() );
-			setDateEnd( new Date() );
+			setCreatedAt( new Date() );
+			setDayCreation( '' );
 			setHourStart( '' );
 			setHourEnd( '' );
 			setSelectedVibe( '' );
@@ -209,8 +219,8 @@ const Planning = () => {
 			// Récupération des données du formulaire
 			const data = {
 				label: eventName,
-				dateStart: dateStart,
-				dateEnd: dateEnd,
+				createdAt: createdAt,
+				dayCreation: dayCreation,
 				hourStart: !allDay ? hourStart : '00:00',
 				hourEnd: !allDay ? hourEnd : '23:59',
 				recurrence: recurrence,
@@ -219,11 +229,13 @@ const Planning = () => {
 				profile: `/api/profiles/${ userId }`
 			}
 
+			console.log( data );
+
 			// Loading
 			setIsLoading( true );
 
 			// Gestion de champs vides
-			if ( !eventName || !dateStart || !dateEnd ) {
+			if ( !eventName || !createdAt ) {
 				console.log( 'Veuillez remplir tous les champs' );
 				setError( 'Veuillez remplir tous les champs' );
 				setSuccess( null);
@@ -238,8 +250,8 @@ const Planning = () => {
 			if ( response.status === 201 ) {
 				console.log( 'L\'évènement a bien été créé' );
 				setEventName( '' );
-				setDateStart( new Date() );
-				setDateEnd( new Date() );
+				setCreatedAt( new Date() );
+				setDayCreation( '' );
 				setRecurrence( 'none' );
 				setSelectedVibe( '' );
 				setSelectedRooms( [] );
@@ -346,6 +358,7 @@ const Planning = () => {
 												onChange={( e ) => { setEventName( e.target.value ) } }
 											/>
 										</div>
+										<hr />
 										<div className='flex justify-between m-4' >
 											<p>
 												Jour entier
@@ -353,10 +366,30 @@ const Planning = () => {
 											<SwitchToggle sendToParent={ handleSwitch } />
 										</div>
 										<hr />
+										<div className='flex justify-between m-4' >
+											<label htmlFor="createdAt" >
+												Date de l'évènement
+											</label>
+											<input
+												type="date"
+												name="createdAt"
+												id="createdAt"
+												onChange={ ( e ) => {
+														console.log( e.target.value );
+														setCreatedAt( e.target.value );
+														const day = new Date( e.target.value ).getDay();
+                										const dayName = daysOfWeek[day];
+														console.log( dayName );
+														setDayCreation( dayName );
+													} 
+												}
+											/>
+										</div>
+										<hr />
 										{ !allDay &&
 											<div>
 												<div className='flex justify-between m-4' >
-													<label htmlFor="dateStart" >
+													<label htmlFor="hourStart" >
 														Heure de début
 													</label>
 													<input
@@ -367,7 +400,7 @@ const Planning = () => {
 													/>
 												</div>
 												<div className='flex justify-between m-4' >
-													<label htmlFor="dateEnd">
+													<label htmlFor="hourEnd">
 														Heure de fin
 													</label>
 													<input
@@ -401,50 +434,6 @@ const Planning = () => {
 												</option>
 											</select>
 										</div>
-										<hr />
-										{ recurrence !== 'none' ?
-											<div>
-												<div className='flex justify-between m-4' >
-													<label htmlFor="dateStart" >
-														Date de début
-													</label>
-													<input
-														type="date"
-														name="dateStart"
-														id="dateStart"
-														onChange={ ( e ) => { setDateStart( e.target.value ) } }
-													/>
-												</div>
-												<div className='flex justify-between m-4' >
-													<label htmlFor="dateEnd">
-														Date de fin
-													</label>
-													<input
-														type="date"
-														name="dateEnd"
-														id="dateEnd"
-														onChange={ ( e ) => { setDateEnd( e.target.value ) } }
-													/>
-												</div>
-											</div>
-											:
-											<div>
-												<div className='flex justify-between m-4' >
-													<label htmlFor="dateStart" >
-														Date de l'évènement
-													</label>
-													<input
-														type="date"
-														name="dateStart"
-														id="dateStart"
-														onChange={ ( e ) => {
-															setDateStart( e.target.value );
-															setDateEnd( e.target.value);
-														}}
-													/>
-												</div>
-											</div>
-										}
 										<hr />
 										{/* Lier à une ambiance */}
 										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer' >

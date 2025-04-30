@@ -8,6 +8,16 @@ const PlanningsByDate = ({ date, callable }) => {
     const [planningsForDate, setPlanningsForDate] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const daysOfWeek = [
+        'Dimanche',
+        'Lundi',
+        'Mardi',
+        'Mercredi',
+        'Jeudi',
+        'Vendredi',
+        'Samedi'
+    ];
+
     // Fonction utilitaire : date à minuit (évite les problèmes de fuseau horaire)
     const getDateAtMidnight = (dateStr) => {
         const date = new Date(dateStr);
@@ -52,63 +62,21 @@ const PlanningsByDate = ({ date, callable }) => {
             }
 
             try {
+                const day = new Date(date).getDay();
+                const dayName = daysOfWeek[day === 0 ? 6 : day - 1];
                 const formatedDate = toLocalYYYYMMDD(date);
+
                 const response = await axios.post(`${API_ROOT}/service-planning`,
                     { 
-                        date:formatedDate
+                        date:formatedDate,
+                        day: dayName,
                     },
                     {
                         headers: { 'Content-Type': 'application/json' }
                     }
                 );
 
-                const filteredPlannings = [];
-
-                response.data.plannings.forEach(planning => {
-                    const nbRecurrence = recurrenceNumber(planning);
-
-                    const startDateTime = getDateAtMidnight(planning.dateStart);
-                    const endDateTime = getDateAtMidnight(planning.dateEnd);
-
-                    // Debug temporaire (à retirer après validation)
-                    console.log({
-                        title: planning.label,
-                        recurrence: planning.recurrence,
-                        start: new Date(startDateTime).toLocaleDateString(),
-                        end: new Date(endDateTime).toLocaleDateString(),
-                        target: new Date(targetDateTime).toLocaleDateString(),
-                    });
-
-                    // Aucun événement si la date cible est hors de l'intervalle
-                    if (targetDateTime < startDateTime || targetDateTime > endDateTime) {
-                        return;
-                    }
-
-                    // Non récurrent
-                    if (nbRecurrence === 0) {
-                        if (startDateTime === targetDateTime) {
-                            filteredPlannings.push(planning);
-                        }
-                    }
-
-                    // Récurrent
-                    else if (nbRecurrence > 0) {
-                        const currentDate = new Date(startDateTime);
-
-                        while (currentDate.getTime() <= endDateTime) {
-                            currentDate.setHours(0, 0, 0, 0);
-
-                            if (currentDate.getTime() === targetDateTime) {
-                                filteredPlannings.push(planning);
-                                break;
-                            }
-
-                            currentDate.setDate(currentDate.getDate() + nbRecurrence);
-                        }
-                    }
-                });
-
-                setPlanningsForDate(filteredPlannings);
+                setPlanningsForDate(response.data.plannings);
             } catch (error) {
                 console.error('Erreur lors de la récupération des plannings :', error.response || error.message || error);
             } finally {
@@ -160,20 +128,10 @@ const PlanningsByDate = ({ date, callable }) => {
                                                 { event.label }
                                             </p>
                                             <p className='text-sm mx-4' >
-                                                <span className='text-sm font-normal' >
                                                     ( { recurrenceLabels[ event.recurrence ] } )
-                                                </span>
                                             </p>
                                             <p className='text-sm' >
-                                                { event.dateStart && event.dateEnd && event.dateStart !== event.dateEnd ?
-                                                    <span className='text-sm font-normal' >
-                                                        { new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) } - { new Date( event.dateEnd ).toLocaleDateString( 'fr-FR' ) }
-                                                    </span>
-                                                    :
-                                                    <span className='text-sm font-normal' >
-                                                        { new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) }
-                                                    </span>
-                                                }
+                                                { new Date( event.createdAt ).toLocaleDateString( 'fr-FR' ) }
                                             </p>
                                         </div>
                                         <RiArrowRightSFill
