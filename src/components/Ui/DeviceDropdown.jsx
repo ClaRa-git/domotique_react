@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaPlus } from 'react-icons/fa6';
+import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6';
 import axios from 'axios';
 import { API_URL } from '../../constants/apiConstant';
 
@@ -36,15 +36,6 @@ const DeviceDropdown = ( { isVisible, toggleDropdown, devices, showDevices, room
     
     return (
         <div className='mb-6'>
-            { devices && showDevices &&
-                <div
-                    onClick={ toggleDropdown }
-                    className='flex flex-row justify-between bg-primary text-white mb-4 px-4 py-1 rounded-lg cursor-pointer'
-                >
-                    Ajouter un appareil à la pièce
-                    <FaPlus className='mt-1'/>
-                </div>
-            }
             { error && 
                 <p className='text-red-500 text-center text-sm m-4' >
                     { error }
@@ -55,8 +46,30 @@ const DeviceDropdown = ( { isVisible, toggleDropdown, devices, showDevices, room
                     { success }
                 </p>
             }
+            { devices && showDevices &&
+                <div
+                    onClick={ toggleDropdown }
+                    className={`flex flex-row justify-between bg-primary text-white px-4 py-1 cursor-pointer ${ isVisible ? 'rounded-t-lg' : 'rounded-lg' }` }
+                >
+                    <div className='flex w-full justify-between p-2'>
+                        <div className='flex items-center'>
+                            <FaPlus className='mr-2' />
+                            <div className='flex items-center'>
+                                Ajouter un objet connecté
+                            </div>
+                        </div>
+                        <div className='flex items-center'>
+                            { isVisible ?
+                                <FaChevronDown />
+                                :
+                                <FaChevronRight />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
             { isVisible && (
-                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4 shadow-inner' >
+                <ul className='bg-primary px-4 pb-4 mb-2 rounded-b-lg' >
                     { devices.length > 0 ?
                     (
                         devices.map( ( device ) => (

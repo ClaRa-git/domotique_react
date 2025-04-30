@@ -17,6 +17,7 @@ import { fetchAllPlanningsForUser } from '../../store/planning/planningSlice';
 import selectPlanningData from '../../store/planning/planningSelector';
 import PlanningsByDate from '../../components/Ui/PlanningsByDate';
 import PageLoader from '../../components/Loader/PageLoader';
+import { IoMdArrowDropleftCircle, IoMdArrowDroprightCircle } from 'react-icons/io';
 
 // Affiche la page de planning
 const Planning = () => {
@@ -51,15 +52,24 @@ const Planning = () => {
 	const [ recurrence, setRecurrence ] = useState( 'none' );
 	const [ switchOn, setSwitchOn ] = useState( false );
 	const [ allDay, setAllDay ] = useState( false );
+	const [ currentMonth, setCurrentMonth ] = useState( new Date() );
 
-	const [ dotsNone, setDotsNone ] = useState( [] );
-	const [ dotsDaily, setDotsDaily ] = useState( [] );
-	const [ dotsWeekly, setDotsWeekly ] = useState( [] );
-	const [ dotsMonthly, setDotsMonthly ] = useState( [] );
+	const [ dots, setDots ] = useState( [] );
 
 	// State pour gérer les messages d'erreur et de succès
 	const [ error, setError ] = useState( null );
 	const [ success, setSuccess ] = useState( null );
+
+	// Renvoie le nombre de jours de récurrence
+    const recurrenceNumber = (recurrence) => {
+        switch (recurrence) {
+            case 'daily': return 1;
+            case 'weekly': return 7;
+            case 'monthly': return 30;
+            case 'none': return 0;
+            default: return -1; // à surveiller
+        }
+    };
 
 	// Récupération des vibes de l'utilisateur
 	useEffect( () => {
@@ -83,52 +93,37 @@ const Planning = () => {
 	const { loadingPlanning, allPlannings } = useSelector( selectPlanningData );
 
 	useEffect(() => {
-		const generateEventDots = () => {
-			const daily = new Set();
-			const weekly = new Set();
-			const monthly = new Set();
-			const none = new Set();
-	
-			allPlannings.forEach((event) => {
-				const start = new Date(event.dateStart);
-				const end = new Date(event.dateEnd);
-				const recurrence = event.recurrence;
-				const now = new Date();
-	
-				switch (recurrence) {
-					case 'daily':
-						for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-							daily.add(d.toDateString());
-						}
-						break;
-					case 'weekly':
-						for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 7)) {
-							weekly.add(d.toDateString());
-						}
-						break;
-					case 'monthly':
-						for (let d = new Date(start); d <= end; d.setMonth(d.getMonth() + 1)) {
-							monthly.add(d.toDateString());
-						}
-						break;
-					default:
-						for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-							none.add(d.toDateString());
-						}
-						break;
+
+		if ( !allPlannings.length ) return;
+
+		const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+		const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+		const dates = new Set();
+
+		allPlannings.forEach((planning) => {
+			const startDate = new Date(planning.dateStart);
+			const recurrencePlanning = planning.recurrence;
+			const nbRecurrence = recurrenceNumber(recurrencePlanning);
+
+			if ( nbRecurrence === 0 ) {
+				if ( startDate >= startOfMonth ) {
+					dates.add(startDate.toDateString());
 				}
-			});
-	
-			setDotsDaily([...daily]);
-			setDotsWeekly([...weekly]);
-			setDotsMonthly([...monthly]);
-			setDotsNone([...none]);
-		};
-	
-		if (allPlannings.length) {
-			generateEventDots();
-		}
-	}, [allPlannings]);	
+			}
+			else {
+				while ( startDate <= endOfMonth ) {
+					if ( startDate >= startOfMonth && startDate <= endOfMonth ) {
+						dates.add(startDate.toDateString());
+					}
+					startDate.setDate(startDate.getDate() + nbRecurrence);
+				}
+			}			
+		});
+
+		setDots( [ ...dates ] );
+
+	}, [ allPlannings, currentMonth ] );	
 
 	// Gestion de la sélection des rooms
 	const toggleRoomSelection = ( room ) => {
@@ -147,10 +142,7 @@ const Planning = () => {
 		const dateStr = d.toDateString();
 	
 		if (
-			dotsNone.includes(dateStr) ||
-			dotsDaily.includes(dateStr) ||
-			dotsWeekly.includes(dateStr) ||
-			dotsMonthly.includes(dateStr)
+			dots.includes(dateStr)
 		) {
 			return <div className="w-1 h-1 bg-orange-400 rounded-full mx-auto mt-1" />;
 		}
@@ -279,14 +271,15 @@ const Planning = () => {
           	<MenuBar />
           	<div>
             	<div className='flex flex-col justify-center items-center mt-4' >
-              		<div className='bg-[#eee4df] p-4 rounded-xl w-fit shadow-md' >
+              		<div className='bg-offwhite p-4 rounded-xl w-fit shadow-md' >
 						<Calendar
+							onActiveStartDateChange={ ( { activeStartDate } ) => setCurrentMonth( activeStartDate ) }
 							onChange={ setDate }
 							value={ date }
 							locale="fr-FR"
 							tileContent={ tileContent }
-							nextLabel="▶"
-							prevLabel="◀"
+							nextLabel={ <div className=' flex justify-center'> <IoMdArrowDroprightCircle size={20} /> </div> }
+							prevLabel={ <div className=' flex justify-center'> <IoMdArrowDropleftCircle size={20} /> </div>}
 							formatShortWeekday={( locale, date ) =>
 								date.toLocaleDateString( locale, { weekday: 'short' }).slice( 0, 3 )
 							}
@@ -405,9 +398,6 @@ const Planning = () => {
 												</option>
 												<option value="weekly" >
 													Hebdomadaire
-												</option>
-												<option value="monthly" >
-													Mensuel
 												</option>
 											</select>
 										</div>

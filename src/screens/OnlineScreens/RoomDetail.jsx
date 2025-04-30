@@ -119,11 +119,13 @@ const RoomDetail = () => {
                     className='flex justify-between items-center font-bold bg-primary text-xl text-white text-center p-2 rounded-lg mb-4' 
                     onClick={ toggleView }
                 >
-                    { showDevices ?
-                        'Appareils'
-                        :
-                        'Ambiances'
-                    }
+                    <div className="ml-2">
+                        { showDevices ?
+                            'Appareils'
+                            :
+                            'Ambiances'
+                        }
+                    </div>
                     <div className='flex items-center' >
                         <p className='text-sm' >
                             { showDevices ?

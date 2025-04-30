@@ -186,7 +186,7 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
                                 <div className='flex items-center' >
                                     <FaRegTrashAlt
                                         size={ 20} 
-                                        className='bg-secondary-orange h-8 w-8 text-white rounded-lg p-2 mr-2 cursor-pointer'
+                                        className='bg-primary h-8 w-8 text-white rounded-lg p-2 mr-2 cursor-pointer'
                                         onClick={ () => deleteFromRoom( device.id ) }
                                     />
                                     { openMenuId === device.id ? 
