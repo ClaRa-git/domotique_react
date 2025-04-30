@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { API_ROOT } from '../../constants/apiConstant';
+import { Link } from 'react-router-dom';
+import { RiArrowRightSFill } from 'react-icons/ri';
 
 const PlanningsByDate = ({ date, callable }) => {
     const [planningsForDate, setPlanningsForDate] = useState([]);
@@ -51,7 +53,6 @@ const PlanningsByDate = ({ date, callable }) => {
 
             try {
                 const formatedDate = toLocalYYYYMMDD(date);
-                console.log('Date formatée :', formatedDate);
                 const response = await axios.post(`${API_ROOT}/service-planning`,
                     { 
                         date:formatedDate
@@ -62,8 +63,6 @@ const PlanningsByDate = ({ date, callable }) => {
                 );
 
                 const filteredPlannings = [];
-
-                console.log('Plannings récupérés :', response.data.plannings);
 
                 response.data.plannings.forEach(planning => {
                     const nbRecurrence = recurrenceNumber(planning);
@@ -123,28 +122,70 @@ const PlanningsByDate = ({ date, callable }) => {
         fetchPlanningsByDate();
     }, [targetDateTime, callable]);
 
+    // Fonction pour gérer les labels de récurrence
+	const recurrenceLabels = {
+		none: "Ponctuel",
+		daily: "Quotidien",
+		weekly: "Hebdomadaire",
+		monthly: "Mensuel",
+	};
+
     return (
         isLoading ? (
             <div>Chargement ...</div>
         ) : (
             <div>
                 {planningsForDate.length > 0 ? (
-                    <p className="text-center text-primary font-bold text-2xl mt-4">
-                        {planningsForDate.length} évènement(s) le {dateObj.toLocaleDateString('fr-FR', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })}
-                    </p>
+                    <div>
+                        <p className='text-center text-primary font-bold text-2xl mt-4' >
+                            Evènements
+                        </p>
+                        <p className="text-center text-primary font-bold text-2xl mt-4">
+                            {planningsForDate.length} évènement(s) le {dateObj.toLocaleDateString('fr-FR', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </p>
+                        <div>
+                            {planningsForDate.map((event, index) => (
+                                <Link
+                                    to={ `/planning/${ event.id }` }
+                                    key={ index }
+                                >
+                                    <div className='flex justify-between bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg' >
+                                        <div className='flex justify-between items-center' >
+                                            <p className='text-lg font-bold mx-4' >
+                                                { event.label }
+                                            </p>
+                                            <p className='text-sm mx-4' >
+                                                <span className='text-sm font-normal' >
+                                                    ( { recurrenceLabels[ event.recurrence ] } )
+                                                </span>
+                                            </p>
+                                            <p className='text-sm' >
+                                                { event.dateStart && event.dateEnd && event.dateStart !== event.dateEnd ?
+                                                    <span className='text-sm font-normal' >
+                                                        { new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) } - { new Date( event.dateEnd ).toLocaleDateString( 'fr-FR' ) }
+                                                    </span>
+                                                    :
+                                                    <span className='text-sm font-normal' >
+                                                        { new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) }
+                                                    </span>
+                                                }
+                                            </p>
+                                        </div>
+                                        <RiArrowRightSFill
+                                            size={ 24 }
+                                        />
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
                 ) : (
                     <p className="text-center text-primary font-bold text-2xl mt-4">
-                        Aucun évènement le {dateObj.toLocaleDateString('fr-FR', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })}
                     </p>
                 )}
             </div>

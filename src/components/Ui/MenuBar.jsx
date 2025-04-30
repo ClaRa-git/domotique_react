@@ -7,14 +7,14 @@ const MenuBar = () => {
     const location = window.location.pathname;
     
   return (
-    <div className='flex flex-col justify-around font-bold my-4 items-center sm:flex-row' >
+    <div className='flex justify-around my-4 items-center flex-row' >
         <Link to="/playlist" >
             <div className={ `${
                 location === '/playlist' ?
                 'bg-secondary-pink text-white font-normal rounded-lg'
                 :
                 ''
-                } py-1 px-4 ` }
+                } py-1 px-2 ` }
             >
                 Playlists
             </div>
@@ -25,7 +25,7 @@ const MenuBar = () => {
                 'bg-secondary-pink text-white font-normal rounded-lg'
                 :
                 ''
-                } py-1 px-4 ` }
+                } py-1 px-2 ` }
             >
                 Pièces
             </div>
@@ -36,7 +36,7 @@ const MenuBar = () => {
                 'bg-secondary-pink text-white font-normal rounded-lg'
                 :
                 ''
-                } py-1 px-4 ` }
+                } py-1 px-2 ` }
             >
                 Ambiances
             </div>
@@ -47,7 +47,7 @@ const MenuBar = () => {
                 'bg-secondary-pink text-white font-normal rounded-lg'
                 :
                 ''
-                } py-1 px-4 ` }
+                } py-1 px-2 ` }
             >
                 Planning
             </div>

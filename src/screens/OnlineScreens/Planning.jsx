@@ -1,10 +1,10 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import MenuBar from '../../components/Ui/MenuBar';
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6';
 import SwitchToggle from '../../components/Ui/SwitchToggle';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import selectVibeData from '../../store/vibe/vibeSelector';
 import selectRoomData from '../../store/room/roomSelector';
@@ -16,7 +16,7 @@ import { API_URL } from '../../constants/apiConstant';
 import { fetchAllPlanningsForUser } from '../../store/planning/planningSlice';
 import selectPlanningData from '../../store/planning/planningSelector';
 import PlanningsByDate from '../../components/Ui/PlanningsByDate';
-import { RiArrowRightSFill } from 'react-icons/ri';
+import PageLoader from '../../components/Loader/PageLoader';
 
 // Affiche la page de planning
 const Planning = () => {
@@ -227,8 +227,6 @@ const Planning = () => {
 				profile: `/api/profiles/${ userId }`
 			}
 
-			console.log( 'data', data );
-
 			// Loading
 			setIsLoading( true );
 
@@ -274,16 +272,9 @@ const Planning = () => {
 			setIsLoading( false );
 		}
 	}
-
-	// Fonction pour gérer les labels de récurrence
-	const recurrenceLabels = {
-		none: "Ponctuel",
-		daily: "Quotidien",
-		weekly: "Hebdomadaire",
-		monthly: "Mensuel",
-	  };
 	  
-    return (
+    return ( loadingRoom ? <PageLoader />
+		:
         <div className='flex flex-col justify-center mb-16' >
           	<MenuBar />
           	<div>
@@ -310,42 +301,6 @@ const Planning = () => {
 					}
               		<div className='w-full' >
 						<div>
-							<p className='text-center text-primary font-bold text-2xl mt-4' >
-								Evènements
-							</p>
-							{ allPlannings.map( ( event, index ) => (
-								<Link
-									to={ `/planning/${ event.id }` }
-									key={ index }
-								>
-									<div className='flex justify-between bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg' >
-										<div className='flex justify-between items-center' >
-											<p className='text-lg font-bold mx-4' >
-												{ event.label }
-											</p>
-											<p className='text-sm mx-4' >
-												<span className='text-sm font-normal' >
-													( { recurrenceLabels[ event.recurrence ] } )
-												</span>
-											</p>
-											<p className='text-sm' >
-												{ event.dateStart && event.dateEnd && event.dateStart !== event.dateEnd ?
-													<span className='text-sm font-normal' >
-														{ new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) } - { new Date( event.dateEnd ).toLocaleDateString( 'fr-FR' ) }
-													</span>
-													:
-													<span className='text-sm font-normal' >
-														{ new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) }
-													</span>
-												}
-											</p>
-										</div>
-										<RiArrowRightSFill
-											size={ 24 }
-										/>
-									</div>
-								</Link>
-							))}
 							{ success && 
 								<p className='text-green-500 text-center' >
 									{ success }
@@ -366,10 +321,21 @@ const Planning = () => {
 								'rounded-lg' }
 								`}
 							>
-							<p>
-								Créer un nouvel évènement...
-							</p>
-							<FaPlus className='mt-1' />
+							<div className='flex justify-between w-full items-center gap-2' >
+								<div className='flex'>
+									<div className='flex items-center justify-center mr-2'>
+										<FaPlus size={10} />
+									</div>
+									<div>
+										Ajouter un évènement
+									</div>
+								</div>
+								{ isVisible ?
+									<FaChevronDown />
+									: 
+									<FaChevronRight />
+								}
+							</div>
 						</div>
 						{ isVisible &&
 							<div className='flex flex-row justify-between bg-primary text-white mx-4 px-4 py-1 rounded-b-lg' >

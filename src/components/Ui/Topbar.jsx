@@ -1,9 +1,9 @@
 import React from 'react'
 import { FaSearch } from 'react-icons/fa'
-import { RiAccountCircleFill } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { API_ROOT } from '../../constants/apiConstant'
 import { useAuthContext } from '../../contexts/AuthContext'
+import { PiUserCircleFill } from 'react-icons/pi'
 
 // Le composant Topbar permet d'afficher la barre de navigation en haut de la page
 const Topbar = () => {
@@ -33,7 +33,7 @@ const Topbar = () => {
 					</Link>
 					<Link to={ `/account/${ userId }` } >
 						<div className='justify-center items-center p-4' >
-							<RiAccountCircleFill size={ 32 } />
+							<PiUserCircleFill size={ 32 } />
 						</div>
 					</Link>
 				</div>

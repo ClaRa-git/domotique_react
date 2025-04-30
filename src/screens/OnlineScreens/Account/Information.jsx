@@ -11,6 +11,7 @@ import CustomInput from '../../../components/Ui/CustomInput';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { RiArrowLeftSFill } from 'react-icons/ri';
+import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6';
 
 const Information = () => {
 
@@ -23,30 +24,34 @@ const Information = () => {
     // Définition des states
     const [ nickname, setNickname ] = useState( username );
     const [ path, setPath ] = useState( '' );
-    const [ isEditing, setIsEditing ] = useState( false );
     const [ isEditingAvatar, setIsEditingAvatar ] = useState( false );
     const [ isSelected, setIsSelected ] = useState( false );
 
     useEffect(() => {
-      dispatch(fetchUserDetail(userId));
-    }, [dispatch, userId]);
+        try {
+            dispatch( fetchUserDetail( userId ) );
+        } catch ( error ) {
+            console.log( `Erreur lors de la récupération des informations de l'utilisateur : ${ error }` );
+        }
+    }, [ dispatch, userId ] );
 
     // Récupération des informations de l'utilisateur
     const { userDetail, loading } = useSelector(selectUserData);
 
+
     useEffect(() => {
-        dispatch(fetchAllAvatars());
-    }, [dispatch]);
+        try {
+            dispatch(fetchAllAvatars());         
+        } catch ( error ) {
+            console.log( `Erreur lors de la récupération des avatars : ${ error }` );
+        }
+    }, [ dispatch ] );
 
     // Récupération de la liste des avatars
     const { allAvatars } = useSelector(selectUserData);
 
-    console.log( 'allAvatars', allAvatars );
-
     // Récupération du chemin de l'avatar
     const imgAvatar = `${ AVATAR_URL }/${ userDetail.avatar?.imagePath }`;
-
-    console.log( 'userDetail', userDetail );
 
     // Mettre à jour le nom de l'utilisateur
     const handleEditName = async () => {
@@ -65,7 +70,6 @@ const Information = () => {
             // Vérification de la réponse
             if ( response.status === 200 ) {
                 dispatch( fetchUserDetail( userId ) );
-                setIsEditing( false ); // Ferme la popup
             }
         } catch ( error ) {
             console.error( "Erreur lors de la mise à jour du nom de l'utilisateur", error );
@@ -74,7 +78,6 @@ const Information = () => {
 
     // Mettre à jour l'avatar de l'utilisateur
     const handleEditAvatar = async ( ) => {
-        console.log( 'path', path );
         try {
             // Mise à jour par le patch
             axios.defaults.headers.patch[ 'Content-Type' ] = 'application/merge-patch+json';
@@ -96,94 +99,88 @@ const Information = () => {
     loading ? <PageLoader />
     :
     <div className='flex flex-col items-center justify-center w-full h-full' >
-        <div className='flex w-full ml-4' >
-            <div className='flex justify-start items-center' >
-                <Link to={`/account/${userId}`} >
-                    <RiArrowLeftSFill
-                        size={30}
-                        className='text-white bg-secondary-pink rounded-lg  h-10 w-10 cursor-pointer'
-                    />
-                </Link>
+        <div className='flex w-full justify-between' >
+            <div className='flex'>
+                <div className='flex justify-start items-center' >
+                    <Link
+                        to={`/account/${userId}`}
+                        onClick={ () => setIsEditingAvatar( false ) }
+                        className='ml-4'
+                    >
+                        <RiArrowLeftSFill
+                            size={30}
+                            className='text-white bg-secondary-pink rounded-lg h-10 w-10 cursor-pointer'
+                        />
+                    </Link>
+                </div>
+                <div className='flex justify-center items-center font-bold'>
+                    <h2 className='ml-10 text-xl text-primary pr-10' >
+                        Modification du profil
+                    </h2>
+                </div>
             </div>
-            <div className='flex w-full justify-center'>
-                <h2 className='m-8 text-5xl text-primary font-bold pr-10' >
-                    Modification du profil
-                </h2>
+            <div className='flex text-white justify-center items-center' >
+                <button
+                    onClick={ handleEditAvatar }
+                    className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 '
+                >
+                    Done
+                </button>
             </div>
-        </div>
+            </div>
         
-        <div className='flex flex-col items-center justify-center rounded-lg bg-primary w-2/3 h-full p-16 text-white mb-16' >
-            <div className='flex flex-col items-center justify-center mb-4 relative' >
+        <div className='flex flex-col rounded-lg w-full h-full mb-16' >
+            <div className='flex mt-8 justify-center' >
                 <img
                     src={ imgAvatar }
                     alt="Avatar"
-                    className='w-48 h-48 rounded-full'
-                />
-                <FaPen
-                    className='absolute top-2 right-2 bg-secondary-orange h-6 w-6 text-white rounded-sm p-1 cursor-pointer'
-                    onClick={() => {
-                        setPath( imgAvatar );
-                        setIsEditingAvatar( true );
-                    }}
+                    className='w-48 h-48 rounded-lg border-2 border-primary'
                 />
             </div>
-            <div className='flex flex-row items-center justify-center mb-4 '>
-                <div className='text-3xl font-bold' >
-                    { userDetail.username }
+            <div className='flex flex-row items-center justify-center '>
+                <div className='flex flex-row text-primary align-center mb-4' >
+                    <CustomInput
+                        state={ nickname }
+                        label={ 'Nom' }
+                        type={ 'text' }
+                        callable={( e ) => setNickname( e.target.value ) }
+                    />
                 </div>
-                <FaPen
-                    className='ml-2 bg-secondary-orange h-6 w-6 text-white rounded-sm p-1 cursor-pointer'
-                    onClick={ () => {
-                        setNickname( userDetail.username );
-                        setIsEditing( true );
-                    }}
-                />
             </div>
-            { isEditing &&
-            (
-                <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-                    <div className='flex flex-col relative w-full text-white sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary  border-2 border-secondary-orange' >
-                        <h2 className='text-lg font-bold mb-4' >
-                            Modifier le nom
-                        </h2>
-                        <div className='flex flex-row text-primary align-center' >
-                            <CustomInput
-                                state={ nickname }
-                                label={ 'Nom' }
-                                type={ 'text' }
-                                callable={( e ) => setNickname( e.target.value ) }
-                            />
+            <div className='w-full px-4'>
+                <div
+                    className={`flex justify-between items-center w-full bg-primary cursor-pointer text-white font-bold p-2 ${isEditingAvatar ? 'rounded-t-lg' : 'rounded-lg'} transition`}
+                    onClick={ () => { setIsEditingAvatar( !isEditingAvatar ); } }
+                >
+                    <div className='flex'>
+                        <div className='flex items-center justify-center mr-2' >
+                            <FaPlus size={10} />
                         </div>
-                        <div className='flex flex-col text-primary justify-center items-center' >
-                            <button
-                                onClick={ handleEditName }
-                                className='w-full bg-secondary-orange font-bold p-3 rounded-lg transition'
-                            >
-                                Sauvegarder
-                            </button>
-                            <button
-                                onClick={ () => setIsEditing( false ) }
-                                className='w-full bg-secondary-pink font-bold p-3 mt-2 rounded-lg transition'
-                            >
-                                Annuler
-                            </button>
+                        <div className='text-lg font-bold' >
+                            Modifier l'avatar
                         </div>
                     </div>
+                    { isEditingAvatar ?
+                        <FaChevronDown />
+                        : 
+                        <FaChevronRight />
+                    }
                 </div>
-            )}
+            </div>
             { isEditingAvatar &&
             (
-                <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-                    <div className='flex flex-col relative w-full text-white sm:w-2/3 lg:w-1/2 h-1/2 rounded-2xl justify-center items-center bg-primary  border-2 border-secondary-orange' >
-                        <h2 className='text-lg font-bold my-4' >
-                            Modifier l'avatar
-                        </h2>
+                <div className='flex items-center justify-center mx-4' >
+                    <div className='flex flex-col w-full text-white rounded-b-2xl justify-center items-center bg-primary' >
+                        
                         <div className="grid grid-cols-7 gap-5 p-5 grow place-content-center">
                             {allAvatars.map((image) => (
                                 <div
                                     key={image.id}
                                     className={`p-2 cursor-pointer ${isSelected === image.id ? 'bg-secondary-orange rounded-2xl' : ''}`}
-                                    onClick={() => { setIsSelected(image.id); setPath(image['@id']); }}>
+                                    onClick={() => {
+                                        setIsSelected( image.id );
+                                        setPath(image['@id']); 
+                                    }}>
                                     <img
                                         src={`${ AVATAR_URL }/${image.imagePath}`}
                                         alt={`Avatar ${image.id}`}
@@ -191,20 +188,7 @@ const Information = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className='flex flex-col text-primary justify-center items-center mb-4' >
-                            <button
-                                onClick={ handleEditAvatar }
-                                className='w-full bg-secondary-orange font-bold p-3 rounded-lg transition'
-                            >
-                                Sauvegarder
-                            </button>
-                            <button
-                                onClick={ () => setIsEditingAvatar( false ) }
-                                className='w-full bg-secondary-pink font-bold p-3 mt-2 rounded-lg transition'
-                            >
-                                Annuler
-                            </button>
-                        </div>
+                        
                     </div>
                 </div>
             )}
