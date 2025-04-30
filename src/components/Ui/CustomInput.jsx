@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Créer un composant d'input personnalisé
-const CustomInput = ( { state, label, type, callable, textColor = 'text-black' } ) => {
+const CustomInput = ( { state, label, type, callable, textColor = 'text-primary' } ) => {
 	
 	return (
 		<div className='mb-4'>

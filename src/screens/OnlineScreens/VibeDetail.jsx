@@ -30,7 +30,7 @@ const VibeDetail = () => {
 	const navigate = useNavigate();
 
 	// Récupération des détails de l'ambiance
-	useEffect(() => {
+	useEffect( () => {
 		dispatch( fetchVibeDetail( id ) );
 	}, [ dispatch, id ] );	
 	
@@ -106,7 +106,7 @@ const VibeDetail = () => {
 	}
 
   return (
-	loadingVibe ? <PageLoader />
+	loadingVibe && loadingRoom ? <PageLoader />
 	:
 	<div className='flex flex-col items-center justify-center mb-4' >        
 		<div className='flex w-full justify-between m-10' >
@@ -121,9 +121,9 @@ const VibeDetail = () => {
 							<VibeCard vibe={ vibeDetail } />
 						</div>
 						<div className='flex flex-col justify-center items-center' >
-							<div>Humeur : {vibeDetail.criteria.mood}</div>
-							<div>Stress : {vibeDetail.criteria.stress}</div>
-							<div>Tonus : {vibeDetail.criteria.tone}</div>
+							<div>Humeur : {vibeDetail?.criteria?.mood}</div>
+							<div>Stress : {vibeDetail?.criteria?.stress}</div>
+							<div>Tonus : {vibeDetail?.criteria?.tone}</div>
 						</div>
 					</div>
 					<div className='flex flex-col justify-start mr-4' >

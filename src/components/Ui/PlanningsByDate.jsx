@@ -34,17 +34,6 @@ const PlanningsByDate = ({ date, callable }) => {
 
     const dateObj = useMemo(() => new Date(date), [date]);
 
-    // Renvoie le nombre de jours de récurrence
-    const recurrenceNumber = (planning) => {
-        switch (planning.recurrence) {
-            case 'daily': return 1;
-            case 'weekly': return 7;
-            case 'monthly': return 30;
-            case 'none': return 0;
-            default: return -1; // à surveiller
-        }
-    };
-
     // Fonction utilitaire : formate une date au format YYYY-MM-DD
     const toLocalYYYYMMDD = (dateInput) => {
         const date = new Date(dateInput); // accepte un Date ou une string

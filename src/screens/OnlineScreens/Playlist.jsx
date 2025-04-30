@@ -42,7 +42,7 @@ const Playlist = () => {
             onClick={ handleClick }
             className={`flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-1 ${ isVisible ? 'rounded-t-lg' : 'rounded-lg' } hover:cursor-pointer`}
         >
-            <div className='flex w-full justify-between p-2'>
+            <div className='flex w-full justify-between'>
                 <div className='flex items-center'>
                     <FaPlus className='mr-2' />
                     <div className='flex items-center'>

@@ -18,6 +18,7 @@ import selectPlanningData from '../../store/planning/planningSelector';
 import PlanningsByDate from '../../components/Ui/PlanningsByDate';
 import PageLoader from '../../components/Loader/PageLoader';
 import { IoMdArrowDropleftCircle, IoMdArrowDroprightCircle } from 'react-icons/io';
+import VibeCard from '../../components/Card/VibeCard';
 
 // Affiche la page de planning
 const Planning = () => {
@@ -61,13 +62,13 @@ const Planning = () => {
 	const [ success, setSuccess ] = useState( null );
 
 	// Renvoie le nombre de jours de récurrence
-    const recurrenceNumber = (recurrence) => {
-        switch (recurrence) {
+    const recurrenceNumber = ( recurrence ) => {
+        switch ( recurrence ) {
             case 'daily': return 1;
             case 'weekly': return 7;
             case 'monthly': return 30;
             case 'none': return 0;
-            default: return -1; // à surveiller
+            default: return -1;
         }
     };
 
@@ -106,19 +107,19 @@ const Planning = () => {
 
 		if ( !allPlannings.length ) return;
 
-		const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-		const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+		const startOfMonth = new Date( currentMonth.getFullYear(), currentMonth.getMonth(), 1 );
+		const endOfMonth = new Date( currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0 );
 
 		const dates = new Set();
 
-		allPlannings.forEach((planning) => {
-			const startDate = new Date(planning.createdAt);
+		allPlannings.forEach( ( planning ) => {
+			const startDate = new Date( planning.createdAt );
 			const recurrencePlanning = planning.recurrence;
-			const nbRecurrence = recurrenceNumber(recurrencePlanning);
+			const nbRecurrence = recurrenceNumber( recurrencePlanning );
 
 			if ( nbRecurrence === 0 ) {
 				if ( startDate >= startOfMonth ) {
-					dates.add(startDate.toDateString());
+					dates.add( startDate.toDateString() );
 				}
 			}
 			else {
@@ -126,7 +127,7 @@ const Planning = () => {
 					if ( startDate >= startOfMonth && startDate <= endOfMonth ) {
 						dates.add(startDate.toDateString());
 					}
-					startDate.setDate(startDate.getDate() + nbRecurrence);
+					startDate.setDate(startDate.getDate() + nbRecurrence );
 				}
 			}			
 		});
@@ -138,7 +139,7 @@ const Planning = () => {
 	// Gestion de la sélection des rooms
 	const toggleRoomSelection = ( room ) => {
 		const roomId = room[ '@id' ];
-		if ( selectedRooms.includes( roomId )) {
+		if ( selectedRooms.includes( roomId ) ) {
 			setSelectedRooms( selectedRooms.filter(r => r !== roomId ) );
 		} else {
 			setSelectedRooms( [ ...selectedRooms, roomId ] );
@@ -146,13 +147,13 @@ const Planning = () => {
 	};
 
 	// Gestion de l'affichage du calendrier (un point se rajoute si la date est déjà occupée)
-    const tileContent = ({ date: d, view }) => {
+    const tileContent = ( { date: d, view } ) => {
 		if (view !== 'month') return null;
 	
 		const dateStr = d.toDateString();
 	
 		if (
-			dots.includes(dateStr)
+			dots.includes( dateStr )
 		) {
 			return <div className="w-1 h-1 bg-orange-400 rounded-full mx-auto mt-1" />;
 		}
@@ -191,16 +192,6 @@ const Planning = () => {
 			setAllDay( false );
 		}
 	}
-
-	// Fonction pour permettre de naviguer puis revenir à la page
-	const goToVibe = () => {
-        navigate( `/vibe`, {
-            state: {
-                from: location,
-                deviceId: null,
-            },
-        });
-    };
 
 	// Fonction pour réinitialiser les messages d'erreur et de succès
 	const resetMessage = () => {
@@ -290,8 +281,8 @@ const Planning = () => {
 							value={ date }
 							locale="fr-FR"
 							tileContent={ tileContent }
-							nextLabel={ <div className=' flex justify-center'> <IoMdArrowDroprightCircle size={20} /> </div> }
-							prevLabel={ <div className=' flex justify-center'> <IoMdArrowDropleftCircle size={20} /> </div>}
+							nextLabel={ <div className=' flex justify-center'> <IoMdArrowDroprightCircle size={ 20 } /> </div> }
+							prevLabel={ <div className=' flex justify-center'> <IoMdArrowDropleftCircle size={ 20 } /> </div>}
 							formatShortWeekday={( locale, date ) =>
 								date.toLocaleDateString( locale, { weekday: 'short' }).slice( 0, 3 )
 							}
@@ -301,7 +292,7 @@ const Planning = () => {
 					{ date &&
 						<PlanningsByDate
 							date={ date }
-							callable={ setIsLoading}
+							callable={ setIsLoading }
 						/>
 					}
               		<div className='w-full' >
@@ -319,7 +310,7 @@ const Planning = () => {
 						</div>
 						<div
 							onClick={ handleClick }
-							className={`flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-4 ${
+							className={`flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-1 ${
 								isVisible ?
 								'rounded-t-lg'
 								: 
@@ -327,9 +318,9 @@ const Planning = () => {
 								`}
 							>
 							<div className='flex justify-between w-full items-center gap-2' >
-								<div className='flex'>
-									<div className='flex items-center justify-center mr-2'>
-										<FaPlus size={10} />
+								<div className='flex' >
+									<div className='flex items-center justify-center mr-2' >
+										<FaPlus size={ 10 } />
 									</div>
 									<div>
 										Ajouter un évènement
@@ -355,7 +346,7 @@ const Planning = () => {
 												name="eventName"
 												id="eventName"
 												className='w-35 sm:w-50 bg-offwhite text-primary rounded py-2 px-3'
-												onChange={( e ) => { setEventName( e.target.value ) } }
+												onChange={ ( e ) => { setEventName( e.target.value ) } }
 											/>
 										</div>
 										<hr />
@@ -375,12 +366,8 @@ const Planning = () => {
 												name="createdAt"
 												id="createdAt"
 												onChange={ ( e ) => {
-														console.log( e.target.value );
 														setCreatedAt( e.target.value );
-														const day = new Date( e.target.value ).getDay();
-                										const dayName = daysOfWeek[day];
-														console.log( dayName );
-														setDayCreation( dayName );
+														setDayCreation( daysOfWeek[ new Date( e.target.value ).getDay() ] );
 													} 
 												}
 											/>
@@ -421,7 +408,7 @@ const Planning = () => {
 												name="recurrence"
 												id="recurrence"
 												className='bg-primary rounded py-2 px-3'
-												onChange={( e ) => { setRecurrence( e.target.value ) } }
+												onChange={  ( e ) => { setRecurrence( e.target.value ) } }
 											>
 												<option value="none" >
 													Aucune
@@ -435,7 +422,6 @@ const Planning = () => {
 											</select>
 										</div>
 										<hr />
-										{/* Lier à une ambiance */}
 										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer' >
 											<div 
 												onClick={ () => setLinkVibeOpen( !linkVibeOpen ) }
@@ -452,40 +438,25 @@ const Planning = () => {
 											</div>
 											{ linkVibeOpen &&
 											(
-												<div>
-													<div className='mt-2 pl-2 text-sm' >
-														<label
-															htmlFor="vibeSelect"
-															className='block mb-2 text-sm'
-														>
-																Choisir une ambiance
-														</label>
-														<select
-															id="vibeSelect"
-															value={ selectedVibe[ '@id' ] }
-															onChange={ ( e ) => setSelectedVibe( e.target.value ) }
-															className="w-full p-2 rounded bg-white text-primary border border-primary"
-														>
-															<option value="" >
-																-- Sélectionner --
-															</option>
+												<div className='flex items-center justify-center mx-4' >
+													<div className='flex flex-col w-full text-white rounded-b-2xl justify-center items-center' >                        
+														<div className="grid grid-cols-5 gap-5 p-5 grow place-content-center">
 															{ allVibesForUser.map( ( vibe, index ) => (
-																<option
-																	key={index}
-																	value={ vibe[ '@id' ] }
+																<div
+																	key={ index }
+																	className={ `p-2 cursor-pointer ${ selectedVibe === vibe[ '@id' ] ? 'bg-secondary-orange rounded-lg' : '' }` }
+																	onClick={ () => {
+																		setSelectedVibe( vibe[ '@id' ] );
+																	}}
 																>
-																	{ vibe.label }
-																</option>
+																	<VibeCard
+																		key={ index }
+																		vibe={ vibe.icon }
+																	/>
+																</div>
 															))}
-														</select>
+														</div>                        
 													</div>
-													<button
-														type="button"
-														className='mt-2 text-sm underline text-primary hover:text-secondary-orange transition'
-														onClick={ goToVibe }
-													>
-														Créer une nouvelle ambiance
-													</button>
 												</div>
 											)}
 										</div>
@@ -502,40 +473,38 @@ const Planning = () => {
 												}
 											</div>
 											{ linkRoomOpen && (
-												<div className='mt-2 pl-2 text-sm' >
-													{ allRooms.map( ( room, index ) => (
-														<div
-															key={index}
-															className='flex items-center gap-2 mb-1'
-														>
-															<input
-																type="checkbox"
-																id={ `room-${ index }` }
-																checked={ selectedRooms.includes( room[ '@id' ] ) }
-																onChange={ () => toggleRoomSelection( room ) }
-															/>
-															<label htmlFor={ `room-${ index }` } >
+												<div className='flex flex-col mt-2 p-2 text-sm'>
+													{allRooms.map( ( room, index ) => {
+														const isSelected = selectedRooms.includes( room[ '@id' ] );
+														return (
+															<button
+																type='button'
+																key={ index }
+																onClick={ () => toggleRoomSelection( room ) }
+																className={ `p-2 rounded-md mb-1 mr-2 font-bold ${ isSelected ? 'bg-secondary-orange text-white' : 'bg-primary text-white' }` }
+															>
 																{ room.label }
-															</label>
-														</div>
-													))}
-												</div>
+															</button>
+														);
+													})}
+											  </div>
+											  
 											)}
 										</div>
 
 										<div className='flex items-center justify-between p-4' >
 											<button
+												type='button'
+												className='bg-secondary-orange p-3 mt-2 rounded-lg transition'
+												onClick={ handleClick }
+											>
+												Annuler
+											</button>
+											<button
 												type='submit'
 												className='bg-secondary-orange font-bold p-3 rounded-lg transition'
 											>
 												Ajouter
-											</button>
-											<button
-												type='button'
-												className='bg-secondary-pink p-3 mt-2 rounded-lg transition'
-												onClick={ handleClick }
-											>
-												Annuler
 											</button>
 										</div>
 									</form>

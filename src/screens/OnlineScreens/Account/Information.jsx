@@ -170,8 +170,7 @@ const Information = () => {
             { isEditingAvatar &&
             (
                 <div className='flex items-center justify-center mx-4' >
-                    <div className='flex flex-col w-full text-white rounded-b-2xl justify-center items-center bg-primary' >
-                        
+                    <div className='flex flex-col w-full text-white rounded-b-2xl justify-center items-center bg-primary' >                        
                         <div className="grid grid-cols-7 gap-5 p-5 grow place-content-center">
                             {allAvatars.map((image) => (
                                 <div
@@ -184,11 +183,11 @@ const Information = () => {
                                     <img
                                         src={`${ AVATAR_URL }/${image.imagePath}`}
                                         alt={`Avatar ${image.id}`}
-                                        className="w-12 h-12 rounded-full" />
+                                        className="w-12 h-12 rounded-full"
+                                    />
                                 </div>
                             ))}
-                        </div>
-                        
+                        </div>                        
                     </div>
                 </div>
             )}

@@ -8,7 +8,7 @@ const SongDropdown = ( { isVisible, toggleDropdown, songs, addSongToPlaylist, pl
     return (
         <div className='w-full p-4 mb-6' >
             <div
-                className={`flex justify-between items-center w-full bg-primary cursor-pointer text-white p-2 ${isVisible ? 'rounded-t-lg' : 'rounded-lg'} transition`}
+                className={`flex justify-between items-center w-full bg-primary cursor-pointer text-white px-4 py-1 ${isVisible ? 'rounded-t-lg' : 'rounded-lg'} transition`}
                 onClick={ toggleDropdown }
             >
                 <div className='flex items-center'>

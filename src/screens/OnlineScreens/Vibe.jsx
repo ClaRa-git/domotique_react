@@ -5,7 +5,7 @@ import selectVibeData from '../../store/vibe/vibeSelector';
 import { fetchAllVibesForUser } from '../../store/vibe/vibeSlice';
 import PageLoader from '../../components/Loader/PageLoader';
 import VibeCard from '../../components/Card/VibeCard';
-import { FaPlus } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext';
 import PopupNewVibe from '../../components/Popup/PopupNewVibe';
@@ -31,7 +31,7 @@ const Vibe = () => {
 
     // Fonction pour gérer le clic sur le bouton "Créer une nouvelle ambiance"
     const handleClick = () => {
-        setIsVisible( true );
+        setIsVisible( !isVisible );
     }
 
     return (
@@ -41,13 +41,30 @@ const Vibe = () => {
             <MenuBar />
             <div
                 onClick={ handleClick }
-                className='flex flex-row justify-between bg-primary text-white m-4 px-4 py-1 rounded-lg cursor-pointer'
+                className={`flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-1 ${ isVisible ? 'rounded-t-lg' : 'rounded-lg' } hover:cursor-pointer`}
             >
-                <p>
-                    Créer une nouvelle vibe...
-                </p>
-                <FaPlus className='mt-1'/>
+                <div className='flex w-full justify-between'>
+                    <div className='flex items-center'>
+                        <FaPlus className='mr-2' />
+                        <div className='flex items-center'>
+                            Créer une nouvelle vibe
+                        </div>
+                    </div>            
+                    <div className='flex items-center'>
+                        { isVisible ?
+                            <FaChevronDown />
+                            :
+                            <FaChevronRight />
+                        }
+                    </div>
+                </div>
             </div>
+            { isVisible && 
+                <PopupNewVibe
+                    callable={ () => setIsVisible( false) }
+                    userId={ userId }
+                />
+            }
             <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 mb-16' >
                 { allVibesForUser && allVibesForUser.map( ( vibe, index ) => (
                     <Link
@@ -60,12 +77,6 @@ const Vibe = () => {
                     </Link>
                 ))}
             </div>
-            { isVisible && 
-                <PopupNewVibe
-                    callable={ () => setIsVisible( false) }
-                    userId={ userId }
-                />
-            }
         </div>
     )
 }

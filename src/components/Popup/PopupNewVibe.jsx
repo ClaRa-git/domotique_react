@@ -9,6 +9,7 @@ import selectUserData from '../../store/user/userSelector';
 import { API_URL, ICON_URL } from '../../constants/apiConstant';
 import axios from 'axios';
 import { fetchAllVibesForUser } from '../../store/vibe/vibeSlice';
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
 const PopupNewVibe = ( { callable, userId } ) => {
 
@@ -117,9 +118,12 @@ const PopupNewVibe = ( { callable, userId } ) => {
     }
 
   return (
-    <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-        <div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-2/3 p-4 rounded-lg bg-primary text-white' >
-            <form onSubmit={ handleSubmit } >
+    <div className='flex items-center w-full justify-center px-4' >
+        <div className='flex flex-col relative w-full rounded-b-2xl justify-center items-center bg-primary' >
+            <form
+                onSubmit={ handleSubmit }
+                className='flex flex-col justify-center items-center w-full p-4 text-white'
+            >
                 <h2 className='text-2xl text-center font-bold mb-4 flex-shrink-0' >
                     Créer une ambiance
                 </h2>
@@ -131,46 +135,40 @@ const PopupNewVibe = ( { callable, userId } ) => {
                     </div>
                 }
                 <div className='flex-1 overflow-y-auto w-full flex flex-col items-center' >
-                    <div className='flex justify-center w-full text-primary'>
+                    <div className='flex justify-center w-full'>
                         <CustomInput
                             state={ label }
                             label={ 'Nom de l\'ambiance' }
                             type={ 'text' }
                             callable={ ( e ) => setLabel( e.target.value ) }
+                            textColor='text-white'
                         />
                     </div>
                     <div
                         onClick={ () => { openMenuId == 1 ? setOpenMenuId( 0 ) : setOpenMenuId( 1 ) }}
-                        className={ `flex flex-row justify-between items-center w-full p-1 cursor-pointer bg-white text-primary ${ openMenuId == 1 ? 'rounded-t-lg' : 'rounded-lg' }` }
+                        className={ `flex flex-row justify-between items-center w-full p-1 cursor-pointer bg-offwhite text-primary ${ openMenuId == 1 ? 'rounded-t-lg' : 'rounded-lg' }` }
                     >
                         <h2 className='text-lg font-bold w-full px-2' >
                             Critères de l'ambiance
                         </h2>
-                        { openMenuId === 1 ? (
-                            <RiArrowDownSFill
-                                size={ 24 }
-                                className='text-secondary-pink'
-                            />
-                        )
-                        :
-                        (
-                            <RiArrowRightSFill
-                                size={ 24 }
-                                className='text-secondary-pink'
-                            />
-                        )}
+                        { openMenuId === 1 ?
+                            <FaChevronDown />
+                            :
+                            <FaChevronRight />
+                        }
                     </div>
                     { openMenuId === 1 &&
-                        <div className='flex flex-col justify-center items-center pt-4 border-2 border-white rounded-b-lg w-full'>
+                        <div className='flex flex-col justify-center items-center pt-4 bg-offwhite rounded-b-lg w-full text-primary'>
                             <div className='flex flex-row align-center' >
                                 <CustomInput
                                     state={ mood }
                                     label={ 'Humeur' }
                                     type={'range' }
                                     callable={ ( e ) => setMood( parseInt( e.target.value ) ) }
+                                    textColor='text-primary'
                                 />
                                 <div className='flex items-center justify-center' >
-                                    <p className='text-white font-bold mb-2 mt-4 ml-4 w-10' >
+                                    <p className='font-bold mb-2 mt-4 ml-4 w-10' >
                                         { mood }
                                     </p>
                                 </div>
@@ -183,7 +181,7 @@ const PopupNewVibe = ( { callable, userId } ) => {
                                     callable={ ( e ) => setStress( parseInt( e.target.value ) ) }
                                 />
                                 <div className='flex items-center justify-center' >
-                                    <p className='text-white font-bold mb-2 mt-4 ml-4 w-10' >
+                                    <p className='font-bold mb-2 mt-4 ml-4 w-10' >
                                         { stress }
                                     </p>
                                 </div>
@@ -196,7 +194,7 @@ const PopupNewVibe = ( { callable, userId } ) => {
                                     callable={ ( e ) => setTonus( parseInt( e.target.value ) ) }
                                 />
                                 <div className='flex items-center justify-center' >
-                                    <p className='text-white font-bold mb-2 mt-4 ml-4 w-10' >
+                                    <p className='font-bold mb-2 mt-4 ml-4 w-10' >
                                         { tonus }
                                     </p>
                                 </div>
@@ -205,27 +203,19 @@ const PopupNewVibe = ( { callable, userId } ) => {
                     }
                     <div
                         onClick={ () => { openMenuId == 2 ? setOpenMenuId( 0 ) : setOpenMenuId( 2 ) }}
-                        className={ `flex flex-row justify-between items-center w-full p-1 cursor-pointer mt-4 bg-white text-primary ${ openMenuId == 2 ? 'rounded-t-lg' : 'rounded-lg' }` }
+                        className={ `flex flex-row justify-between items-center w-full p-1 cursor-pointer mt-4 bg-offwhite text-primary ${ openMenuId == 2 ? 'rounded-t-lg' : 'rounded-lg' }` }
                     >
                     <h2 className='text-lg font-bold w-full px-2' >
                         Playlists
                     </h2>
-                    {openMenuId === 2 ? (
-                        <RiArrowDownSFill
-                            size={ 24 }
-                            className='text-secondary-pink'
-                        />
-                    )
-                    :
-                    (
-                        <RiArrowRightSFill
-                            size={ 24 }
-                            className='text-secondary-pink'
-                        />
-                    )}
+                    {openMenuId === 2 ? 
+                        <FaChevronDown />
+                        :
+                        <FaChevronRight />
+                    }
                     </div>
                     { openMenuId === 2 &&
-                        <div className='flex flex-col justify-center items-center p-2 border-2 border-white rounded-b-lg w-full'>
+                        <div className='flex flex-col justify-center items-center p-2 rounded-b-lg w-full bg-offwhite text-primary'>
                             { userPlaylists && userPlaylists.map( ( playlist, index ) => (
                                 <div
                                     key={ index }
@@ -240,7 +230,7 @@ const PopupNewVibe = ( { callable, userId } ) => {
                                             }
                                         }
                                     }
-                                    className={`flex flex-row justify-between items-center w-full m-1 p-1 cursor-pointer text-primary rounded-lg ${ isSelectedPlaylist === playlist.id ? 'bg-secondary-orange' : 'bg-white' }`}
+                                    className={`flex flex-row justify-between items-center w-full m-1 p-1 cursor-pointer text-white rounded-lg ${ isSelectedPlaylist === playlist.id ? 'bg-secondary-orange' : 'bg-primary' }`}
                                 >
                                     <h2 className='text-lg font-bold w-full px-2' >
                                         { playlist.title }
@@ -251,27 +241,19 @@ const PopupNewVibe = ( { callable, userId } ) => {
                     }
                     <div
                         onClick={ () => { openMenuId == 3 ? setOpenMenuId( 0 ) : setOpenMenuId( 3 ) }}
-                        className={ `flex flex-row justify-between items-center w-full p-1 cursor-pointer mt-4 bg-white text-primary ${ openMenuId == 3 ? 'rounded-t-lg' : 'rounded-lg' }` }
+                        className={ `flex flex-row justify-between items-center w-full p-1 cursor-pointer mt-4 bg-offwhite text-primary ${ openMenuId == 3 ? 'rounded-t-lg' : 'rounded-lg' }` }
                     >
                         <h2 className='text-lg font-bold w-full px-2' >
                             Icône
                         </h2>
-                        { openMenuId === 3 ? (
-                            <RiArrowDownSFill
-                                size={ 24 }
-                                className='text-secondary-pink'
-                            />
-                        )
-                        :
-                        (
-                            <RiArrowRightSFill
-                                size={ 24 }
-                                className='text-secondary-pink'
-                            />
-                        )}
+                        { openMenuId === 3 ? 
+                            <FaChevronDown />
+                            :
+                            <FaChevronRight />                        
+                        }
                     </div>
                     { openMenuId === 3 &&
-                        <div className='grid grid-cols-5 gap-5 p-4 place-content-center w-full border-2 border-white rounded-b-lg'>
+                        <div className='grid grid-cols-5 gap-5 p-4 place-content-center w-full rounded-b-lg bg-offwhite'>
                             {allIcons.map((icon) => (
                                 <div
                                     key={icon.id}
@@ -286,26 +268,26 @@ const PopupNewVibe = ( { callable, userId } ) => {
                         </div>
                     }
                 </div>
-                <div className='flex justify-center mt-4' >
+                <div className='flex justify-center w-full mt-4' >
                     { isLoading ?
                     (
                     <ButtonLoader />
                     )
                     :
                     (
-                        <div>
-                            <button
-                                type='submit'
-                                className='w-full bg-secondary-orange font-bold py-3 rounded-lg transition'
-                            >
-                                Créer
-                            </button>
+                        <div className='flex w-full justify-between text-white'>
                             <button
                                 type='button'
                                 onClick={ callable }
-                                className='w-full bg-secondary-pink font-bold py-3 mt-2 rounded-lg transition'
+                                className='bg-secondary-orange px-4 py-2 rounded-lg transition'
                             >
                                 Annuler
+                            </button>
+                            <button
+                                type='submit'
+                                className='bg-secondary-orange px-4 py-2 font-bold rounded-lg transition'
+                            >
+                                Ajouter
                             </button>
                         </div>								
                     )}
