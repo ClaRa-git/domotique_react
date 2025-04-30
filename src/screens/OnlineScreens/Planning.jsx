@@ -162,6 +162,22 @@ const Planning = () => {
 	// Gestion du click pour la visibilité
     const handleClick = () => {
 		setIsVisible( !isVisible );
+		if ( isVisible === false ) {
+			setAllDay( false );
+			setRecurrence( 'none' );
+			setEventName( '' );
+			setDateStart( new Date() );
+			setDateEnd( new Date() );
+			setHourStart( '' );
+			setHourEnd( '' );
+			setSelectedVibe( '' );
+			setSelectedRooms( [] );
+			setSwitchOn( false );
+			setLinkVibeOpen( false );
+			setLinkRoomOpen( false );
+			setError( null );
+			setSuccess( null );
+		} 
     }
 
 	// Gestion de l'affichage du switch pour le jour entier
@@ -197,21 +213,14 @@ const Planning = () => {
 		// Empêche le comportement par défaut du formulaire
 		e.preventDefault();
 
-		if ( allDay ) {
-			// l'heure de début est à 00:00
-			setHourStart( '00:00' );
-			// l'heure de fin est à 23:59
-			setHourEnd( '23:59' );
-		}
-
 		try {
 			// Récupération des données du formulaire
 			const data = {
 				label: eventName,
 				dateStart: dateStart,
 				dateEnd: dateEnd,
-				hourStart: hourStart,
-				hourEnd: hourEnd,
+				hourStart: !allDay ? hourStart : '00:00',
+				hourEnd: !allDay ? hourEnd : '23:59',
 				recurrence: recurrence,
 				vibe: selectedVibe,
 				rooms: selectedRooms,
@@ -277,16 +286,6 @@ const Planning = () => {
     return (
         <div className='flex flex-col justify-center mb-16' >
           	<MenuBar />
-			{ success && 
-				<p className='text-green-500 text-center' >
-					{ success }
-				</p>
-			}
-			{ error && 
-				<p className='text-red-500 text-center' >
-					{ error }
-				</p>
-			}
           	<div>
             	<div className='flex flex-col justify-center items-center mt-4' >
               		<div className='bg-[#eee4df] p-4 rounded-xl w-fit shadow-md' >
@@ -347,6 +346,16 @@ const Planning = () => {
 									</div>
 								</Link>
 							))}
+							{ success && 
+								<p className='text-green-500 text-center' >
+									{ success }
+								</p>
+							}
+							{ error && 
+								<p className='text-red-500 text-center' >
+									{ error }
+								</p>
+							}
 						</div>
 						<div
 							onClick={ handleClick }
@@ -412,29 +421,6 @@ const Planning = () => {
 											</div>
 										}
 										<hr />
-										<div className='flex justify-between m-4' >
-											<label htmlFor="dateStart" >
-												Date de début
-											</label>
-											<input
-												type="date"
-												name="dateStart"
-												id="dateStart"
-												onChange={ ( e ) => { setDateStart( e.target.value ) } }
-											/>
-										</div>
-										<div className='flex justify-between m-4' >
-											<label htmlFor="dateEnd">
-												Date de fin
-											</label>
-											<input
-												type="date"
-												name="dateEnd"
-												id="dateEnd"
-												onChange={ ( e ) => { setDateEnd( e.target.value ) } }
-											/>
-										</div>
-										<hr />
 										<div className='flex justify-between items-center m-4' >
 											<label htmlFor="recurrence" >
 												Récurrence
@@ -459,6 +445,51 @@ const Planning = () => {
 												</option>
 											</select>
 										</div>
+										<hr />
+										{ recurrence !== 'none' ?
+											<div>
+												<div className='flex justify-between m-4' >
+													<label htmlFor="dateStart" >
+														Date de début
+													</label>
+													<input
+														type="date"
+														name="dateStart"
+														id="dateStart"
+														onChange={ ( e ) => { setDateStart( e.target.value ) } }
+													/>
+												</div>
+												<div className='flex justify-between m-4' >
+													<label htmlFor="dateEnd">
+														Date de fin
+													</label>
+													<input
+														type="date"
+														name="dateEnd"
+														id="dateEnd"
+														onChange={ ( e ) => { setDateEnd( e.target.value ) } }
+													/>
+												</div>
+											</div>
+											:
+											<div>
+												<div className='flex justify-between m-4' >
+													<label htmlFor="dateStart" >
+														Date de l'évènement
+													</label>
+													<input
+														type="date"
+														name="dateStart"
+														id="dateStart"
+														onChange={ ( e ) => {
+															setDateStart( e.target.value );
+															setDateEnd( e.target.value);
+														}}
+													/>
+												</div>
+											</div>
+										}
+										<hr />
 										{/* Lier à une ambiance */}
 										<div className='bg-offwhite text-primary mt-4 mx-2 px-4 py-2 rounded-lg cursor-pointer' >
 											<div 
@@ -557,6 +588,7 @@ const Planning = () => {
 											<button
 												type='button'
 												className='bg-secondary-pink p-3 mt-2 rounded-lg transition'
+												onClick={ handleClick }
 											>
 												Annuler
 											</button>
