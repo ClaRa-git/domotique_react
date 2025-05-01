@@ -16,13 +16,13 @@ const VibeCard = ( { vibe }  ) => {
 				<div className='flex justify-center w-24 h-20 bg-[#E8E0DB] rounded-t-full rounded-b-xl shadow-md mx-auto border-t-1 border-x-1 border-primary' >
 					<img
 						src={ imgIcon }
-						alt={ `Icon ${ vibe.icon }` }
-						className='w-16 h-16 mb-2 mt-4'
+						alt={ `Icon ${ vibe?.icon }` }
+						className='w-16 h-16 mb-3 mt-3'
 					/>
 				</div>
 				<div className='flex justify-center w-24 h-10 bg-offwhite text-primary rounded-b-3xl shadow-md border-b-1 border-x-1 border-primary mx-auto' >
 					<p className='font-bold mt-2' >
-						{ vibe.label }
+						{ vibe?.label }
 					</p>
 				</div>            
 			</div>

@@ -1,16 +1,23 @@
 import React from 'react'
 import SliderInterface from './SliderInterface'; // <-- importe le vrai composant
+import ColorInterface from './ColorInterface';
+import SwitchInterface from './SwitchInterface';
 
 // Component pour afficher l'interface personnalisée
-const SelectInterface = ( { interfaceFeature } ) => {
+const SelectInterface = ( { interfaceFeature, onChange } ) => {
 
     // Récupération des données pour la création de l'interface
     const label = interfaceFeature.label;
-    const unit = interfaceFeature?.unit?.symbol ?? '';
+    const valeur = interfaceFeature.value;
+    const unite = interfaceFeature?.unit ?? '';
+    const mini = interfaceFeature?.min ?? 0;
+    const maxi = interfaceFeature?.max ?? 100;
 
     // Liste des interfaces personnalisées (temporaire)
     const interfaces = {
         "Luminosité": SliderInterface,
+        "Couleur": ColorInterface,
+        "On/Off": SwitchInterface,
     };
 
     // Création du nom de l'interface
@@ -21,7 +28,13 @@ const SelectInterface = ( { interfaceFeature } ) => {
         return <div>Interface non trouvée</div>;
     }
 
-    return <CustomInterface label={ label } min={ 0 } max={ 100 } unit={ unit } />;
+    return <CustomInterface
+                label={ label }
+                valeur={ valeur }
+                mini={ mini }
+                maxi={ maxi }
+                unite={ unite }
+                onChange={ onChange } />;
 };
 
 export default SelectInterface;

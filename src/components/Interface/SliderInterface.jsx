@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import CustomInput from '../Ui/CustomInput';
+import { Box, Slider, Stack } from '@mui/material';
 
 /// Composant SliderInterface
-const SliderInterface = ( { label = "Valeur", min = 0, max = 100, step = 1, unit = "", onChange } ) => {
+const SliderInterface = ( { label = "Valeur", valeur = "", mini = 0, maxi = 255, pas = 1, unite = "", onChange } ) => {
 
     // Valeur par défaut du slider
-    const [ value, setValue ] = useState( min );
+    const [ value, setValue ] = useState( Number ( valeur ) );
 
     // Fonction pour gérer le changement de valeur du slider
     const handleChange = ( e ) => {
@@ -15,20 +15,30 @@ const SliderInterface = ( { label = "Valeur", min = 0, max = 100, step = 1, unit
     };
 
     return (
-        <div className='flex items-center' >            
-            <CustomInput
-                state={ value }
-                label={ label }
-                type={ 'range' }
-                callable={ ( e ) => setValue( e.target.value ) }
-            />
-            <div className='flex ml-2 mt-2 justify-center font-bold' >                
-                <div className='w-8 text-center' >
-                    {value}
-                </div>
-                <div className='w-5 ml-1' >
-                    { unit }
-            '</div>
+        <div className='flex w-full justify-center items-center' >
+            <div className='w-8 text-center mr-4' >
+                { mini }
+            </div>
+            <Box sx={ { width: 500 } } >
+                <Stack
+                    spacing={ 2 }
+                    direction="row"
+                    sx={{ alignItems: 'center' }}
+                >
+                    <Slider
+                        aria-label={ label }
+                        min={ mini }
+                        max={ maxi }
+                        step={ pas }
+                        unit={ unite }
+                        value={ value }
+                        onChange={ handleChange }
+                        valueLabelDisplay="auto"
+                    />
+                </Stack>
+            </Box>
+            <div className='w-8 text-center ml-4' >
+                { maxi }
             </div>
         </div>
     );
