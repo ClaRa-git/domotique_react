@@ -10,6 +10,7 @@ import { FaRegUser } from 'react-icons/fa';
 import { LuPlay } from 'react-icons/lu';
 import { GoLock } from 'react-icons/go';
 import { USER_INFOS } from '../../../constants/appConstant';
+import PageLoader from '../../../components/Loader/PageLoader';
 
 // Affiche le component pour déconnexion
 const Logout = () => {
@@ -29,6 +30,46 @@ const Logout = () => {
 
 	return (
 		<div className='flex flex-col items-start justify-start' >
+			<button
+				onClick={ () => {
+					const confirmLogout = window.confirm( 'Voulez-vous vraiment vous déconnecter ?' );
+					if ( confirmLogout ) handleLogout();
+				}}
+				className='flex bg-secondary-orange text-white rounded-lg p-2 items-center justify-center'
+			>
+				<FiLogOut className='w-6 h-6 mr-2' />
+				<p>
+					Log out
+				</p>
+			</button>
+		</div>
+	)
+}
+
+// Affiche le component de l'utilisateur connecté
+const Account = () => {
+
+	// Récupération de l'utilisateur connecté dans le store
+	const params = useParams();
+	const { id } = params;
+
+	// Récupération du dispatch
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch( fetchUserDetail( id ) );
+	}, [ dispatch, id ] );
+
+	const { loading, userDetail } = useSelector( selectUserData );
+
+	// Récupération de l'utilisateur connecté dans le localStorage
+	// const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
+	//const [ username ] = useState( user.username );
+
+	return ( loading ? <PageLoader />
+		:
+		<div>
+			<HelloUser username={ userDetail.username} />
 			<div className='flex flex-col items-start justify-start w-full mb-4' >
 				<Link
 					to='/account/informations'
@@ -52,7 +93,9 @@ const Logout = () => {
 						/>
 					</div>
 				</Link>
-				<hr className='w-full border-t border-gray-500' />
+				<div className='flex w-full px-4' >
+					<hr className='w-full border-t border-gray-500' />
+				</div>
 			</div>
 			<div className='flex flex-col items-start justify-start w-full mb-4' >
 				<div className='flex w-full justify-between mb-4'>
@@ -78,36 +121,6 @@ const Logout = () => {
 					</div>
 				</div>
 			</div>
-
-			<div>
-				<button
-					onClick={ () => {
-						const confirmLogout = window.confirm( 'Voulez-vous vraiment vous déconnecter ?' );
-						if ( confirmLogout ) handleLogout();
-					}}
-					className='flex bg-secondary-orange text-white rounded-lg p-2 items-center justify-center'
-				>
-					<FiLogOut className='w-6 h-6 mr-2' />
-					<p>
-						Log out
-					</p>
-				</button>
-			</div>
-		</div>
-	)
-}
-
-// Affiche le component de l'utilisateur connecté
-const Account = () => {
-
-	// Récupération de l'utilisateur connecté dans le localStorage
-	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
-
-	const [ username ] = useState( user.username );
-
-	return (
-		<div>
-			<HelloUser username={ username } />
 			<div className='m-5' >
 				<Logout />
 			</div>

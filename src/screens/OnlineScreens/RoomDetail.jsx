@@ -47,6 +47,8 @@ const RoomDetail = () => {
 
     const { loadingRoom, roomDetail } = useSelector( selectRoomData );
 
+    console.log( "RoomDetail", roomDetail );
+
     // Effet pour récupérer les ambiances de l'utilisateur
     useEffect( () => {
         dispatch(fetchAllVibesForUser( userId ) );

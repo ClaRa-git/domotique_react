@@ -56,4 +56,16 @@ export const fetchDefaultSettingsForDevices = () => async (dispatch) => {
     }
 }
 
+export const fetchDeviceDetail = (deviceId) => async (dispatch) => {
+    try {
+        dispatch(setLoadingDevice(true));
+        const response = await axios.get(`${API_URL}/devices/${deviceId}`);
+        dispatch(setDeviceDetail(response.data));
+    } catch (error) {
+        console.log(`Erreur lors de la récupération des appareils : ${error}`);
+    } finally {
+        dispatch(setLoadingDevice(false));
+    }
+}
+
 export default deviceSlice.reducer;

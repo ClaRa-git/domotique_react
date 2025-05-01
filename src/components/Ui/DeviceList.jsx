@@ -1,12 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FaPlus, FaRegTrashAlt } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight, FaPlus, FaRegTrashAlt } from 'react-icons/fa';
 import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { API_URL } from '../../constants/apiConstant';
 import { FaGear } from 'react-icons/fa6';
 import selectDeviceData from '../../store/device/deviceSelector';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDefaultSettingsForDevices } from '../../store/device/deviceSlice';
+import VibeCard from '../Card/VibeCard';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 // Affiche la liste des appareils
 const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser, onDeviceRemoved, refreshVibes } ) => {
@@ -18,6 +20,12 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
 
     // Récupération de dispatch
     const dispatch = useDispatch();
+
+    // Récupération de location
+    const location = useLocation();
+
+    // Récupération de navigate
+    const navigate = useNavigate();
 
     // Affiche la visibilité des réglages
     const [ showSettings, setShowSettings ] = useState( false );
@@ -156,6 +164,17 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
 		}, 3000 )
 	}
 
+    // Fonction pour naviguer vers la page de création d'ambiance
+    const goToSettings = ( vibeId, deviceId, roomId ) => {
+        navigate( `/setting?vibeId=${vibeId}&deviceId=${deviceId}`, {
+            state: {
+                from: location,
+                roomId: roomId,
+            },
+        });
+    };
+
+
     return Object.entries( groupedDevices ).map( ( [ type, devices ] ) => (
         <div
             key={ type }
@@ -190,84 +209,37 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
                                         onClick={ () => deleteFromRoom( device.id ) }
                                     />
                                     { openMenuId === device.id ? 
-                                        <RiArrowDownSFill
-                                            size={ 24 }
-                                            className='text-secondary-pink'
-                                        /> 
-                                        : 
-                                        <RiArrowRightSFill
-                                            size={ 24 }
-                                            className='text-secondary-pink'
-                                        />
+                                        <FaChevronDown />
+                                        :
+                                        <FaChevronRight />
                                     }
                                 </div>
                             </div>
                             { openMenuId === device.id && (
-                                <ul className='bg-gray-50 p-4 rounded-lg mb-2 ml-4' >
-                                    <p className='font-semibold mb-2' >
-                                        Vibes :
-                                    </p>
-                                    {allVibesForUser.length > 0 ?
-                                    (
-                                        allVibesForUser.map((vibe, index) => {
-                                            console.log("vibe", vibe)
-
-                                            // On récupère les settings du device
-                                            const deviceSettings = vibe.settings.filter(setting => setting.device.id === device.id);
-
-                                            return (
-                                                <li key={index} className='border-2 rounded-lg p-2 mb-2' >
-                                                    <div
-                                                        onClick={() => setShowSettings(prev => prev === vibe.id ? null : vibe.id)}
-                                                        className='cursor-pointer text-sm font-semibold'
-                                                    >
-                                                        {vibe.label}
-                                                    </div>
-
-                                                    {showSettings === vibe.id && (
-                                                        console.log("viiiibe", vibe),
-                                                        <div className='ml-2 mt-2' >
-                                                            {deviceSettings.length > 0 ?
-                                                            (
-                                                                deviceSettings.map((setting, i) => (
-                                                                    <div
-                                                                        className='flex items-center justify-between text-xs text-gray-600 mb-1'
-                                                                        key={i}
-                                                                    >
-                                                                        <span>
-                                                                            - {setting.feature.label} : {setting.value} {setting.feature.unit?.symbol}
-                                                                        </span>
-                                                                        <FaGear className='ml-2' />
-                                                                    </div>
-                                                                ))
-                                                            )
-                                                            :
-                                                            (
-                                                                <div>
-                                                                    <p className='text-xs text-gray-400 italic' >
-                                                                        Aucun réglage
-                                                                    </p>
-                                                                    <div className='flex items-center text-xs text-gray-600 mt-2' >
-                                                                        Associer à cette vibe
-                                                                        <FaPlus
-                                                                            className='ml-2 cursor-pointer'
-                                                                            onClick={() => handleAddVibe(device.id, vibe.id)}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </li>
-                                            );
-                                        })
-                                    ) : (
-                                        <li className='text-sm text-gray-500' >
-                                            Aucune vibe
-                                        </li>
-                                    )}
-
-                                </ul>
+                                <div className='flex items-center justify-center mx-4' >
+                                    <div className='flex flex-col w-full bg-primary text-white rounded-2xl justify-center items-center' >  
+                                        <div className='flex w-full justify-start items-center py-2 pl-4'>
+                                            Liste des vibes
+                                        </div>  
+                                        <div className='w-full p-4'>
+                                            <div className='w-full '>
+                                                <hr />
+                                            </div>
+                                        </div>        
+                                        <div className="grid grid-cols-5 gap-5 p-5 grow place-content-center">
+                                            { allVibesForUser.map( ( vibe, index ) => (
+                                                <div
+                                                    key={ index }
+                                                    onClick={ () => goToSettings( vibe.id, device.id ) }
+                                                >
+                                                    <VibeCard
+                                                        vibe={ vibe }
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>                        
+                                    </div>
+                                </div>
                             )}
                         </li>
                         <hr className='border-t border-gray-300 my-2' />

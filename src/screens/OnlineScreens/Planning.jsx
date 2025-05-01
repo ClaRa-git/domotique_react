@@ -451,7 +451,7 @@ const Planning = () => {
 																>
 																	<VibeCard
 																		key={ index }
-																		vibe={ vibe.icon }
+																		vibe={ vibe }
 																	/>
 																</div>
 															))}

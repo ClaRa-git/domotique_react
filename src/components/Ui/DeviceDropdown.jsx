@@ -51,7 +51,7 @@ const DeviceDropdown = ( { isVisible, toggleDropdown, devices, showDevices, room
                     onClick={ toggleDropdown }
                     className={`flex flex-row justify-between bg-primary text-white px-4 py-1 cursor-pointer ${ isVisible ? 'rounded-t-lg' : 'rounded-lg' }` }
                 >
-                    <div className='flex w-full justify-between p-2'>
+                    <div className='flex w-full justify-between'>
                         <div className='flex items-center'>
                             <FaPlus className='mr-2' />
                             <div className='flex items-center'>
@@ -69,7 +69,7 @@ const DeviceDropdown = ( { isVisible, toggleDropdown, devices, showDevices, room
                 </div>
             }
             { isVisible && (
-                <ul className='bg-primary px-4 pb-4 mb-2 rounded-b-lg' >
+                <ul className='bg-primary px-4 py-2 rounded-b-lg' >
                     { devices.length > 0 ?
                     (
                         devices.map( ( device ) => (
