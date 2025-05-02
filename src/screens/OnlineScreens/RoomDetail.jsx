@@ -12,7 +12,6 @@ import { fetchDevicesWithoutRoom } from '../../store/device/deviceSlice';
 import selectDeviceData from '../../store/device/deviceSelector';
 import DeviceDropdown from '../../components/Ui/DeviceDropdown';
 import RoomDetailTopbar from '../../components/Ui/RoomDetailTopbar';
-import VibeCard from '../../components/Card/VibeCard';
 
 // Affichage des détails d'une pièce
 const RoomDetail = () => {
@@ -44,8 +43,6 @@ const RoomDetail = () => {
     }, [ dispatch, id ] );
 
     const { loadingRoom, roomDetail } = useSelector( selectRoomData );
-
-    console.log( "RoomDetail", roomDetail );
 
     // Effet pour récupérer les ambiances de l'utilisateur
     useEffect( () => {
@@ -112,6 +109,7 @@ const RoomDetail = () => {
                         onDeviceAdded={refreshRoomData}
                     />
                     <DeviceList
+                        roomId={ id }
                         groupedDevices={ groupedDevices }
                         setGroupedDevices={ setGroupedDevices }
                         openMenuId={ openMenuId }

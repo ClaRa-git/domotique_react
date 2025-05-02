@@ -1,45 +1,22 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { FaChevronDown, FaChevronRight, FaRegTrashAlt } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaChevronDown, FaChevronRight, FaPlus, FaRegTrashAlt } from 'react-icons/fa';
 import { API_URL } from '../../constants/apiConstant';
-import selectDeviceData from '../../store/device/deviceSelector';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchDefaultSettingsForDevices } from '../../store/device/deviceSlice';
 import VibeCard from '../Card/VibeCard';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // Affiche la liste des appareils
-const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser, onDeviceRemoved, refreshVibes } ) => {
+const DeviceList = ( { roomId, groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser, onDeviceRemoved, refreshVibes } ) => {
     
-    console.log( "groupedDevices", groupedDevices )
     // Messages d'erreur et de succès
     const [ error, setError ] = useState( null );
     const [ success, setSuccess ] = useState( null );
-
-    // Récupération de dispatch
-    const dispatch = useDispatch();
 
     // Récupération de location
     const location = useLocation();
 
     // Récupération de navigate
     const navigate = useNavigate();
-
-    // Récupération des settings par défaut de tous les devices
-    const { loadingDevice, defaultSettingsForDevices } = useSelector( selectDeviceData );
-
-    console.log( "defaultSettingsForDevices", defaultSettingsForDevices );
-
-    useEffect( () => {
-        try {
-            dispatch( fetchDefaultSettingsForDevices() );
-        } catch (error) {
-            console.log( "Erreur lors de la récupération des settings par défaut", error );
-            setError( "Une erreur est survenue lors de la récupération des settings par défaut" );
-            setSuccess( null );
-            resetMessage();            
-        }
-    }, []);
 
     // Supprime un objet d'une pièce
     const deleteFromRoom = async ( deviceId ) => {
@@ -104,53 +81,6 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
         }
     }
 
-    // Fonction pour ajouter une ambiance à un appareil
-    const handleAddVibe = async ( deviceId, vibeId ) => {
-        const confirm = window.confirm( 'Voulez-vous vraiment ajouter cette ambiance à cet appareil ?' );
-
-        if ( !confirm ) return;
-
-        const deviceSettings = [];
-        defaultSettingsForDevices.forEach(setting => {
-            if ( setting.device.id === deviceId ) {
-                deviceSettings.push( setting );
-            }
-        });
-
-        // On va tenter de remplir la base de données pour chaque setting
-        for ( const setting of deviceSettings ) {
-            try {
-                const data = {
-                    device: `/api/devices/${ deviceId }`,
-                    vibe: `/api/vibes/${ vibeId }`,
-                    feature: `/api/features/${ setting.feature.id }`,
-                    value: setting.value
-                };
-
-                console.log( "data", data );
-
-                axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';                
-                const response = await axios.post( `${ API_URL }/settings?page=1&device.id=${deviceId}`, data );
-
-                if ( response.status === 200 ){
-                    console.log( "Réglage ajouté à l'appareil" )
-                    setSuccess( 'Réglage ajouté à l\'appareil' );
-                    setError( null );
-                    resetMessage();
-                }
-            } catch ( error ) {
-                console.log( `Erreur lors de l'ajout du réglage ${ setting.feature.label } à l'appareil ${ deviceId }`, error );
-                setError( "Une erreur est survenue lors de l'ajout du réglage à l'appareil" );
-                setSuccess( null );
-                resetMessage();
-            }
-        }
-
-        if (refreshVibes) {
-            refreshVibes();
-        }        
-    }
-
     // Permet d'effacer les messages success et error après 3 secondes
 	const resetMessage = () => {
 		setTimeout( () => {
@@ -164,21 +94,21 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
         navigate( `/setting?vibeId=${vibeId}&deviceId=${deviceId}`, {
             state: {
                 from: location,
-                roomId: roomId,
+                roomId: roomId
             },
         });
     };
 
     // Fonction pour naviguer vers la page de création d'ambiance
-    const goToVibes = ( vibeId, deviceId, roomId ) => {
-        navigate( `/setting/vibes`, {
+    const goToVibes = ( roomId ) => {
+        navigate( `/vibe`, {
             state: {
                 from: location,
                 roomId: roomId,
+                eltVisible: true
             },
         });
     };
-
 
     return Object.entries( groupedDevices ).map( ( [ type, devices ] ) => (
         <div
@@ -223,7 +153,7 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
                             { openMenuId === device.id && (
                                 <div className='flex items-center justify-center mx-4' >
                                     <div className='flex flex-col w-full bg-primary text-white rounded-2xl justify-center items-center' >  
-                                        <div className='flex w-full justify-start items-center py-2 pl-4'>
+                                        <div className='flex w-full justify-start items-center pt-4 pl-4'>
                                             Liste des vibes
                                         </div>  
                                         <div className='w-full p-4'>
@@ -243,7 +173,26 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
                                                     />
                                                 </div>
                                             ))}
-                                        </div>                        
+                                            
+                                        </div>
+                                        <div className='flex flex-col w-full justify-center items-center' >
+                                            <div className='w-full p-4'>
+                                                <div className='w-full '>
+                                                    <hr />
+                                                </div>
+                                            </div> 
+                                            <div className='flex w-full justify-start items-center p-4' >
+                                                <div 
+                                                    className='flex items-center cursor-pointer'
+                                                    onClick={ () => goToVibes( roomId ) }
+                                                >
+                                                    <FaPlus className='mr-2' />
+                                                    <div className='flex items-center'>
+                                                        Créer une ambiance
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>                      
                                     </div>
                                 </div>
                             )}
