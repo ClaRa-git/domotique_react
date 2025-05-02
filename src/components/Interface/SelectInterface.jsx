@@ -10,8 +10,8 @@ const SelectInterface = ( { interfaceFeature, onChange } ) => {
     const label = interfaceFeature.label;
     const valeur = interfaceFeature.value;
     const unite = interfaceFeature?.unit ?? '';
-    const mini = interfaceFeature?.min ?? 0;
-    const maxi = interfaceFeature?.max ?? 100;
+    const mini = interfaceFeature?.minimum ?? 0;
+    const maxi = interfaceFeature?.maximum ?? 100;
 
     // Liste des interfaces personnalisées (temporaire)
     const interfaces = {

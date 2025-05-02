@@ -99,7 +99,7 @@ const Setting = ( ) => {
 
     return ( isLoading && loadingDevice && loadingVibe ? <PageLoader />
         :
-        <div className='flex flex-col items-center justify-start w-full h-full p-4' >
+        <div className='flex flex-col items-center justify-start w-full h-full p-4 mb-16' >
             <div className='flex w-full justify-between' >
                 <div className='flex justify-start items-center' >
                     <button
