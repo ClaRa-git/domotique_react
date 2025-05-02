@@ -38,45 +38,35 @@ const Playlist = () => {
     :
     <div>
         <MenuBar />
-        <div
+        { isVisible ? (
+        <PopupNewPlaylist
+            callable={ () => setIsVisible( false ) }
+            userId={ userId }
+        />
+        ) : (
+        <div>
+            <div
             onClick={ handleClick }
-            className={`flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-1 ${ isVisible ? 'rounded-t-lg' : 'rounded-lg' } hover:cursor-pointer`}
-        >
+            className='flex flex-row justify-between bg-primary text-white mt-4 mx-4 px-4 py-1 rounded-lg hover:cursor-pointer'
+            >
             <div className='flex w-full justify-between'>
                 <div className='flex items-center'>
-                    <FaPlus className='mr-2' />
-                    <div className='flex items-center'>
-                        Créer une nouvelle playlist
-                    </div>
-                </div>            
+                <FaPlus className='mr-2' />
                 <div className='flex items-center'>
-                    { isVisible ?
-                        <FaChevronDown />
-                        :
-                        <FaChevronRight />
-                    }
+                    Créer une nouvelle playlist
+                </div>
                 </div>
             </div>
+            </div>
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 mb-16'>
+            { userPlaylists && userPlaylists.map((playlist, index) => (
+                <div key={ index } className='flex justify-center items-center'>
+                <PlaylistCard playlist={ playlist } />
+                </div>
+            ))}
+            </div>
         </div>
-        { isVisible &&
-            <PopupNewPlaylist
-                callable={ () => setIsVisible( false) }
-                userId={ userId }
-            />
-        }
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 mb-16' >
-            { userPlaylists && 
-                userPlaylists.map( ( playlist, index ) => {
-                    return (
-                        <div
-                            key={ index }
-                            className='flex justify-center items-center'
-                        >
-                            <PlaylistCard playlist={ playlist } />
-                        </div>
-                    )
-            })}
-        </div>
+        )}
     </div>
   )
 }

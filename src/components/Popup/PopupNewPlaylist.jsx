@@ -1,10 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomInput from '../Ui/CustomInput';
 import axios from 'axios';
-import { API_URL } from '../../constants/apiConstant';
+import { API_ROOT, API_URL } from '../../constants/apiConstant';
 import ButtonLoader from '../Loader/ButtonLoader';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserPlaylists } from '../../store/user/userSlice';
+import { RiArrowLeftSFill } from 'react-icons/ri';
+import { fetchAllSongs } from '../../store/song/songSlice';
+import selectSongData from '../../store/song/songSelector';
+import SongDropdown from '../Ui/SongDropdown';
+import SongCard from '../Card/SongCard';
+import PageLoader from '../Loader/PageLoader';
 
 // Afficher le popup de création d'une nouvelle playlist
 const PopupNewPlaylist = ( { callable, userId } ) => {
@@ -22,17 +28,36 @@ const PopupNewPlaylist = ( { callable, userId } ) => {
     const [ error, setError ] = useState( '' );
     const [ success, setSuccess ] = useState( '' );
 
+	const [ isVisible, setIsVisible ] = useState( false );
+	const [ selectedSongs, setSelectedSongs ] = useState( [] );
+
+	// Récupération des chansons
+	useEffect( () => {
+		dispatch( fetchAllSongs() );
+	}, [ dispatch ] );
+
+	const { loadingSongs, allSongs } = useSelector( selectSongData );
+
+	let imgPlaylist = "";
+	if ( selectedSongs.length > 0 ) {
+		// On cherche la chanson qui a le même id que le premier élément de selectedSongs
+		const song = allSongs.find( ( song ) => song[ '@id' ] === selectedSongs[ 0 ] );
+			imgPlaylist = `${ API_ROOT }/upload/images/songs/${ song.imagePath }`;
+	} else {
+		imgPlaylist = `${ API_ROOT }/upload/images/songs/song.jpg`;
+	}
+	
+
 	// Fonction qui gère la soumission du formulaire de création de playlist
-    const handleSubmit = async ( e ) => {
-		// On empêche le comportement par défaut du formulaire
-        e.preventDefault();
+    const handleSubmit = async ( ) => {
+		
         try {
 			setError( '' );
 			const data = {
 				title: playlistName.trim(),
 				profile: `/api/profiles/${ userId }`,
 				vibes: [],
-				songs: []
+				songs: selectedSongs
 			}
 
 			setIsLoading( true );
@@ -72,59 +97,90 @@ const PopupNewPlaylist = ( { callable, userId } ) => {
 		}, 3000 )
 	}
 
-	return (
-		<div className='flex items-center justify-center px-4' >
-			<div className='flex flex-col relative w-full rounded-b-2xl justify-center items-center bg-primary' >
-				<div className='flex flex-col items-center justify-center w-full' >
-					<form 
-						onSubmit={ handleSubmit } 
-						className='flex flex-col items-center justify-center w-full p-4'
-					>
-						<CustomInput
-							state={ playlistName }
-							label={ 'Nom' }
-							type={ 'text' }
-							callable={ ( e ) => setPlaylistName( e.target.value ) }
-							textColor='text-white'
-						/>
-						{ success && 
-							<p className='text-green-500 text-center' >
-								{ success }
-							</p>
-						}
-						{ error && 
-							<p className='text-red-500 text-center' >
-								{ error }
-							</p>
-						}
-						<div className='flex justify-center w-full' >
-							{ isLoading ?
-							(
-							<ButtonLoader />
-							)
-							:
-							(
-								<div className='flex w-full justify-between text-white'>
-									<button
-										type='button'
-										onClick={ callable }
-										className='bg-secondary-orange px-4 py-2 rounded-lg transition'
-									>
-										Annuler
-									</button>
-									<button
-										type='submit'
-										className='bg-secondary-orange px-4 py-2 font-bold rounded-lg transition'
-									>
-										Ajouter
-									</button>
-								</div>								
-							)}
+	// Fonction pour ajouter une chanson au tableau des chansons sélectionnées
+	const handleAddSong = async ( songsId ) => {
+		setSelectedSongs( songsId );
+	}
+
+	// Fonction pour supprimer une chanson du tableau des chansons sélectionnées
+	const handleDeleteSong = async ( songId ) => {
+		const newSelectedSongs = selectedSongs.filter( ( song ) => song !== songId );
+		setSelectedSongs( newSelectedSongs );
+	}
+
+	return ( loadingSongs ? <PageLoader />
+		:
+		<div className="m-4 mb-16">
+			<div className='flex flex-col items-center justify-center w-full h-full' >
+				<div className='flex w-full justify-between' >
+					<div className='flex'>
+						<div
+							className='flex justify-start items-center'
+							onClick={ () => {
+									// On prévient l'utilisateur que l'on quitte sans sauvegarder
+									if ( window.confirm( 'Êtes-vous sûr de vouloir quitter sans sauvegarder ?' ) ) {
+										callable();
+									}
+								} 
+							}
+						>
+							<RiArrowLeftSFill
+								size={30}
+								className='text-white bg-secondary-pink rounded-lg h-10 w-10 cursor-pointer'
+							/>
 						</div>
-					</form>
+						<div className='flex justify-center items-center font-bold'>
+							<h2 className='ml-10 text-2xl text-primary pr-10' >
+								Création d'une playlist
+							</h2>
+						</div>
+					</div>
+					<div className='flex text-white justify-center items-center' >
+						<div
+							className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 cursor-pointer'
+							onClick={ () => handleSubmit() }
+						>
+							Done
+						</div>
+					</div>
+				</div>
+			
+				<div className='flex flex-col items-center rounded-lg w-full h-full mb-16' >
+					<div className='flex mt-16'>
+						<div className='flex flex-col justify-center items-center' >
+							<img
+								src={ imgPlaylist }
+								alt={ `Image defaut playlist` }
+								className='w-48 h-48 rounded-lg mb-2'
+							/>
+							<CustomInput
+								state={ playlistName }
+								label={ 'Titre' }
+								type={ 'text' }
+								callable={ ( e ) => setPlaylistName( e.target.value ) }
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
+			<SongDropdown
+				isVisible={ isVisible }
+				toggleDropdown={ () => setIsVisible( !isVisible ) }
+				addSongsToPlaylist={ handleAddSong }
+				playlistSongIds={ [] }
+			/>
+			{ selectedSongs && selectedSongs.map( ( songId, index ) => {
+				// Dans allSongs, on cherche la chanson qui a le même id que songId
+				const song = allSongs.find( ( song ) => song[ '@id' ] === songId );
+				return (
+                    <SongCard
+                        key={ index }
+                        song={ song}
+                        sentToParent={ handleDeleteSong }
+                    />
+				)
+			})}
+		</div>  
 	)
 }
 

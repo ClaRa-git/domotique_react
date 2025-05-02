@@ -49,13 +49,6 @@ const Vibe = () => {
                         <div className='flex items-center'>
                             Créer une nouvelle vibe
                         </div>
-                    </div>            
-                    <div className='flex items-center'>
-                        { isVisible ?
-                            <FaChevronDown />
-                            :
-                            <FaChevronRight />
-                        }
                     </div>
                 </div>
             </div>

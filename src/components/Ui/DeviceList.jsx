@@ -1,14 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FaChevronDown, FaChevronRight, FaPlus, FaRegTrashAlt } from 'react-icons/fa';
-import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
+import { FaChevronDown, FaChevronRight, FaRegTrashAlt } from 'react-icons/fa';
 import { API_URL } from '../../constants/apiConstant';
-import { FaGear } from 'react-icons/fa6';
 import selectDeviceData from '../../store/device/deviceSelector';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDefaultSettingsForDevices } from '../../store/device/deviceSlice';
 import VibeCard from '../Card/VibeCard';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Affiche la liste des appareils
 const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu, allVibesForUser, onDeviceRemoved, refreshVibes } ) => {
@@ -26,9 +24,6 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
 
     // Récupération de navigate
     const navigate = useNavigate();
-
-    // Affiche la visibilité des réglages
-    const [ showSettings, setShowSettings ] = useState( false );
 
     // Récupération des settings par défaut de tous les devices
     const { loadingDevice, defaultSettingsForDevices } = useSelector( selectDeviceData );
@@ -164,9 +159,19 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
 		}, 3000 )
 	}
 
-    // Fonction pour naviguer vers la page de création d'ambiance
+    // Fonction pour naviguer vers la page des settings
     const goToSettings = ( vibeId, deviceId, roomId ) => {
         navigate( `/setting?vibeId=${vibeId}&deviceId=${deviceId}`, {
+            state: {
+                from: location,
+                roomId: roomId,
+            },
+        });
+    };
+
+    // Fonction pour naviguer vers la page de création d'ambiance
+    const goToVibes = ( vibeId, deviceId, roomId ) => {
+        navigate( `/setting/vibes`, {
             state: {
                 from: location,
                 roomId: roomId,
@@ -230,6 +235,7 @@ const DeviceList = ( { groupedDevices, setGroupedDevices, openMenuId, toggleMenu
                                             { allVibesForUser.map( ( vibe, index ) => (
                                                 <div
                                                     key={ index }
+                                                    className="cursor-pointer"
                                                     onClick={ () => goToSettings( vibe.id, device.id ) }
                                                 >
                                                     <VibeCard

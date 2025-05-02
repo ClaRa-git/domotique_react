@@ -11,6 +11,8 @@ import SongCard from '../../components/Card/SongCard';
 import axios from 'axios';
 import SongDropdown from '../../components/Ui/SongDropdown';
 import CustomInput from '../../components/Ui/CustomInput';
+import { fetchAllSongs } from '../../store/song/songSlice';
+import selectSongData from '../../store/song/songSelector';
 
 // Page de détails d'une playlist
 const PlaylistDetail = () => {
@@ -20,7 +22,6 @@ const PlaylistDetail = () => {
     const { id } = params;
 
     // States
-    const [ availableSongs, setAvailableSongs ] = useState( [] );
     const [ isEditing, setIsEditing ] = useState( false );
     const [ newTitle, setNewTitle ] = useState( '' );
 
@@ -47,17 +48,10 @@ const PlaylistDetail = () => {
 
     // Récupérer les chansons disponibles
     useEffect( () => {
-        const fetchSongs = async () => {
-            try {
-                const response = await axios.get( `${ API_URL }/songs` );
-                setAvailableSongs( response.data.member );
-            } catch ( error ) {
-                console.error( 'Erreur lors du chargement des chansons', error );
-            }
-        };
+        dispatch( fetchAllSongs() );
+    }, [dispatch] );
 
-        fetchSongs();
-    }, []);
+    const { loadingSong, allSongs } = useSelector( selectSongData );
 
     // Récupérer l'image de la playlist
     const imgPath = playlist?.songs?.length > 0 ?
@@ -134,18 +128,22 @@ const PlaylistDetail = () => {
         }
     }
 
-    const handleAddSong = async ( songId ) => {
+    const handleAddSongs = async ( songsId ) => {
         try {
             const currentSongIds = playlist?.songs.map( song => song[ '@id' ] );
-            const newSongId = `${ songId }`;
             
-            if ( currentSongIds.includes( newSongId ) ) {
-                alert( "Cette chanson est déjà dans la playlist." );
-                return;
-            } else {
-                // on ajoute le nouvel id de chanson à la playlist
-                currentSongIds.push( newSongId );
-            }
+            // On va ajouter les nouvelles chansons à la playlist
+            for ( const songId of songsId ) {
+                const newSongId = `${ songId }`;
+                
+                if ( currentSongIds.includes( newSongId ) ) {
+                    alert( "Cette chanson est déjà dans la playlist." );
+                    return;
+                } else {
+                    // on ajoute le nouvel id de chanson à la playlist
+                    currentSongIds.push( newSongId );
+                }
+        }
     
             axios.defaults.headers.patch[ 'Content-Type' ] = 'application/merge-patch+json';
             const response = await axios.patch( `${ API_URL }/playlists/${ playlist.id }`, {
@@ -223,8 +221,7 @@ const PlaylistDetail = () => {
                 <SongDropdown
                     isVisible={ isVisible }
                     toggleDropdown={ () => setIsVisible( !isVisible ) }
-                    songs={ availableSongs }
-                    addSongToPlaylist={ handleAddSong }
+                    addSongsToPlaylist={ handleAddSongs }
                     playlistSongIds={ playlist?.songs?.map( song => song[ '@id' ] ) || [] }
                 />
                 { songs && songs.map( ( song, index ) => (

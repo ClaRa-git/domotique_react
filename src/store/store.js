@@ -5,6 +5,7 @@ import vibeReducer from "./vibe/vibeSlice";
 import planningReducer from "./planning/planningSlice";
 import deviceReducer from "./device/deviceSlice";
 import iconReducer from "./icon/iconSlice";
+import songReducer from "./song/songSlice";
 
 const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
         plannings : planningReducer,
         devices : deviceReducer,
         icons : iconReducer,
+        songs : songReducer,
     }
 });
 

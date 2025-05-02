@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import selectRoomData from '../../store/room/roomSelector';
-import { API_ROOT } from '../../constants/apiConstant';
 import { fetchRoomDetail as fetchRoom } from '../../store/room/roomSlice';
-import { RiArrowLeftSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { fetchAllVibesForUser } from '../../store/vibe/vibeSlice';
 import { useAuthContext } from '../../contexts/AuthContext';
 import selectVibeData from '../../store/vibe/vibeSelector';
 import DeviceList from '../../components/Ui/DeviceList';
-import VibeList from '../../components/Ui/VibeList';
 import PageLoader from '../../components/Loader/PageLoader';
 import { fetchDevicesWithoutRoom } from '../../store/device/deviceSlice';
 import selectDeviceData from '../../store/device/deviceSelector';
 import DeviceDropdown from '../../components/Ui/DeviceDropdown';
 import RoomDetailTopbar from '../../components/Ui/RoomDetailTopbar';
+import VibeCard from '../../components/Card/VibeCard';
 
 // Affichage des détails d'une pièce
 const RoomDetail = () => {
@@ -54,7 +52,7 @@ const RoomDetail = () => {
         dispatch(fetchAllVibesForUser( userId ) );
     }, [ dispatch, userId ] );
 
-    const { loadingVibe, allVibesForUser } = useSelector( selectVibeData );
+    const { allVibesForUser } = useSelector( selectVibeData );
 
     // Effet pour récupérer les appareils non assignés à une pièce
     useEffect( () => {
@@ -83,22 +81,6 @@ const RoomDetail = () => {
         setOpenMenuId( ( prevId ) => ( prevId === id ? null : id ) );
     };
 
-    // Fonction pour gérer l'affichage des appareils ou des ambiances
-    const toggleView = () => {
-        setShowDevices( !showDevices );
-        setOpenMenuId( null ); // Ferme tout en changeant de vue
-    };
-
-    // Fonction pour naviguer vers la page de création d'ambiance
-    const goToVibe = () => {
-        navigate( `/vibe`, {
-            state: {
-                from: location,
-                deviceId: null,
-            },
-        });
-    };
-
     // Fonction pour rafraîchir les données de la pièce
     const refreshRoomData = () => {
         dispatch(fetchRoom(id)); // Re-fetch la room pour avoir les devices à jour
@@ -117,47 +99,18 @@ const RoomDetail = () => {
             <RoomDetailTopbar roomDetail={roomDetail} />
 
             <div className='flex flex-col p-4 w-full' >
-                <button 
-                    className='flex justify-between items-center font-bold bg-primary text-xl text-white text-center p-2 rounded-lg mb-4' 
-                    onClick={ toggleView }
-                >
-                    <div className="ml-2">
-                        { showDevices ?
-                            'Appareils'
-                            :
-                            'Ambiances'
-                        }
-                    </div>
-                    <div className='flex items-center' >
-                        <p className='text-sm' >
-                            { showDevices ?
-                                'Ambiances'
-                                :
-                                'Appareils'
-                            }
-                        </p>
-                        <RiArrowRightSFill
-                            size={20}
-                            className='text-white'
-                        />
-                    </div>
-                </button>
-
-                { showDevices && 
-                    <div>
-                        <DeviceDropdown
-                            isVisible={isVisible}
-                            toggleDropdown={() => setIsVisible(!isVisible)}
-                            devices={devicesWithoutRoom}
-                            showDevices={showDevices}
-                            roomId={id}
-                            onDeviceAdded={refreshRoomData}
-                        />
-                    </div>
-                }
-
-                { showDevices ?
-                (
+                <div className='flex justify-center items-center font-bold bg-primary text-xl text-white text-center p-2 rounded-lg mb-4 pl-4' >
+                    Appareils
+                </div>
+                <div>
+                    <DeviceDropdown
+                        isVisible={isVisible}
+                        toggleDropdown={() => setIsVisible(!isVisible)}
+                        devices={devicesWithoutRoom}
+                        showDevices={showDevices}
+                        roomId={id}
+                        onDeviceAdded={refreshRoomData}
+                    />
                     <DeviceList
                         groupedDevices={ groupedDevices }
                         setGroupedDevices={ setGroupedDevices }
@@ -165,39 +118,9 @@ const RoomDetail = () => {
                         toggleMenu={ toggleMenu }
                         allVibesForUser={ allVibesForUser }
                         onDeviceRemoved={ refreshRoomData }
-                        refreshVibes={ refreshRoomData }
+                        refreshVibes={ refreshVibesData }
                     />
-                )
-                :
-                ( loadingVibe ?
-                    <PageLoader />
-                    :
-                    <div>
-                        { allVibesForUser.length === 0 ?
-                        (
-                            <div>
-                                <p className='text-center mb-4' >
-                                    Vous n'avez pas encore d'ambiance. Créez-en une !                                
-                                </p>
-                                <button 
-                                    className='font-bold bg-secondary-pink text-white p-2 rounded-lg w-full'
-                                    onClick={ goToVibe }
-                                >
-                                    Créer une Vibe
-                                </button>
-                            </div>
-                        )
-                        :
-                        (
-                            <VibeList
-                                vibes={ allVibesForUser }
-                                openMenuId={ openMenuId }
-                                toggleMenu={ toggleMenu }
-                                roomId={ id }
-                            />
-                        )}
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );
