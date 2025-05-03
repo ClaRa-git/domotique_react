@@ -90,8 +90,7 @@ const Setting = ( ) => {
     }
 
     // Fonction pour enregistrer les paramètres dans un tableau
-    const handleSettingChange = (settingObject, newValue) => {
-        // TODO: utiliser mqtt pour changer les réglages en temps réel
+    const handleSettingChange = async (settingObject, newValue) => {
 
         const updatedSetting = {
             ...settingObject,
@@ -106,6 +105,21 @@ const Setting = ( ) => {
                 return [...prev, updatedSetting];
             }
         });
+
+        // Envoi immédiat à MQTT via l'API Symfony
+        try {
+            await axios.post(`${API_ROOT}/send-vibe`, {
+                settings: [{
+                    deviceAddress: updatedSetting.deviceAddress,
+                    deviceRef: updatedSetting.deviceRef,
+                    deviceLabel: updatedSetting.deviceLabel,
+                    featureLabel: updatedSetting.featureLabel,
+                    value: updatedSetting.value 
+                }]
+            });
+        } catch (error) {
+            console.error("Erreur lors de l'envoi en MQTT :", error);
+        }
     };
 
     console.log("updatedSettings", updatedSettings);

@@ -163,7 +163,7 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
             setIsLoading( true );
 
             axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
-            await axios.post(`${API_ROOT}/play-vibe`, settings);
+            await axios.post(`${API_ROOT}/send-vibe`, settings);
             console.log("Commandes envoyées au backend !");
         } catch (error) {
             console.error("Erreur lors de l'envoi MQTT :", error);
@@ -172,7 +172,7 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
         }
 
         // On redirige vers la page d'accueil
-        navigate( '/' );
+        //navigate( '/' );
     };    
 
     return ( loadingRoom ? <PageLoader />
