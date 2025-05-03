@@ -19,10 +19,11 @@ const MoodPie = ( { mood, stress, tonus } ) => {
     ];
 
     return (
-        <div className='flex flex-row justify-center items-center w-50 sm:w-1/2' >
+        <div className='flex flex-row justify-center items-center w-50 sm:w-1/2 cursor-pointer' >
             <PieChart
                 width={ 300 }
                 height={ 220 }
+                className='cursor-pointer'
             >
                 <Pie
                     data={ data }
@@ -32,9 +33,14 @@ const MoodPie = ( { mood, stress, tonus } ) => {
                     outerRadius={ 80 }
                     paddingAngle={ 0 }
                     dataKey="value"
+                    className='cursor-pointer'
                 >
                     {data.map(( entry, index ) => (
-                        <Cell key={ `cell-${ index }` } fill={ COLORS[ index % COLORS.length ] } />
+                        <Cell 
+                            key={ `cell-${ index }` }
+                            fill={ COLORS[ index % COLORS.length ] } 
+                            className='cursor-pointer'
+                        />
                     ))}
                 </Pie>
                 {/* <Tooltip />

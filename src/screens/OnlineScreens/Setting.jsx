@@ -91,6 +91,8 @@ const Setting = ( ) => {
 
     // Fonction pour enregistrer les paramètres dans un tableau
     const handleSettingChange = (settingObject, newValue) => {
+        // TODO: utiliser mqtt pour changer les réglages en temps réel
+
         const updatedSetting = {
             ...settingObject,
             value: String (newValue),

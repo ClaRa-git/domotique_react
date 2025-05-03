@@ -52,6 +52,9 @@ const RoomDetail = () => {
     const { allVibesForUser } = useSelector( selectVibeData );
 
     // Effet pour récupérer les appareils non assignés à une pièce
+    // TODO: pour permettre à l'utilisateur d'ajouter un appareil avec une route personnalisée
+    // 1) on utilise mqtt pour écouter les devices non assignés
+    // 2) on utilise une route personnalisée pour récupérer les devices non assignés et les enregistrer en bdd ( route /api/device-init à éventuellement modifier )
     useEffect( () => {
         dispatch( fetchDevicesWithoutRoom() );
     }, [ dispatch ] );

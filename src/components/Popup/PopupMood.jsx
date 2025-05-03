@@ -1,20 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../Ui/CustomInput';
 import ButtonLoader from '../Loader/ButtonLoader';
+import { API_ROOT } from '../../constants/apiConstant';
+import axios from 'axios';
+import { RiArrowLeftSFill } from 'react-icons/ri';
+import VibeCard from '../Card/VibeCard';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllRooms } from '../../store/room/roomSlice';
+import selectRoomData from '../../store/room/roomSelector';
+import PageLoader from '../Loader/PageLoader';
+import RoomCard from '../Card/RoomCard';
+import { useNavigate } from 'react-router-dom';
 
 // Afficher le popup de l'humeur
-const PopupMood = ( { data, callable, sentToParent } ) => {
+const PopupMood = ( { data, callable, sentToParent, userId } ) => {
 
     // Récupération des données de l'utilisateur si elles existent
     const [ mood, setMood ] = useState( data.mood || 50 );
     const [ stress, setStress ] = useState( data.stress || 50 );
     const [ tonus, setTonus ] = useState( data.tonus || 50 );
 
+    // State pour les vibes recommandées
+    const [ recommendedVibes, setRecommendedVibes ] = useState( [] );
+
+    // State pour la vibe sélectionnée
+    const [ selectedVibe, setSelectedVibe ] = useState( null );
+
     // State pour le loader du bouton
     const [ isLoading, setIsLoading ] = useState( false );
 
     // State pour le message d'erreur
     const [ error, setError ] = useState( null );
+
+    // State pour les rooms dans la vibe
+    const [ filteredRooms, setFilteredRooms ] = useState( [] );
+
+    // Récupération du dispatch
+    const dispatch = useDispatch();
+
+    // Récupération du navigate
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      dispatch( fetchAllRooms() );
+    }, [ dispatch ] );
+
+    const { loadingRoom, allRooms } = useSelector( selectRoomData );    
 
     // Fonction qui calcule l'humeur
     const determineMood = ( mood, tonus, stress ) => {
@@ -70,8 +101,11 @@ const PopupMood = ( { data, callable, sentToParent } ) => {
         // Enregistrer les données dans localStorage
         saveToLocalStorage();
 
+        // On récupère les vibes recommandées
+        getRecommendedVibes();
+
         // Appeler la fonction callable pour fermer la popup
-        callable();
+        //callable();
     };
 
     // Fonction pour charger les données du localStorage quand le composant se monte
@@ -84,20 +118,112 @@ const PopupMood = ( { data, callable, sentToParent } ) => {
         }
     }, []);
 
-    return (
-        <div className='z-30 absolute top-0 right-0 bottom-0 left-0 backdrop-blur flex items-center justify-center' >
-            <div className='flex flex-col relative w-full sm:w-2/3 lg:w-1/2 h-1/2 rounded-lg justify-center items-center bg-primary' >
-                <h1 className='text-white mt-4 text-2xl font-bold' >
-                    Quelle est votre humeur ?
-                </h1>
-                <div className='flex flex-col items-center justify-center w-2/3 h-full' >
-                    <form onSubmit={handleSubmit} >
-                        <div className='flex flex-row align-center' >
+    const getRecommendedVibes = async () => {
+        try {
+            setIsLoading( true );
+
+            const $data = {
+                userId: userId,
+                mood: mood,
+                tone: tonus,
+                stress: stress
+            };
+
+            axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';        
+            const response = await axios.post( `${ API_ROOT }/service-vibe-recommended`, $data );
+
+            const vibes = response.data.vibes;
+
+            setRecommendedVibes(vibes);
+        } catch ( error ) {
+            console.log ( `Erreur lors de la récupération des vibes recommandées : ${ error }` );
+            setError( 'Erreur lors de la récupération des vibes recommandées' );
+        } finally {
+            setIsLoading( false );
+        }          
+    }
+
+    // Fonction pour donner les rooms pour la vibe
+    const getRoomsForVibe = async ( vibe ) => {
+        // On récupère les rooms présentes dans la vibe
+        const rooms = [...new Set(vibe.settings.map((setting) => setting.roomId))];
+
+        // On filtre allRooms pour ne garder que les rooms présentes dans la vibe
+        const filter = allRooms.filter((room) => rooms.includes(room.id));
+        setFilteredRooms(filter);
+    }
+
+    // Fonction pour jouer la vibe
+    const playVibe = async (vibe, roomId) => {
+        const settings = vibe.settings.filter(setting => setting.roomId === roomId);
+
+        console.log( 'Settings : ', settings );
+    
+        try {
+            setIsLoading( true );
+
+            axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
+            await axios.post(`${API_ROOT}/play-vibe`, settings);
+            console.log("Commandes envoyées au backend !");
+        } catch (error) {
+            console.error("Erreur lors de l'envoi MQTT :", error);
+        } finally {
+            setIsLoading( false );
+        }
+
+        // On redirige vers la page d'accueil
+        navigate( '/' );
+    };    
+
+    return ( loadingRoom ? <PageLoader />
+        :
+		<div className="m-4 mb-16">
+			<div className='flex flex-col items-center justify-center w-full h-full' >
+                <div className='flex w-full justify-between' >
+                    <div className='flex'>
+                        <div
+                            className='flex justify-start items-center'
+                            onClick={ () => {
+                                    // On prévient l'utilisateur que l'on quitte sans sauvegarder
+                                    if ( window.confirm( 'Êtes-vous sûr de vouloir quitter sans sauvegarder ?' ) ) {
+                                        callable();
+                                    }
+                                } 
+                            }
+                        >
+                            <RiArrowLeftSFill
+                                size={30}
+                                className='text-white bg-secondary-pink rounded-lg h-10 w-10 cursor-pointer'
+                            />
+                        </div>
+                        <div className='flex justify-center items-center font-bold'>
+                            <h2 className='ml-10 text-2xl text-primary pr-10' >
+                                Calcul de l'humeur
+                            </h2>
+                        </div>
+                    </div>
+                    <div className='flex text-white justify-center items-center' >
+                        <div
+                            className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 cursor-pointer'
+                            onClick={ () => {} }
+                        >
+                            Done
+                        </div>
+                    </div>
+                </div>
+                <div className='flex flex-col w-full items-center justify-center' >
+                    <h2 className='text-3xl my-6 font-bold'>Quelle est votre humeur ?</h2>
+                    <form
+                        className='flex flex-col justify-center w-full bg-primary text-white p-4 rounded-lg'
+                        onSubmit={handleSubmit}
+                    >
+                        <div className='flex justify-center' >
                             <CustomInput
                                 state={ mood }
                                 label={ 'Humeur' }
                                 type={'range' }
                                 callable={ ( e ) => setMood( e.target.value ) }
+                                textColor='text-white'
                             />
                             <div className='flex items-center justify-center' >
                                 <p className='text-white font-bold mb-2 mt-4 ml-4 w-10' >
@@ -105,12 +231,13 @@ const PopupMood = ( { data, callable, sentToParent } ) => {
                                 </p>
                             </div>
                         </div>
-                        <div className='flex flex-row align-center' >
+                        <div className='flex justify-center' >
                             <CustomInput
                                 state={ stress }
                                 label={ 'Stress' }
                                 type={ 'range' }
                                 callable={ ( e ) => setStress( e.target.value ) }
+                                textColor='text-white'
                             />
                             <div className='flex items-center justify-center' >
                                 <p className='text-white font-bold mb-2 mt-4 ml-4 w-10' >
@@ -118,12 +245,13 @@ const PopupMood = ( { data, callable, sentToParent } ) => {
                                 </p>
                             </div>
                         </div>
-                        <div className='flex flex-row align-center' >
+                        <div className='flex justify-center' >
                             <CustomInput
                                 state={ tonus }
                                 label={ 'Tonus' }
                                 type={ 'range' }
                                 callable={ ( e ) => setTonus( e.target.value ) }
+                                textColor='text-white'
                             />
                             <div className='flex items-center justify-center' >
                                 <p className='text-white font-bold mb-2 mt-4 ml-4 w-10' >
@@ -143,19 +271,19 @@ const PopupMood = ( { data, callable, sentToParent } ) => {
                             )
                             :
                             (
-                                <div>
-                                    <button
-                                        type='submit'
-                                        className='w-full bg-secondary-orange font-bold py-3 rounded-lg transition'
-                                    >
-                                        Valider
-                                    </button>
+                                <div className='flex w-full justify-between'>
                                     <button
                                         type='button'
-                                        onClick={ callable }
-                                        className='w-full bg-secondary-pink font-bold py-3 mt-2 rounded-lg transition'
+                                        onClick={ () => callable() }
+                                        className='bg-secondary-orange p-3 rounded-lg transition'
                                     >
                                         Annuler
+                                    </button>
+                                    <button
+                                        type='submit'
+                                        className='bg-secondary-orange font-bold p-3 rounded-lg transition'
+                                    >
+                                        Valider
                                     </button>
                                 </div>
                             )}
@@ -163,6 +291,59 @@ const PopupMood = ( { data, callable, sentToParent } ) => {
                     </form>
                 </div>
             </div>
+            { recommendedVibes.length > 0 && 
+                <div className='flex flex-col items-center justify-center w-full h-full' >
+                    <h2 className='text-3xl my-6 font-bold'>Vibes recommandées</h2>
+                    <div className={`flex flex-col items-center justify-center w-full bg-primary text-white p-4 ${selectedVibe ? 'rounded-t-lg' : 'mb-4 rounded-lg' } `} >
+                        { recommendedVibes.map( ( vibe, index ) => (
+                            <div 
+                                className={ `cursor-pointer ${ selectedVibe?.id == vibe.id ? 'bg-secondary-orange rounded-lg' : '' } `}
+                                key={ index }
+                                onClick={ () => {
+                                        if ( selectedVibe?.id == vibe.id ) {
+                                            setSelectedVibe( null );
+                                            setFilteredRooms( [] );
+                                        }
+                                        else {
+                                            setSelectedVibe( vibe );
+                                            getRoomsForVibe( vibe );
+                                        }
+                                    }
+                                }
+
+                            >
+                                <VibeCard
+                                    vibe={ vibe }
+                                />
+                            </div>
+                        ))}
+                    </div>
+                    {
+                        selectedVibe ?
+                            filteredRooms.length > 0 ?
+                            <div className='flex flex-col items-center justify-center w-full bg-primary text-white p-4 rounded-b-lg'>
+                                <h2 className='text-3xl my-6 font-bold'>Rooms disponibles</h2>
+                                <div className='flex'>
+                                    { filteredRooms.map( ( room, index ) => (
+                                        <div
+                                            className="cursor-pointer"
+                                            key={ index }
+                                            onClick={ () => playVibe( selectedVibe, room.id ) }
+                                        >
+                                            <RoomCard room={room} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            :
+                            <div className='flex flex-col items-center justify-center w-full bg-primary text-white p-4 rounded-lg'>
+                                <h2 className='text-3xl my-6 font-bold'>Aucune room disponible</h2>
+                            </div>
+                        :
+                            <div></div>
+                    }
+                </div>
+            }
         </div>
     )
 };
