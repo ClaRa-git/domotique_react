@@ -37,7 +37,7 @@ const Setting = ( ) => {
     const [ messageResponse, setMessageResponse ] = useState( "" );
     const [ settingsResponse, setSettingsResponse ] = useState( [] );
 
-    const [ updatedSettings, setUpdatedSettings ] = useState({});
+    const [ updatedSettings, setUpdatedSettings ] = useState( []);
 
     // Effet pour récupérer les détails de l'appareil
     useEffect( () => {
@@ -89,12 +89,70 @@ const Setting = ( ) => {
         navigate(from.pathname);
     }
 
-    // Fonction pour enregistrer les paramètres
-    const handleSettingChange = (label, newValue) => {
-        setUpdatedSettings(prev => ({
-            ...prev,
-            [label]: newValue
-        }));
+    // Fonction pour enregistrer les paramètres dans un tableau
+    const handleSettingChange = (settingObject, newValue) => {
+        const updatedSetting = {
+            ...settingObject,
+            value: String (newValue),
+        };
+    
+        setUpdatedSettings(prev => {
+            const exists = prev.find(s => s.id === settingObject.id);
+            if (exists) {
+                return prev.map(s => s.id === settingObject.id ? updatedSetting : s);
+            } else {
+                return [...prev, updatedSetting];
+            }
+        });
+    };
+
+    console.log("updatedSettings", updatedSettings);
+    console.log("settingsResponse", settingsResponse);
+
+    // Fonction pour enregistrer les settings
+    const sendSettings = async () => {
+        try {
+            // Filtrer les settings sans id (id === null) non modifiés par l'utilisateur
+            const nullSettingsNotModified = settingsResponse
+                .filter(s => s.id === 0)  // Seulement ceux avec id = 0
+                .filter(s =>
+                    !updatedSettings.some(us =>
+                        us.featureId === s.featureId &&
+                        us.deviceId === s.deviceId &&
+                        us.vibeId === s.vibeId
+                    )
+                )
+                .map(s => ({
+                    id: null,  // Pas d'id
+                    value: String( s.value ),
+                    featureId: s.featureId,
+                    deviceId: s.deviceId,
+                    vibeId: Number(vibeId)  // On ajoute le vibeId récupéré en paramètre
+                }));
+    
+            // Construction du tableau final à envoyer
+            const finalPayload = [...updatedSettings, ...nullSettingsNotModified];
+    
+            console.table(finalPayload); // Pour debug
+    
+            // Envoi des réglages à l'API
+            const response = await axios.post(`${API_ROOT}/service-settings-update`, finalPayload, {
+                headers: {
+                    'Content-Type': 'application/ld+json'
+                }
+            });
+    
+            if (response.status === 200) {
+                console.log("Réglages envoyés avec succès :", response.data);
+                goBack();
+            } else {
+                console.log(`Erreur lors de l'envoi des réglages : ${response.status}`);
+            }
+    
+        } catch (error) {
+            console.error("Erreur lors de l'envoi des réglages :", error);
+            alert("Une erreur est survenue pendant l'enregistrement.");
+        }
     };
 
     return ( isLoading && loadingDevice && loadingVibe ? <PageLoader />
@@ -127,7 +185,7 @@ const Setting = ( ) => {
                 </div>
                 <div className='flex text-white justify-center items-center' >
                     <button
-                        onClick={ () => console.log( "mise à jour des réglages" ) }
+                        onClick={ () => sendSettings() }
                         className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 '
                     >
                         Done
@@ -158,9 +216,12 @@ const Setting = ( ) => {
                                         {setting.label} :
                                     </p>
                                     { !(setting.value === "true" || setting.value === "false") &&
-                                        <p className='text-lg text-primary mt-4 w-20 text-right' >
-                                            {updatedSettings[setting.label] ?? setting.value}
+                                        <p className='text-lg text-primary mt-4 w-20 text-right'>
+                                            {
+                                            updatedSettings.find(s => s.id === setting.id)?.value ?? setting.value
+                                            }
                                         </p>
+                                      
                                     }
                                     { setting.unit &&
                                         <p className='text-lg text-primary mt-4 ml-2' >
@@ -169,8 +230,8 @@ const Setting = ( ) => {
                                     }
                                 </div>
                                 <SelectInterface
-                                    interfaceFeature={ setting }
-                                    onChange={ ( newValue ) => handleSettingChange( setting.label, newValue ) }
+                                    interfaceFeature={setting}
+                                    onChange={(newValue) => handleSettingChange(setting, newValue)}
                                 />
                                 <hr className='w-full border-t border-gray-500 my-4' />
                             </div> 
