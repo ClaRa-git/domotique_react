@@ -18,6 +18,8 @@ const SelectInterface = ( { interfaceFeature, onChange } ) => {
         "Luminosité": SliderInterface,
         "Couleur": ColorInterface,
         "On/Off": SwitchInterface,
+        "Play": SwitchInterface,
+        "Volume": SliderInterface,
     };
 
     // Création du nom de l'interface

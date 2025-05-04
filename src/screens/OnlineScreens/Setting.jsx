@@ -91,6 +91,7 @@ const Setting = ( ) => {
 
     // Fonction pour enregistrer les paramètres dans un tableau
     const handleSettingChange = async (settingObject, newValue) => {
+        console.log("settingObject", settingObject);
 
         const updatedSetting = {
             ...settingObject,
@@ -98,9 +99,24 @@ const Setting = ( ) => {
         };
     
         setUpdatedSettings(prev => {
-            const exists = prev.find(s => s.id === settingObject.id);
+            const exists = prev.find(s =>
+                (s.id !== 0 && s.id === settingObject.id) ||
+                (s.id === 0 &&
+                 s.deviceId === settingObject.deviceId &&
+                 s.featureId === settingObject.featureId &&
+                 s.vibeId === settingObject.vibeId)
+            );
+            
             if (exists) {
-                return prev.map(s => s.id === settingObject.id ? updatedSetting : s);
+                return prev.map(s =>
+                    (s.id !== 0 && s.id === updatedSetting.id) ||
+                    (s.id === 0 &&
+                     s.deviceId === updatedSetting.deviceId &&
+                     s.featureId === updatedSetting.featureId &&
+                     s.vibeId === updatedSetting.vibeId)
+                    ? updatedSetting
+                    : s
+                );
             } else {
                 return [...prev, updatedSetting];
             }
@@ -115,15 +131,14 @@ const Setting = ( ) => {
                     deviceLabel: updatedSetting.deviceLabel,
                     featureLabel: updatedSetting.featureLabel,
                     value: updatedSetting.value 
-                }]
+                }],
+                vibeId: updatedSetting.vibeId,
+                roomId: deviceDetail.room.id
             });
         } catch (error) {
             console.error("Erreur lors de l'envoi en MQTT :", error);
         }
     };
-
-    console.log("updatedSettings", updatedSettings);
-    console.log("settingsResponse", settingsResponse);
 
     // Fonction pour enregistrer les settings
     const sendSettings = async () => {
@@ -148,6 +163,8 @@ const Setting = ( ) => {
     
             // Construction du tableau final à envoyer
             const finalPayload = [...updatedSettings, ...nullSettingsNotModified];
+
+            console.log("finalPayload", finalPayload);
     
             console.table(finalPayload); // Pour debug
     
@@ -231,14 +248,19 @@ const Setting = ( ) => {
                                     <p className='text-lg text-primary mt-4' >
                                         {setting.label} :
                                     </p>
-                                    { !(setting.value === "true" || setting.value === "false") &&
-                                        <p className='text-lg text-primary mt-4 w-20 text-right'>
-                                            {
-                                            updatedSettings.find(s => s.id === setting.id)?.value ?? setting.value
-                                            }
-                                        </p>
-                                      
-                                    }
+                                    <p className='text-lg text-primary mt-4 w-20 text-right'>
+                                        {
+                                            (
+                                                updatedSettings.find(s =>
+                                                    (s.id !== 0 && s.id === setting.id) ||
+                                                    (s.id === 0 &&
+                                                    s.deviceId === setting.deviceId &&
+                                                    s.featureId === setting.featureId &&
+                                                    s.vibeId === setting.vibeId)
+                                                )?.value ?? setting.value
+                                            )
+                                        }
+                                    </p>
                                     { setting.unit &&
                                         <p className='text-lg text-primary mt-4 ml-2' >
                                             {setting.unit}
