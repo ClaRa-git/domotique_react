@@ -41,8 +41,6 @@ const VibeDetail = () => {
 	}, [ dispatch, id ] );
 
 	const { settingsForVibe } = useSelector( selectVibeData );
-	
-	console.log( 'settingsForVibe', settingsForVibe );
 
 	// Récupération des pièces
 	useEffect(() => {
@@ -56,10 +54,6 @@ const VibeDetail = () => {
 	}, [ dispatch, id ] );
 
 	const { planningsForVibe } = useSelector( selectVibeData );
-
-	console.log( 'vibeDetail', vibeDetail );
-	console.log( 'settingsForVibe', settingsForVibe );
-	console.log( 'planningsForVibe', planningsForVibe );
 
 	const handleDeleteVibe = async ( id ) => {
 		const confirm = window.confirm( 'Voulez-vous vraiment supprimer cette vibe ?' );

@@ -45,9 +45,6 @@ const DeviceListVibe = ( { room, vibeId } ) => {
 
     // Fonction pour naviguer vers la page des settings
     const goToSettings = ( vibeId, deviceId, roomId ) => {
-        console.log( 'vibeId', vibeId );
-        console.log( 'deviceId', deviceId );
-        console.log( 'roomId', roomId );
         navigate( `/setting?vibeId=${vibeId}&deviceId=${deviceId}`, {
             state: {
                 from: location,

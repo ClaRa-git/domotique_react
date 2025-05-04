@@ -91,7 +91,6 @@ const Setting = ( ) => {
 
     // Fonction pour enregistrer les paramètres dans un tableau
     const handleSettingChange = async (settingObject, newValue) => {
-        console.log("settingObject", settingObject);
 
         const updatedSetting = {
             ...settingObject,
@@ -124,7 +123,7 @@ const Setting = ( ) => {
 
         // Envoi immédiat à MQTT via l'API Symfony
         try {
-            await axios.post(`${API_ROOT}/send-vibe`, {
+            await axios.post(`${API_ROOT}/test-settings`, {
                 settings: [{
                     deviceAddress: updatedSetting.deviceAddress,
                     deviceRef: updatedSetting.deviceRef,
@@ -132,8 +131,7 @@ const Setting = ( ) => {
                     featureLabel: updatedSetting.featureLabel,
                     value: updatedSetting.value 
                 }],
-                vibeId: updatedSetting.vibeId,
-                roomId: deviceDetail.room.id
+                vibeId: updatedSetting.vibeId
             });
         } catch (error) {
             console.error("Erreur lors de l'envoi en MQTT :", error);
@@ -163,10 +161,6 @@ const Setting = ( ) => {
     
             // Construction du tableau final à envoyer
             const finalPayload = [...updatedSettings, ...nullSettingsNotModified];
-
-            console.log("finalPayload", finalPayload);
-    
-            console.table(finalPayload); // Pour debug
     
             // Envoi des réglages à l'API
             const response = await axios.post(`${API_ROOT}/service-settings-update`, finalPayload, {

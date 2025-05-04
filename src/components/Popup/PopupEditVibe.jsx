@@ -75,10 +75,6 @@ const PopupEditVibe = ( { callable, vibeDetail } ) => {
                 tone: tonus
             }
 
-            console.log( 'criteria', criteria );
-            console.log( vibeDetail.criteria.id );
-            console.log( `${ API_URL }/criterias/${vibeDetail.criteria.id}` );
-
             axios.defaults.headers.patch[ 'Content-Type' ] = 'application/merge-patch+json';
             const criteriaResponse = await axios.patch( `${ API_URL }/criterias/${vibeDetail.criteria.id}`, criteria );
 

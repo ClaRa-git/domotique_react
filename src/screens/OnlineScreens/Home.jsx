@@ -50,9 +50,7 @@ const Home = () => {
     }, [ dispatch ] );
 
     const { loadingVibe, allVibesPlaying } = useSelector( selectVibeData );
-
-	console.log( 'allVibesPlaying', allVibesPlaying );
-
+	
 	// Fonction pour afficher / cacher le popup
 	const handleClick = () => {
 		setIsVisible( true );

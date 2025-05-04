@@ -220,8 +220,6 @@ const Planning = () => {
 				profile: `/api/profiles/${ userId }`
 			}
 
-			console.log( data );
-
 			// Loading
 			setIsLoading( true );
 

@@ -171,6 +171,12 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
             return;
         }
     
+        const data = {
+            vibeId: vibe.id,
+            settings: settings,
+            roomId: roomId
+        }
+
         try {
             setIsLoading( true );
 
@@ -178,7 +184,6 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
             const response = await axios.post( `${ API_ROOT }/send-vibe`, {
                 vibeId: vibe.id,
                 settings: settings,
-                songs: vibe.playlist.songs,
                 roomId: roomId
             } );
 
