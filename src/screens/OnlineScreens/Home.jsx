@@ -10,7 +10,7 @@ import MoodPie from '../../components/Mood/MoodPie';
 import HelloUser from '../../components/Ui/HelloUser';
 import { USER_INFOS, USER_MOOD } from '../../constants/appConstant';
 import PageLoader from '../../components/Loader/PageLoader';
-import VibeLocalStrorage from '../../components/Ui/VibeStorage';
+import VibeLocalStorage from '../../components/Ui/VibeStorage';
 import { fetchAllVibesPlaying } from '../../store/vibe/vibeSlice';
 import selectVibeData from '../../store/vibe/vibeSelector';
 import { useDispatch, useSelector } from 'react-redux';
@@ -77,7 +77,7 @@ const Home = () => {
 			:
 				<div className='min-h-screen flex flex-col' >
 					<HelloUser username = { username } />
-					<VibeLocalStrorage
+					<VibeLocalStorage
 						allVibesPlaying={ allVibesPlaying }
 					/>
 					<div

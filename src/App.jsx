@@ -3,11 +3,12 @@ import useAuthCheck from './hooks/useAuthCheck';
 import { Outlet } from 'react-router-dom';
 import Topbar from './components/Ui/Topbar';
 import Footbar from './components/Ui/Footbar';
+import { USER_INFOS } from './constants/appConstant';
 
 const App = () => {
 
 	// Récupération des informations de l'utilisateur depuis le localStorage
-	const user = JSON.parse( localStorage.getItem( 'USER_INFOS' ) );
+	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
 
 	// Vérification que l'utilisateur en session est bien le bon
 	useAuthCheck( user );

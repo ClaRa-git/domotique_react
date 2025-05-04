@@ -5,7 +5,7 @@ import { API_URL } from "../../constants/apiConstant";
 const planningSlice = createSlice({
     name: "plannings",
     initialState: {
-        loadingPlanning: false,
+        loadingPlanning: true,
         planningDetail: {},
         allPlannings: []
     },

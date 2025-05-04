@@ -75,12 +75,11 @@ const DeviceDropdown = ( { isVisible, toggleDropdown, devices, showDevices, room
                         devices.map( ( device ) => (
                             <div key={ device.id } >
                                 <li
-                                    className='text-sm text-gray-800 mb-2 cursor-pointer flex items-center justify-between'
+                                    className='text-sm text-white mb-2 cursor-pointer flex items-center justify-between'
                                 >
                                     { device.label }
                                     <FaPlus 
                                         size={ 16 }
-                                        className='text-secondary-pink ml-2'
                                         onClick={ () => handleAddDevice( device.id ) }
                                     />
                                 </li>

@@ -12,6 +12,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { RiArrowLeftSFill } from 'react-icons/ri';
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6';
+import { USER_INFOS } from '../../../constants/appConstant';
 
 const Information = () => {
 
@@ -63,9 +64,9 @@ const Information = () => {
             });
 
             // On met à jour le localStorage
-            const userInfos = JSON.parse( localStorage.getItem( 'USER_INFOS' ) );
+            const userInfos = JSON.parse( localStorage.getItem( USER_INFOS ) );
             userInfos.username = nickname;
-            localStorage.setItem( 'USER_INFOS', JSON.stringify( userInfos ) );
+            localStorage.setItem( USER_INFOS, JSON.stringify( userInfos ) );
     
             // Vérification de la réponse
             if ( response.status === 200 ) {

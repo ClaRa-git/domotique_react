@@ -5,7 +5,7 @@ import { useDispatch  } from 'react-redux';
 import PageLoader from '../Loader/PageLoader';
 import { fetchAllVibesPlaying } from '../../store/vibe/vibeSlice';
 
-const VibeLocalStrorage = ( { allVibesPlaying } ) => {
+const VibeLocalStorage = ( { allVibesPlaying } ) => {
 
     // Récupération du dispatch
     const dispatch = useDispatch();
@@ -66,4 +66,4 @@ const VibeLocalStrorage = ( { allVibesPlaying } ) => {
     )
 }
 
-export default VibeLocalStrorage
+export default VibeLocalStorage

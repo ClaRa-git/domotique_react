@@ -5,7 +5,7 @@ import { API_URL } from "../../constants/apiConstant";
 const userSlice = createSlice({
     name: "users",
     initialState: {
-        loading: false,
+        loading: true,
         userDetail: {},
         allUsers: [],
         userPlaylists: [],

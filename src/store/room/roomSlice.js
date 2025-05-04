@@ -5,7 +5,7 @@ import axios from "axios";
 const roomSlice = createSlice({
     name: "rooms",
     initialState: {
-        loadingRoom: false,
+        loadingRoom: true,
         roomDetail: {},
         allRooms: [],
         roomsAvailable: [],

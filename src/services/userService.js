@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../constants/apiConstant";
 
 /**
  * méthode qui vérifie que l'utilisateur du localStorage est bien celui de la bdd
@@ -8,7 +9,7 @@ import axios from "axios";
 export const checkUser = async (userInfo) => {
     try {
         // récupération de l'utilisateur dans la bdd avec l'id qui est dans le localStorage
-        const response = await axios.get(`${API_URL}/users/${userInfo.userId}`);
+        const response = await axios.get(`${API_URL}/profiles/${userInfo.userId}`);
         const user = response.data;
         // vérification que l'utilisateur du localStorage est bien celui de la bdd
         if (user.nickname === userInfo.nickname) {
