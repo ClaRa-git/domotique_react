@@ -120,7 +120,7 @@ const PlanningsByDate = ({ date, callable }) => {
                                                     ( { recurrenceLabels[ event.recurrence ] } )
                                             </p>
                                             <p className='text-sm' >
-                                                { new Date( event.createdAt ).toLocaleDateString( 'fr-FR' ) }
+                                                { new Date( event.dateStart ).toLocaleDateString( 'fr-FR' ) }
                                             </p>
                                         </div>
                                         <RiArrowRightSFill

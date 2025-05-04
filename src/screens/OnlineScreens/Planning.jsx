@@ -46,7 +46,7 @@ const Planning = () => {
 	// State pour gérer les données de l'évènement
 	const [ eventName, setEventName ] = useState( '' );
     const [ date, setDate] = useState( new Date() );
-	const [ createdAt, setCreatedAt ] = useState( new Date() );
+	const [ dateStart, setDateStart ] = useState( new Date() );
 	const [ dayCreation, setDayCreation ] = useState( '' );
 	const [ hourStart, setHourStart ] = useState( '' );
 	const [ hourEnd, setHourEnd ] = useState( '' );
@@ -103,38 +103,39 @@ const Planning = () => {
 	
 	const { loadingPlanning, allPlannings } = useSelector( selectPlanningData );
 
+	console.log( 'allPlannings : ', allPlannings );
+
 	useEffect(() => {
-
-		if ( !allPlannings.length ) return;
-
-		const startOfMonth = new Date( currentMonth.getFullYear(), currentMonth.getMonth(), 1 );
-		const endOfMonth = new Date( currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0 );
-
+		if (!allPlannings.length) return;
+	
+		const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+		const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+	
 		const dates = new Set();
-
-		allPlannings.forEach( ( planning ) => {
-			const startDate = new Date( planning.createdAt );
+	
+		allPlannings.forEach((planning) => {
+			let startDate = new Date(planning.dateStart); // Créer une nouvelle instance de Date
 			const recurrencePlanning = planning.recurrence;
-			const nbRecurrence = recurrenceNumber( recurrencePlanning );
-
-			if ( nbRecurrence === 0 ) {
-				if ( startDate >= startOfMonth ) {
-					dates.add( startDate.toDateString() );
+			const nbRecurrence = recurrenceNumber(recurrencePlanning);
+	
+			if (nbRecurrence === 0) {
+				if (startDate >= startOfMonth) {
+					dates.add(startDate.toDateString());
 				}
-			}
-			else {
-				while ( startDate <= endOfMonth ) {
-					if ( startDate >= startOfMonth && startDate <= endOfMonth ) {
+			} else {
+				while (startDate <= endOfMonth) {
+					if (startDate >= startOfMonth && startDate <= endOfMonth) {
 						dates.add(startDate.toDateString());
 					}
-					startDate.setDate(startDate.getDate() + nbRecurrence );
+					startDate = new Date(startDate.getTime()); // Créer une nouvelle instance à chaque itération
+					startDate.setDate(startDate.getDate() + nbRecurrence);
 				}
-			}			
+			}
 		});
-
-		setDots( [ ...dates ] );
-
-	}, [ allPlannings, currentMonth ] );	
+	
+		setDots([...dates]);
+	}, [allPlannings, currentMonth]);
+		
 
 	// Gestion de la sélection des rooms
 	const toggleRoomSelection = ( room ) => {
@@ -169,7 +170,7 @@ const Planning = () => {
 			setAllDay( false );
 			setRecurrence( 'none' );
 			setEventName( '' );
-			setCreatedAt( new Date() );
+			setDateStart( new Date() );
 			setDayCreation( '' );
 			setHourStart( '' );
 			setHourEnd( '' );
@@ -210,7 +211,7 @@ const Planning = () => {
 			// Récupération des données du formulaire
 			const data = {
 				label: eventName,
-				createdAt: createdAt,
+				dateStart: dateStart,
 				dayCreation: dayCreation,
 				hourStart: !allDay ? hourStart : '00:00',
 				hourEnd: !allDay ? hourEnd : '23:59',
@@ -224,13 +225,15 @@ const Planning = () => {
 			setIsLoading( true );
 
 			// Gestion de champs vides
-			if ( !eventName || !createdAt ) {
+			if ( !eventName || !dateStart ) {
 				console.log( 'Veuillez remplir tous les champs' );
 				setError( 'Veuillez remplir tous les champs' );
 				setSuccess( null);
 				resetMessage();
 				return;
 			}
+
+			console.log( 'Données envoyées : ', data );
 
 			// Envoi de la requête POST
 			axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
@@ -239,7 +242,7 @@ const Planning = () => {
 			if ( response.status === 201 ) {
 				console.log( 'L\'évènement a bien été créé' );
 				setEventName( '' );
-				setCreatedAt( new Date() );
+				setDateStart( new Date() );
 				setDayCreation( '' );
 				setRecurrence( 'none' );
 				setSelectedVibe( '' );
@@ -266,7 +269,7 @@ const Planning = () => {
 		}
 	}
 	  
-    return ( loadingRoom ? <PageLoader />
+    return ( loadingRoom || loadingPlanning || loadingVibe ? <PageLoader />
 		:
         <div className='flex flex-col justify-center mb-16' >
           	<MenuBar />
@@ -356,15 +359,15 @@ const Planning = () => {
 										</div>
 										<hr />
 										<div className='flex justify-between m-4' >
-											<label htmlFor="createdAt" >
+											<label htmlFor="dateStart" >
 												Date de l'évènement
 											</label>
 											<input
 												type="date"
-												name="createdAt"
-												id="createdAt"
+												name="dateStart"
+												id="dateStart"
 												onChange={ ( e ) => {
-														setCreatedAt( e.target.value );
+														setDateStart( e.target.value );
 														setDayCreation( daysOfWeek[ new Date( e.target.value ).getDay() ] );
 													} 
 												}
