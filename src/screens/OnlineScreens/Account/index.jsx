@@ -11,19 +11,63 @@ import { LuPlay } from 'react-icons/lu';
 import { GoLock } from 'react-icons/go';
 import { USER_INFOS } from '../../../constants/appConstant';
 import PageLoader from '../../../components/Loader/PageLoader';
+import { fetchAllVibesForUser } from '../../../store/vibe/vibeSlice';
+import selectVibeData from '../../../store/vibe/vibeSelector';
+import axios from 'axios';
+import { API_ROOT } from '../../../constants/apiConstant';
 
 // Affiche le component pour déconnexion
 const Logout = () => {
 
+	// Récupération de l'utilisateur connecté dans le localStorage
+	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
+
 	// Récupération de la fonction signOut dans le contexte d'authentification
 	const { signOut } = useAuthContext();
+
+	const [ isLoading, setIsLoading ] = useState( false );
 
 	// Récupération de la fonction navigate
 	const navigate = useNavigate();
 
+	// Récupération de dispatch
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch( fetchAllVibesForUser( user.userId ) );
+	}, [ dispatch, user.userId ] );
+
+	const { loadingVibe, allVibesForUser } = useSelector( selectVibeData );
+
+	// On arrête toutes les vibes en cours
+	const stopVibes = async ( userId ) => {
+        
+        try {
+            setIsLoading( true );
+
+            console.log( `Arrêt des vibes pour l'utilisateur : ${ userId }` );
+
+            axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
+            await axios.post( `${ API_ROOT }/stop-vibes-user`, {
+                userId: userId
+            });
+        } catch ( error ) {
+            console.log( `Erreur lors de l'arrêt des vibes: ${ error }` );
+        } finally {
+            setIsLoading( false );
+
+		}
+    }
+
 	// On crée la méthode de deconnexion
 	const handleLogout = async () => {
 		await signOut();
+
+		// On arrête toutes les vibes en cours
+		await stopVibes( user.userId );
+
+		// On supprime l'utilisateur du localStorage
+		localStorage.removeItem( USER_INFOS );
 
 		navigate( '/' );
 	}

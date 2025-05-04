@@ -10,9 +10,16 @@ import MoodPie from '../../components/Mood/MoodPie';
 import HelloUser from '../../components/Ui/HelloUser';
 import { USER_INFOS, USER_MOOD } from '../../constants/appConstant';
 import PageLoader from '../../components/Loader/PageLoader';
+import VibeLocalStrorage from '../../components/Ui/VibeStorage';
+import { fetchAllVibesPlaying } from '../../store/vibe/vibeSlice';
+import selectVibeData from '../../store/vibe/vibeSelector';
+import { useDispatch, useSelector } from 'react-redux';
 
 // Page d'accueil
 const Home = () => {
+
+	// Récupération du dispatch
+	const dispatch = useDispatch();
 
 	// Récupération de l'utilisateur connecté dans le localStorage
 	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
@@ -38,6 +45,14 @@ const Home = () => {
 		}
 	}, []);
 
+    useEffect(() => {
+        dispatch( fetchAllVibesPlaying() );
+    }, [ dispatch ] );
+
+    const { loadingVibe, allVibesPlaying } = useSelector( selectVibeData );
+
+	console.log( 'allVibesPlaying', allVibesPlaying );
+
 	// Fonction pour afficher / cacher le popup
 	const handleClick = () => {
 		setIsVisible( true );
@@ -51,7 +66,8 @@ const Home = () => {
 		setStress( data.stress );
 	}
 
-	return (
+	return ( loadingVibe ? <PageLoader />
+		:
 		<div className='p-4'>
 			{ isVisible ?
 				<PopupMood
@@ -63,6 +79,9 @@ const Home = () => {
 			:
 				<div className='min-h-screen flex flex-col' >
 					<HelloUser username = { username } />
+					<VibeLocalStrorage
+						allVibesPlaying={ allVibesPlaying }
+					/>
 					<div
 						onClick={ handleClick }
 						className='flex flex-row m-4 justify-around bg-primary rounded-lg p-4 text-white cursor-pointer'

@@ -6,11 +6,11 @@ import axios from 'axios';
 import { RiArrowLeftSFill } from 'react-icons/ri';
 import VibeCard from '../Card/VibeCard';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllRooms } from '../../store/room/roomSlice';
+import { fetchRoomsAvailable, fetchRoomsUnavailable } from '../../store/room/roomSlice';
 import selectRoomData from '../../store/room/roomSelector';
 import PageLoader from '../Loader/PageLoader';
 import RoomCard from '../Card/RoomCard';
-import { useNavigate } from 'react-router-dom';
+import { fetchAllVibesPlaying } from '../../store/vibe/vibeSlice';
 
 // Afficher le popup de l'humeur
 const PopupMood = ( { data, callable, sentToParent, userId } ) => {
@@ -23,8 +23,9 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
     // State pour les vibes recommandées
     const [ recommendedVibes, setRecommendedVibes ] = useState( [] );
 
-    // State pour la vibe sélectionnée
+    // State pour la vibe et la room sélectionnées
     const [ selectedVibe, setSelectedVibe ] = useState( null );
+    const [ selectedRoom, setSelectedRoom ] = useState( null );
 
     // State pour le loader du bouton
     const [ isLoading, setIsLoading ] = useState( false );
@@ -38,14 +39,18 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
     // Récupération du dispatch
     const dispatch = useDispatch();
 
-    // Récupération du navigate
-    const navigate = useNavigate();
-
     useEffect(() => {
-      dispatch( fetchAllRooms() );
+      dispatch( fetchRoomsAvailable() );
     }, [ dispatch ] );
 
-    const { loadingRoom, allRooms } = useSelector( selectRoomData );    
+    const { loadingRoom, roomsAvailable } = useSelector( selectRoomData );
+
+    useEffect(() => {
+        dispatch( fetchRoomsUnavailable() );
+      }, [ dispatch ] );
+  
+      const { roomsUnavailable } = useSelector( selectRoomData );
+
 
     // Fonction qui calcule l'humeur
     const determineMood = ( mood, tonus, stress ) => {
@@ -82,12 +87,6 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
         // Appeler la fonction de calcul et obtenir le moral
         const calculatedMoral = determineMood( mood, tonus, stress );
 
-        // Fonction pour enregistrer les données dans localStorage
-        const saveToLocalStorage = () => {
-            const userMoodData = { mood, stress, tonus, calculatedMoral };
-            localStorage.setItem( 'userMood', JSON.stringify( userMoodData ) ); // Sauvegarde dans le localStorage
-        };
-
         // Passer directement la donnée au parent via sentToParent
         sentToParent(
             {
@@ -97,9 +96,6 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
                 stress
             }
         );
-
-        // Enregistrer les données dans localStorage
-        saveToLocalStorage();
 
         // On récupère les vibes recommandées
         getRecommendedVibes();
@@ -146,33 +142,63 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
     // Fonction pour donner les rooms pour la vibe
     const getRoomsForVibe = async ( vibe ) => {
         // On récupère les rooms présentes dans la vibe
-        const rooms = [...new Set(vibe.settings.map((setting) => setting.roomId))];
+        const rooms = [ ...new Set(vibe.settings.map( ( setting ) => setting.roomId ) ) ];
 
         // On filtre allRooms pour ne garder que les rooms présentes dans la vibe
-        const filter = allRooms.filter((room) => rooms.includes(room.id));
+        const filter = roomsAvailable.filter(( room ) => rooms.includes( room.id ) );
         setFilteredRooms(filter);
     }
 
-    // Fonction pour jouer la vibe
-    const playVibe = async (vibe, roomId) => {
-        const settings = vibe.settings.filter(setting => setting.roomId === roomId);
+    // Reset le message d'erreur après 3 secondes
+    const resetMessage = () => {
+        setTimeout(() => {
+            if ( error ) {
+                setError( null );
+            }
+            if ( success ) {
+                setSuccess( null );
+            }
+        }, 3000);
+    }
 
-        console.log( 'Settings : ', settings );
+    // Fonction pour jouer la vibe
+    const playVibe = async ( vibe, roomId ) => {
+        const settings = vibe.settings.filter( setting => setting.roomId === roomId );
+
+        if ( !selectedVibe || !selectedRoom ) {
+            setError( 'Veuillez sélectionner une vibe et une room' );
+            resetMessage();
+            return;
+        }
     
         try {
             setIsLoading( true );
 
             axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
-            await axios.post(`${API_ROOT}/send-vibe`, settings);
-            console.log("Commandes envoyées au backend !");
+            const response = await axios.post( `${ API_ROOT }/send-vibe`, {
+                vibeId: vibe.id,
+                settings: settings,
+                songs: vibe.playlist.songs,
+                roomId: roomId
+            } );
+
+            if ( response.status === 200 ) {
+                console.log( 'Vibe jouée avec succès' );
+            }
+            else {
+                console.log( 'Erreur lors de l\'envoi de la vibe' );
+            }
+
         } catch (error) {
-            console.error("Erreur lors de l'envoi MQTT :", error);
+            console.log( `Erreur lors de l'envoi de la vibe : ${ error }` );
         } finally {
             setIsLoading( false );
         }
 
-        // On redirige vers la page d'accueil
-        //navigate( '/' );
+        dispatch( fetchAllVibesPlaying() );
+
+        // On ferme la popup
+        callable();
     };    
 
     return ( loadingRoom ? <PageLoader />
@@ -200,14 +226,6 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
                             <h2 className='ml-10 text-2xl text-primary pr-10' >
                                 Calcul de l'humeur
                             </h2>
-                        </div>
-                    </div>
-                    <div className='flex text-white justify-center items-center' >
-                        <div
-                            className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 cursor-pointer'
-                            onClick={ () => {} }
-                        >
-                            Done
                         </div>
                     </div>
                 </div>
@@ -271,14 +289,7 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
                             )
                             :
                             (
-                                <div className='flex w-full justify-between'>
-                                    <button
-                                        type='button'
-                                        onClick={ () => callable() }
-                                        className='bg-secondary-orange p-3 rounded-lg transition'
-                                    >
-                                        Annuler
-                                    </button>
+                                <div className='flex w-full justify-center'>
                                     <button
                                         type='submit'
                                         className='bg-secondary-orange font-bold p-3 rounded-lg transition'
@@ -310,7 +321,6 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
                                         }
                                     }
                                 }
-
                             >
                                 <VibeCard
                                     vibe={ vibe }
@@ -321,20 +331,62 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
                     {
                         selectedVibe ?
                             filteredRooms.length > 0 ?
-                            <div className='flex flex-col items-center justify-center w-full bg-primary text-white p-4 rounded-b-lg'>
+                            <div className='flex flex-col items-center justify-between w-full bg-primary text-white p-4 rounded-b-lg'>
                                 <h2 className='text-3xl my-6 font-bold'>Rooms disponibles</h2>
-                                <div className='flex'>
-                                    { filteredRooms.map( ( room, index ) => (
-                                        <div
-                                            className="cursor-pointer"
-                                            key={ index }
-                                            onClick={ () => playVibe( selectedVibe, room.id ) }
-                                        >
-                                            <RoomCard room={room} />
+                                { roomsUnavailable.length > 0 &&
+                                    <div className='flex flex-col items-center justify-between'>
+                                        <div>Rooms occupées (vibe déjà en cours) : </div>
+                                        <div className='mx-2-'>
+                                            { roomsUnavailable.map( ( room, index ) => (
+                                                <div
+                                                    className='mx-4 cursor-pointer'
+                                                    key={ index }
+                                                >
+                                                    { room.label }
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
+                                    </div>
+                                }
+
+                                <div className='flex flex-col'>
+                                    <div className='flex mb-4'>
+                                        { filteredRooms.map( ( room, index ) => (
+                                            <div
+                                                className={`mx-4 cursor-pointer ${ selectedRoom == room.id ? 'bg-secondary-orange rounded-lg' : '' } `}
+                                                key={ index }
+                                                onClick={ () => {
+                                                        if ( selectedRoom == room.id ) {
+                                                            setSelectedRoom( null );
+                                                        }
+                                                        else {
+                                                            setSelectedRoom( room.id );
+                                                        }
+                                                    }
+                                                }
+                                            >
+                                                <RoomCard room={room} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {isLoading ?
+                                    (
+                                        <ButtonLoader />
+                                    )
+                                    :
+                                    (
+                                        <div className='flex w-full justify-center'>
+                                            <button
+                                                type='button'
+                                                onClick={ () => playVibe( selectedVibe, selectedRoom ) }
+                                                className='bg-secondary-orange font-bold p-3 rounded-lg transition'
+                                            >
+                                                Valider
+                                            </button>
+                                        </div>
+                                    )}
+                                        </div>
+                                    </div>
                             :
                             <div className='flex flex-col items-center justify-center w-full bg-primary text-white p-4 rounded-lg'>
                                 <h2 className='text-3xl my-6 font-bold'>Aucune room disponible</h2>

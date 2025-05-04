@@ -7,6 +7,7 @@ const vibeSlice = createSlice({
     initialState: {
         loadingVibe: false,
         vibeDetail: {},
+        allVibesPlaying: [],
         allVibesForUser: [],
         allIcons: [],
         settingsForVibe: [],
@@ -18,6 +19,9 @@ const vibeSlice = createSlice({
         },
         setVibeDetail: (state, action) => {
             state.vibeDetail = action.payload;
+        },
+        setAllVibesPlaying: (state, action) => {
+            state.allVibesPlaying = action.payload;
         },
         setAllVibesForUser: (state, action) => {
             state.allVibesForUser = action.payload;
@@ -34,7 +38,7 @@ const vibeSlice = createSlice({
     }
 });
 
-export const { setLoadingVibe, setVibeDetail, setAllVibesForUser, setAllIcons, setSettingsForVibe, setPlanningsForVibe } = vibeSlice.actions;
+export const { setLoadingVibe, setVibeDetail, setAllVibesPlaying, setAllVibesForUser, setAllIcons, setSettingsForVibe, setPlanningsForVibe } = vibeSlice.actions;
 
 export const fetchAllVibesForUser = (userId) => async (dispatch) => {
     try {
@@ -55,6 +59,18 @@ export const fetchVibeDetail = (vibeId) => async (dispatch) => {
         dispatch(setVibeDetail(response.data));
     } catch (error) {
         console.log(`Erreur lors de la récupération des détails de la pièce : ${error}`);
+    } finally {
+        dispatch(setLoadingVibe(false));
+    }
+}
+
+export const fetchAllVibesPlaying = () => async (dispatch) => {
+    try {
+        dispatch(setLoadingVibe(true));
+        const response = await axios.get(`${API_URL}/vibe_playings`);
+        dispatch(setAllVibesPlaying(response.data.member));
+    } catch (error) {
+        console.log(`Erreur lors de la récupération de toutes les pièces : ${error}`);
     } finally {
         dispatch(setLoadingVibe(false));
     }

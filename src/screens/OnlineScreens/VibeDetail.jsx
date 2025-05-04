@@ -106,7 +106,7 @@ const VibeDetail = () => {
 	}
 
   return (
-	loadingVibe && loadingRoom ? <PageLoader />
+	loadingVibe || loadingRoom ? <PageLoader />
 	:
 	<div className='flex flex-col items-center justify-center mb-4' >        
 		<div className='flex w-full justify-between m-10' >
