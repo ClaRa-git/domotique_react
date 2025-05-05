@@ -102,9 +102,6 @@ const Planning = () => {
 	}, [ dispatch, userId ] );
 	
 	const { loadingPlanning, allPlannings } = useSelector( selectPlanningData );
-
-	console.log( 'allPlannings : ', allPlannings );
-
 	useEffect(() => {
 		if (!allPlannings.length) return;
 	

@@ -23,6 +23,7 @@ const Home = () => {
 
 	// Récupération de l'utilisateur connecté dans le localStorage
 	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
+	const userId = user.userId;
 
 	const [ username ] = useState( user.username );
 	

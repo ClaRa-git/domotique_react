@@ -5,7 +5,7 @@ import { API_URL } from "../../constants/apiConstant";
 const vibeSlice = createSlice({
     name: "vibes",
     initialState: {
-        loadingVibe: false,
+        loadingVibe: true,
         vibeDetail: {},
         allVibesPlaying: [],
         allVibesForUser: [],

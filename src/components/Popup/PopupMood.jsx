@@ -125,6 +125,8 @@ const PopupMood = ( { data, callable, sentToParent, userId } ) => {
                 stress: stress
             };
 
+            console.log( 'data', $data );
+
             axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';        
             const response = await axios.post( `${ API_ROOT }/service-vibe-recommended`, $data );
 

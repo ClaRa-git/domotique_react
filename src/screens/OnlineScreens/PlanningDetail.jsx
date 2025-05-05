@@ -27,16 +27,38 @@ const PlanningDetail = () => {
 	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
 	const userId = user.userId;
 
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	// Récupération du dispatch
 	const dispatch = useDispatch();
 
 	// Récupération du navigate
 	const navigate = useNavigate();
 
+	useEffect(() => {
+		dispatch(fetchPlanningDetail( id ));
+		setIsLoading( false );
+	}, [ dispatch, id ]);
+  
+	const { loadingPlanning, planningDetail } = useSelector( selectPlanningData );
+
+	// Récupération des vibes de l'utilisateur
+	useEffect( () => {
+		dispatch( fetchAllVibesForUser( userId ) );
+	}, [ dispatch, userId ] );
+
+	const { loadingVibe, allVibesForUser } = useSelector( selectVibeData );
+
+	// Récupération des pièces
+	useEffect( () => {
+		dispatch( fetchAllRooms() );
+	}, [ dispatch, userId ] );
+	
+	const { loadingRoom, allRooms } = useSelector( selectRoomData );
+
 	// State
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isEditing, setIsEditing ] = useState( false );
-	const [ isLoading, setIsLoading ] = useState( false );
 
 	// State pour gérer l'affichage des ambiances et des pièces
 	const [ linkVibeOpen, setLinkVibeOpen ] = useState( false );
@@ -45,26 +67,6 @@ const PlanningDetail = () => {
 	// State pour gérer les ambiances et les pièces sélectionnées
 	const [ selectedRooms, setSelectedRooms] = useState( [] );
 	const [ selectedVibe, setSelectedVibe] = useState( '' );
-
-	useEffect(() => {
-		dispatch(fetchPlanningDetail( id ));
-	}, [ dispatch, id ]);
-
-		// Récupération des vibes de l'utilisateur
-		useEffect( () => {
-		  dispatch( fetchAllVibesForUser( userId ) );
-		}, [ dispatch, userId ] );
-	
-		const { loadingVibe, allVibesForUser } = useSelector( selectVibeData );
-	
-		// Récupération des pièces
-		useEffect( () => {
-		  dispatch( fetchAllRooms() );
-		}, [ dispatch, userId ] );
-	
-		const { loadingRoom, allRooms } = useSelector( selectRoomData );
-  
-	const { loadingPlanning, planningDetail } = useSelector( selectPlanningData );
 
 	// State pour gérer les données de l'évènement
 	const [ eventName, setEventName ] = useState( '' );
@@ -143,7 +145,6 @@ const PlanningDetail = () => {
 			setSelectedRooms( [ ...selectedRooms, roomId ] );
 		}
 	};
-	console.log("planningDetail", planningDetail);
 
 	// Gestion du formulaire d'ajout d'évènement
 	const handleEditEvent = async ( e ) => {
@@ -280,7 +281,7 @@ const PlanningDetail = () => {
 	}
 	, [ planningDetail ] );
   
-  return ( loadingRoom || loadingVibe || isLoading || loadingPlanning ? <PageLoader /> 
+  return ( (loadingRoom || loadingVibe || isLoading || loadingPlanning) ? <PageLoader /> 
 	:
     <div className='mb-16'>
 		{ isVisible ?
