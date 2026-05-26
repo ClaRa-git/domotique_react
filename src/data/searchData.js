@@ -1,22 +1,18 @@
-export const pages = [
+// On transforme pages en fonction pour pouvoir injecter l'userId dynamiquement
+// C'est nécessaire car /account/:id requiert l'id dans l'URL
+export const getPages = (userId) => [
+  {
+    label: "Mon profil",
+    path: `/account/${userId}`,
+    keywords: ["profil", "compte", "utilisateur", "avatar", "identité"],
+    category: "Paramètres"
+  },
   {
     label: "Mot de passe",
     path: "/account/password",
     keywords: ["sécurité", "connexion", "login", "changer", "mot de passe"],
     category: "Paramètres"
   },
-//   {
-//     label: "Langue",
-//     path: "/settings/language",
-//     keywords: ["traduction", "français", "anglais", "paramètres"],
-//     category: "Paramètres"
-//   },
-//   {
-//     label: "Confidentialité",
-//     path: "/settings/privacy",
-//     keywords: ["données", "sécurité", "profil", "visibilité"],
-//     category: "Paramètres"
-//   },
   {
     label: "Planning",
     path: "/planning",

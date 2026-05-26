@@ -1,86 +1,82 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { pages } from "../../data/searchData";
+import { getPages } from "../../data/searchData";
+import { useAuthContext } from "../../contexts/AuthContext";
+import { FaSearch } from "react-icons/fa";
+import { RiArrowRightSFill } from "react-icons/ri";
 
-export default function SearchPage() {
+export default function Search() {
   const navigate = useNavigate();
+  const { userId } = useAuthContext(); // récupère l'id de l'utilisateur connecté
+
   const [query, setQuery] = useState("");
 
-  // Suggestions par défaut
-  const suggestions = [
-    "Mot de passe",
-    "Planning",
-    "Ambiance",
-    "Playlist"
-  ];
+  // On construit les pages en passant userId pour générer /account/:id
+  const pages = getPages(userId);
 
-  // Filtrage élargi (label + mots-clés)
+  const suggestions = ["Mon profil", "Mot de passe", "Planning", "Ambiance", "Playlist"];
+
   const results = pages.filter((p) => {
     const q = query.toLowerCase();
     return (
       p.label.toLowerCase().includes(q) ||
-      (p.keywords && p.keywords.some(k => k.toLowerCase().includes(q)))
+      (p.keywords && p.keywords.some((k) => k.toLowerCase().includes(q)))
     );
   });
 
-  const handleSuggestionClick = (s) => setQuery(s);
-
   return (
-    <div className="search-page" style={{ padding: "1rem" }}>
-      <input
-        type="text"
-        placeholder="Rechercher..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{
-          width: "100%",
-          fontSize: "1.2rem",
-          border: "none",
-          borderBottom: "1px solid #ccc",
-          padding: "0.5rem 0"
-        }}
-      />
+    <div className="flex flex-col px-6 pt-6 pb-4 min-h-screen">
 
-      {/* Suggestions */}
+      {/* Barre de recherche */}
+      <div className="flex items-center gap-3 border-b-2 border-primary pb-3 mb-6">
+        <FaSearch size={20} className="text-primary opacity-50" />
+        <input
+          type="text"
+          placeholder="Rechercher..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          autoFocus
+          className="flex-1 text-lg bg-transparent outline-none text-primary placeholder-primary/40 font-medium"
+        />
+      </div>
+
+      {/* Suggestions par défaut */}
       {!query && (
-        <ul style={{ listStyle: "none", marginTop: "1rem", padding: 0 }}>
+        <ul className="flex flex-col gap-1">
           {suggestions.map((s, i) => (
             <li
               key={i}
-              onClick={() => handleSuggestionClick(s)}
-              style={{
-                color: "#777",
-                cursor: "pointer",
-                marginBottom: "0.5rem"
-              }}
+              onClick={() => setQuery(s)}
+              className="flex justify-between items-center py-3 px-2 rounded-lg text-primary/60 cursor-pointer hover:bg-offwhite transition-colors"
             >
-              {s}
+              <span className="font-medium">{s}</span>
+              <RiArrowRightSFill size={20} className="text-secondary-pink" />
             </li>
           ))}
         </ul>
       )}
 
-      {/* Résultats */}
+      {/* Résultats filtrés */}
       {query && (
-        <ul style={{ listStyle: "none", marginTop: "1rem", padding: 0 }}>
+        <ul className="flex flex-col gap-2">
           {results.length > 0 ? (
             results.map((p, i) => (
               <li
                 key={i}
                 onClick={() => navigate(p.path)}
-                style={{
-                  cursor: "pointer",
-                  marginBottom: "0.5rem"
-                }}
+                className="flex justify-between items-center py-3 px-3 rounded-lg cursor-pointer bg-offwhite hover:bg-secondary-pink/20 transition-colors"
               >
-                <strong>{p.label}</strong>
-                <div style={{ fontSize: "0.9rem", color: "#888" }}>
-                  {p.category}
+                <div>
+                  <p className="font-semibold text-primary">{p.label}</p>
+                  <p className="text-sm text-secondary-pink">{p.category}</p>
                 </div>
+                <RiArrowRightSFill size={24} className="text-secondary-orange" />
               </li>
             ))
           ) : (
-            <li style={{ color: "#aaa" }}>Aucun résultat trouvé</li>
+            <li className="text-center text-primary/40 mt-8 font-medium">
+              Aucun résultat trouvé
+            </li>
           )}
         </ul>
       )}
