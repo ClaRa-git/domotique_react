@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios, { all } from "axios";
-import { API_URL } from "../../constants/apiConstant";
+import { API_URL, API_ROOT } from "../../constants/apiConstant";
 
 const userSlice = createSlice({
     name: "users",
@@ -40,8 +40,8 @@ export const { setLoading, setUserDetail, setAllUsers, setUserPlaylists, setPlay
 export const fetchAllUsers = () => async (dispatch) => {
     try {
         dispatch(setLoading(true));
-        const response = await axios.get(`${API_URL}/profiles`);
-        dispatch(setAllUsers(response.data.member));
+        const response = await axios.get(`${API_ROOT}/login-data`);
+        dispatch(setAllUsers(response.data));
     } catch (error) {
         console.log(`Erreur lors de la récupération des détails de l'utilisateur : ${error}`);
     } finally {

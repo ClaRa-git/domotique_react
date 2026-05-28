@@ -9,7 +9,7 @@ import ButtonLoader from '../Loader/ButtonLoader';
 const PopupAccount = ( { data, callable } ) => {
 
 	// Récupérartion de l'avatar
-	const imgAvatar = `${ IMAGE_URL }/avatars/${ data.avatar.imagePath }`;
+	const imgAvatar = `${ IMAGE_URL }/avatars/${ data.avatar }`;
 
 	// States
 	const [ user, setUser ] = useState( null );
@@ -46,15 +46,21 @@ const PopupAccount = ( { data, callable } ) => {
 			// Si la réponse est un succès, on met à jour le state user avec les données de l'utilisateur
 			const loggingUser = {
 			userId: response.data.user.id,
-			username: response.data.user.username
+			username: response.data.user.username,
+			token: response.data.token
 			};
 
 			// En cas de succès, on connnecte l'utilisateur
 			// On met à jour le state user avec les données de l'utilisateur
-			signIn( loggingUser );
+			// On attend que signIn ait fini de stocker le token
+			await signIn( loggingUser );
 			setUser( loggingUser );
 			// On renvoit le state callable pour fermer le popup
 			callable();
+			// Petit délai pour laisser le localStorage se synchroniser
+			setTimeout(() => {
+				window.location.reload();
+			}, 100);
 			// On réactualise la page
 			window.location.reload();
 		}

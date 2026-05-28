@@ -5,7 +5,7 @@ import { AVATAR_URL } from '../../constants/apiConstant';
 const ProfileCard = ( { data } ) => {
 
   	// Récupération de l'URL de l'avatar et du nom d'utilisateur
-    const imgAvatar = `${ AVATAR_URL }/${ data?.avatar?.imagePath }`;
+    const imgAvatar = `${ AVATAR_URL }/${ data?.avatar }`;
     const username = data?.username;
 
 	return (

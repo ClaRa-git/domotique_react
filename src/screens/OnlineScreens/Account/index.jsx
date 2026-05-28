@@ -96,6 +96,15 @@ const Account = () => {
 	// Récupération de l'utilisateur connecté dans le store
 	const params = useParams();
 	const { id } = params;
+	const navigate = useNavigate();
+
+	// Vérification IDOR côté front
+	const { userId } = useAuthContext();
+	useEffect(() => {
+		if (userId && parseInt(id) !== parseInt(userId)) {
+			navigate(`/account/${userId}`, { replace: true });
+		}
+	}, [id, userId, navigate]);
 
 	// Récupération du dispatch
 	const dispatch = useDispatch();
