@@ -11,13 +11,17 @@ axios.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// ✅ Intercepteur de réponse — on log sans rediriger
 axios.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
             console.warn('401 détecté sur :', error.config.url);
-            // ❌ Pas de redirection automatique — on laisse chaque composant gérer
+            // Si un token existait → session expirée : on nettoie et on renvoie au login
+            if (localStorage.getItem('jwt_token')) {
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('userInfos');
+                window.location.href = '/';
+            }
         }
         return Promise.reject(error);
     }

@@ -158,7 +158,7 @@ const PopupNewVibe = ( { callable, userId, from } ) => {
                 <div className='flex text-white justify-center items-center' >
                     <div
                         className='w-full bg-primary font-bold p-2 rounded-lg transition mr-4 cursor-pointer'
-                        onClick={ () => handleSubmit() }
+                        onClick={ (e) => handleSubmit(e) }
                     >
                         Done
                     </div>
@@ -215,6 +215,7 @@ const PopupNewVibe = ( { callable, userId, from } ) => {
                                 label={ 'Stress' }
                                 type={ 'range' }
                                 callable={ ( e ) => setStress( parseInt( e.target.value ) ) }
+                                textColor='text-white'
                             />
                             <div className='flex items-center justify-center' >
                                 <p className='font-bold mb-2 mt-4 ml-4 w-10' >
@@ -228,6 +229,7 @@ const PopupNewVibe = ( { callable, userId, from } ) => {
                                 label={ 'Tonus' }
                                 type={ 'range' }
                                 callable={ ( e ) => setTonus( parseInt( e.target.value ) ) }
+                                textColor='text-white'
                             />
                             <div className='flex items-center justify-center' >
                                 <p className='font-bold mb-2 mt-4 ml-4 w-10' >
@@ -339,7 +341,8 @@ const PopupNewVibe = ( { callable, userId, from } ) => {
                             Annuler
                         </button>
                         <button
-                            type='submit'
+                            type='button'
+                            onClick={ (e) => handleSubmit(e) }
                             className='bg-secondary-orange px-4 py-2 font-bold rounded-lg transition'
                         >
                             Ajouter

@@ -14,29 +14,25 @@ const VibeLocalStorage = ( { allVibesPlaying } ) => {
 
     const stopVibe = async ( vibeId, roomId, vibePlayingId ) => {
 
-        // On avertit l'utilisateur que cela va arrêter la vibe dans toutes les rooms
         if ( !window.confirm( 'Voulez-vous vraiment arrêter cette vibe ?' ) ) {
             return;
         }
-        
+
         try {
             setIsLoading( true );
 
-            console.log( `Arrêt de la vibe : ${vibeId} dans la room : ${roomId}` );
-            axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
-            const response = await axios.post(`${API_ROOT}/stop-vibe`, {
+            await axios.post(`${API_ROOT}/stop-vibe`, {
                 vibeId: vibeId,
-                roomId: roomId,
+                roomId: roomId ?? null,
                 vibePlayingId: vibePlayingId
             });
 
+            dispatch( fetchAllVibesPlaying() );
         } catch (error) {
             console.log( `Erreur lors de l'arrêt de la vibe : ${error}` );
         } finally {
             setIsLoading( false );
         }
-
-        dispatch( fetchAllVibesPlaying() );
     }
 
     return ( isLoading ? <PageLoader />
@@ -50,11 +46,11 @@ const VibeLocalStorage = ( { allVibesPlaying } ) => {
                             className='flex w-full mb-2 justify-between items-center'
                         >
                             <p>
-                                "{ vibe.vibe.label }" de { vibe.profile.username } en cours dans : {vibe.rooms[0].label}
+                                "{ vibe.vibe.label }" de { vibe.profile.username }{ vibe.rooms?.length > 0 ? ` en cours dans : ${vibe.rooms[0].label}` : '' }
                             </p>
                             <div
                                 className='p-3 bg-secondary-orange rounded-lg cursor-pointer'
-                                onClick={ () => { stopVibe( vibe.vibe.id, vibe.rooms[0].id, vibe.id ) }
+                                onClick={ () => { stopVibe( vibe.vibe.id, vibe.rooms?.[0]?.id, vibe.id ) }
                             }
                             >
                                 Arrêter
