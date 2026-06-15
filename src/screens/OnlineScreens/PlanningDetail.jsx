@@ -83,6 +83,8 @@ const PlanningDetail = () => {
 	const [ error, setError ] = useState( null );
 	const [ success, setSuccess ] = useState( null );
 
+	const daysOfWeek = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+
 	const handleEditPlanning = ( id ) => {
 		setIsVisible( !isVisible );
 	}
@@ -178,28 +180,21 @@ const PlanningDetail = () => {
 			}
 
 			// Envoi de la requête PATCH
-            axios.defaults.headers.patch[ 'Content-Type' ] = 'application/merge-patch+json';
-			const response = await axios.patch( `${ API_URL }/plannings/${id}`, data );
+			const response = await axios.patch(
+				`${ API_URL }/plannings/${id}`,
+				data,
+				{ headers: { 'Content-Type': 'application/merge-patch+json' } }
+			);
 
 			if ( response.status === 200 ) {
-				console.log( 'L\'évènement a bien été modifié' );
-				setEventName( '' );
-				setDateStart( new Date() );
-				setDayCreation( '' );
-				setRecurrence( 'none' );
-				setSelectedVibe( '' );
-				setSelectedRooms( [] );
-				setSwitchOn( false );
-				setAllDay( false );
-
 				setIsVisible( false );
-
 				setSuccess( 'L\'évènement a bien été modifié' );
 				setError( null );
 				resetMessage();
 
+				dispatch( fetchPlanningDetail( id ) );
 				dispatch( fetchAllPlanningsForUser( userId ) );
-			} 
+			}
 
 		} catch ( error ) {
 			console.log( `Erreur lors de l'ajout de l'évènement : ${error}` );
@@ -328,7 +323,7 @@ const PlanningDetail = () => {
 								</p>
 								<SwitchToggle
 									sendToParent={ handleSwitch }
-									isOn={ true }
+									isOn={ switchOn }
 								/>
 							</div>
 							<hr />
@@ -340,7 +335,7 @@ const PlanningDetail = () => {
 									type="date"
 									name="dateStart"
 									id="dateStart"
-									value={ toLocalYYYYMMDD( planningDetail.dateStart ) }
+									value={ toLocalYYYYMMDD( dateStart ) }
 									onChange={ ( e ) => {
 											setDateStart( e.target.value );
 											setDayCreation( daysOfWeek[ new Date( e.target.value ).getDay() ] );
@@ -359,7 +354,7 @@ const PlanningDetail = () => {
 											type="time"
 											name="hourStart"
 											id="hourStart"
-											value={ planningDetail.hourStart }
+											value={ hourStart }
 											onChange={ ( e ) => { setHourStart( e.target.value ) } }
 										/>
 									</div>
@@ -371,7 +366,7 @@ const PlanningDetail = () => {
 											type="time"
 											name="hourEnd"
 											id="hourEnd"
-											value={ planningDetail.hourEnd }
+											value={ hourEnd }
 											onChange={ ( e ) => { setHourEnd( e.target.value ) } }
 										/>
 									</div>
@@ -387,7 +382,7 @@ const PlanningDetail = () => {
 									id="recurrence"
 									className='bg-primary rounded py-2 px-3'
 									onChange={  ( e ) => { setRecurrence( e.target.value ) } }
-									value={ planningDetail.recurrence }
+									value={ recurrence }
 								>
 									<option value="none" >
 										Aucune
