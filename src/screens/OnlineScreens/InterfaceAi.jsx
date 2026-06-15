@@ -20,7 +20,7 @@ const QUICK_SUGGESTIONS = [
 ];
 
 // Page de chat avec Noctys
-// ⚠️  Cette page vit dans <App> qui contient déjà Topbar + Footbar.
+//     Cette page vit dans <App> qui contient déjà Topbar + Footbar.
 //     On n'utilise PAS h-screen ici — on remplit juste l'espace disponible.
 const InterfaceAi = () => {
 
@@ -59,6 +59,18 @@ const InterfaceAi = () => {
 
     // Réinitialise la sélection quand de nouvelles vibes arrivent
     useEffect( () => {
+        console.log( '[InterfaceAi] recommendedVibes mis à jour :', recommendedVibes );
+        if ( recommendedVibes.length > 0 ) {
+            console.log( '[InterfaceAi] Détail de chaque vibe :' );
+            recommendedVibes.forEach( ( vibe, i ) => {
+                console.log( `  [Vibe ${ i }]`, {
+                    id: vibe.id,
+                    label: vibe.label,
+                    score: vibe.score,
+                    settings: vibe.settings,
+                });
+            });
+        }
         setSelectedVibe( null );
         setSelectedRoom( null );
         setFilteredRooms( [] );
@@ -87,10 +99,12 @@ const InterfaceAi = () => {
 
     const handleSelectVibe = ( vibe ) => {
         if ( selectedVibe?.id === vibe.id ) {
+            console.log( '[InterfaceAi] handleSelectVibe — désélection de :', vibe.label );
             setSelectedVibe( null );
             setSelectedRoom( null );
             setFilteredRooms( [] );
         } else {
+            console.log( '[InterfaceAi] handleSelectVibe — sélection de :', vibe );
             setSelectedVibe( vibe );
             setSelectedRoom( null );
             getRoomsForVibe( vibe );
