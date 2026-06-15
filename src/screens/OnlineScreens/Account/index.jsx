@@ -61,13 +61,10 @@ const Logout = () => {
 
 	// On crée la méthode de deconnexion
 	const handleLogout = async () => {
-		await signOut();
-
-		// On arrête toutes les vibes en cours
+		// On arrête toutes les vibes avant de supprimer le token
 		await stopVibes( user.userId );
 
-		// On supprime l'utilisateur du localStorage
-		localStorage.removeItem( USER_INFOS );
+		await signOut();
 
 		navigate( '/' );
 	}
