@@ -50,11 +50,11 @@ const VibeLocalStorage = ( { allVibesPlaying } ) => {
                             className='flex w-full mb-2 justify-between items-center'
                         >
                             <p>
-                                "{ vibe.vibe.label }" de { vibe.profile.username } en cours dans : {vibe.rooms[0].label}
+                                "{ vibe.vibe.label }" de { vibe.profile.username }{ vibe.rooms?.length > 0 ? ` en cours dans : ${vibe.rooms[0].label}` : '' }
                             </p>
                             <div
                                 className='p-3 bg-secondary-orange rounded-lg cursor-pointer'
-                                onClick={ () => { stopVibe( vibe.vibe.id, vibe.rooms[0].id, vibe.id ) }
+                                onClick={ () => { stopVibe( vibe.vibe.id, vibe.rooms?.[0]?.id, vibe.id ) }
                             }
                             >
                                 Arrêter

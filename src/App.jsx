@@ -7,21 +7,21 @@ import { USER_INFOS } from './constants/appConstant';
 
 const App = () => {
 
-	// Récupération des informations de l'utilisateur depuis le localStorage
 	const user = JSON.parse( localStorage.getItem( USER_INFOS ) );
-
-	// Vérification que l'utilisateur en session est bien le bon
 	useAuthCheck( user );
 
 	return (
-		<div className='relative flex flex-col h-screen'>
-			<div className='flex-1 flex flex-col'>
-				<Topbar />
-					<div className='flex-1'>
-						<Outlet />
-					</div>
-				<Footbar />
+		<div className='flex flex-col h-screen overflow-hidden'>
+			{/* Topbar fixe en haut — h-24 */}
+			<Topbar />
+
+			{/* Zone centrale scrollable — prend tout l'espace entre Topbar et Footbar */}
+			<div className='flex-1 overflow-y-auto'>
+				<Outlet />
 			</div>
+
+			{/* Footbar fixe en bas — h-20 */}
+			<Footbar />
 		</div>
 	)
 }
