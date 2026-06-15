@@ -14,29 +14,25 @@ const VibeLocalStorage = ( { allVibesPlaying } ) => {
 
     const stopVibe = async ( vibeId, roomId, vibePlayingId ) => {
 
-        // On avertit l'utilisateur que cela va arrêter la vibe dans toutes les rooms
         if ( !window.confirm( 'Voulez-vous vraiment arrêter cette vibe ?' ) ) {
             return;
         }
-        
+
         try {
             setIsLoading( true );
 
-            console.log( `Arrêt de la vibe : ${vibeId} dans la room : ${roomId}` );
-            axios.defaults.headers.post[ 'Content-Type' ] = 'application/ld+json';
-            const response = await axios.post(`${API_ROOT}/stop-vibe`, {
+            await axios.post(`${API_ROOT}/stop-vibe`, {
                 vibeId: vibeId,
-                roomId: roomId,
+                roomId: roomId ?? null,
                 vibePlayingId: vibePlayingId
             });
 
+            dispatch( fetchAllVibesPlaying() );
         } catch (error) {
             console.log( `Erreur lors de l'arrêt de la vibe : ${error}` );
         } finally {
             setIsLoading( false );
         }
-
-        dispatch( fetchAllVibesPlaying() );
     }
 
     return ( isLoading ? <PageLoader />

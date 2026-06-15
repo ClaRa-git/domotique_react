@@ -4,8 +4,13 @@ import { FaCheck } from 'react-icons/fa'
 import { API_ROOT } from '../../constants/apiConstant'
 import useAiChat from '../../hooks/useAiChat'
 import ChatBubble from '../../components/Ai/ChatBubble'
+import ButtonLoader from '../../components/Loader/ButtonLoader'
 import axios from 'axios'
 import { USER_INFOS } from '../../constants/appConstant'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchAllVibesPlaying } from '../../store/vibe/vibeSlice'
+import { fetchRoomsAvailable, fetchRoomsUnavailable } from '../../store/room/roomSlice'
+import selectRoomData from '../../store/room/roomSelector'
 
 const QUICK_SUGGESTIONS = [
     "Je me sens fatigué 😴",
@@ -14,32 +19,12 @@ const QUICK_SUGGESTIONS = [
     "Je suis de bonne humeur 😊",
 ];
 
-// Carte de vibe recommandée par Noctys
-const VibeCard = ( { vibe, onActivate, isActivating } ) => {
-    const scorePercent = Math.round( ( 1 - Math.min( vibe.score, 2 ) / 2 ) * 100 );
-
-    return (
-        <div className='flex items-center justify-between bg-white border border-primary/10 rounded-xl px-4 py-3 mb-2 shadow-sm'>
-            <div>
-                <p className='font-bold text-primary text-sm'>{ vibe.label }</p>
-                <p className='text-xs text-secondary-pink'>{ scorePercent }% de correspondance</p>
-            </div>
-            <button
-                onClick={ () => onActivate( vibe.id ) }
-                disabled={ isActivating }
-                className='flex items-center gap-1 bg-secondary-orange text-white text-xs font-bold px-3 py-2 rounded-full disabled:opacity-50 transition hover:bg-secondary-pink'
-            >
-                <FaCheck size={ 10 } />
-                Activer
-            </button>
-        </div>
-    );
-};
-
 // Page de chat avec Noctys
 // ⚠️  Cette page vit dans <App> qui contient déjà Topbar + Footbar.
 //     On n'utilise PAS h-screen ici — on remplit juste l'espace disponible.
 const InterfaceAi = () => {
+
+    const dispatch = useDispatch();
 
     const {
         messages,
@@ -49,22 +34,41 @@ const InterfaceAi = () => {
         resetChat
     } = useAiChat();
 
+    const { roomsAvailable, roomsUnavailable } = useSelector( selectRoomData );
+
     const [ input, setInput ]               = useState( '' );
-    const [ activatingId, setActivatingId ] = useState( null );
+    const [ isActivating, setIsActivating ] = useState( false );
     const [ activatedId, setActivatedId ]   = useState( null );
+
+    // Même logique que PopupMood
+    const [ selectedVibe, setSelectedVibe ]     = useState( null );
+    const [ selectedRoom, setSelectedRoom ]     = useState( null );
+    const [ filteredRooms, setFilteredRooms ]   = useState( [] );
 
     const bottomRef = useRef( null );
     const imgIa     = `${ API_ROOT }/images/logo_ai.png`;
 
     useEffect( () => {
+        dispatch( fetchRoomsAvailable() );
+        dispatch( fetchRoomsUnavailable() );
+    }, [ dispatch ] );
+
+    useEffect( () => {
         bottomRef.current?.scrollIntoView( { behavior: 'smooth' } );
     }, [ messages, isLoading, recommendedVibes ] );
+
+    // Réinitialise la sélection quand de nouvelles vibes arrivent
+    useEffect( () => {
+        setSelectedVibe( null );
+        setSelectedRoom( null );
+        setFilteredRooms( [] );
+        setActivatedId( null );
+    }, [ recommendedVibes ] );
 
     const handleSend = () => {
         if ( !input.trim() || isLoading ) return;
         sendMessage( input );
         setInput( '' );
-        setActivatedId( null );
     };
 
     const handleKeyDown = ( e ) => {
@@ -74,18 +78,38 @@ const InterfaceAi = () => {
         }
     };
 
-    const handleActivateVibe = async ( vibeId ) => {
-        const vibe = recommendedVibes.find( v => v.id === vibeId );
-        if ( !vibe ) return;
+    // Même logique que getRoomsForVibe dans PopupMood
+    const getRoomsForVibe = ( vibe ) => {
+        const rooms = [ ...new Set( vibe.settings.map( s => s.roomId ) ) ];
+        const filter = roomsAvailable.filter( room => rooms.includes( room.id ) );
+        setFilteredRooms( filter );
+    };
 
-        setActivatingId( vibeId );
+    const handleSelectVibe = ( vibe ) => {
+        if ( selectedVibe?.id === vibe.id ) {
+            setSelectedVibe( null );
+            setSelectedRoom( null );
+            setFilteredRooms( [] );
+        } else {
+            setSelectedVibe( vibe );
+            setSelectedRoom( null );
+            getRoomsForVibe( vibe );
+        }
+    };
+
+    // Même logique que playVibe dans PopupMood
+    const playVibe = async ( vibe, roomId ) => {
+        const settings = vibe.settings.filter( s => s.roomId === roomId );
+
         try {
+            setIsActivating( true );
+
             const userInfos = JSON.parse( localStorage.getItem( USER_INFOS ) );
             const token = userInfos?.token || null;
 
             await axios.post(
                 `${ API_ROOT }/send-vibe`,
-                { vibeId, settings: vibe.settings },
+                { vibeId: vibe.id, settings, roomId },
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -93,18 +117,23 @@ const InterfaceAi = () => {
                     }
                 }
             );
-            setActivatedId( vibeId );
+
+            setActivatedId( vibe.id );
+            setSelectedVibe( null );
+            setSelectedRoom( null );
+            setFilteredRooms( [] );
+            dispatch( fetchAllVibesPlaying() );
+
         } catch ( err ) {
             console.error( 'Erreur activation vibe :', err );
         } finally {
-            setActivatingId( null );
+            setIsActivating( false );
         }
     };
 
     const showSuggestions = messages.length === 1;
 
     return (
-        // flex-col qui occupe toute la hauteur restante après Topbar + Footbar
         <div className='flex flex-col h-full'>
 
             {/* ── Sous-header Noctys ── */}
@@ -150,19 +179,85 @@ const InterfaceAi = () => {
 
                 { recommendedVibes.length > 0 && (
                     <div className='px-4 mt-3'>
+
+                        {/* Liste des vibes recommandées — même style que PopupMood */}
+                        <div className={ `bg-primary text-white rounded-lg p-4 ${ selectedVibe ? 'rounded-b-none' : 'mb-4' }` }>
+                            { recommendedVibes.map( ( vibe ) => {
+                                const MAX_DISTANCE = Math.sqrt( 3 * 100 * 100 );
+                                const scorePercent = Math.round( Math.max( 0, 1 - vibe.score / MAX_DISTANCE ) * 100 );
+                                const isSelected = selectedVibe?.id === vibe.id;
+                                return (
+                                    <div
+                                        key={ vibe.id }
+                                        onClick={ () => handleSelectVibe( vibe ) }
+                                        className={ `flex items-center justify-between px-3 py-2 rounded-lg mb-2 last:mb-0 cursor-pointer transition ${ isSelected ? 'bg-secondary-orange' : 'hover:bg-white/10' }` }
+                                    >
+                                        <div>
+                                            <p className='font-bold text-sm'>{ vibe.label }</p>
+                                            <p className='text-xs text-white/60'>{ scorePercent }% de correspondance</p>
+                                        </div>
+                                        { isSelected && <FaCheck size={ 14 } /> }
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Sélection de la pièce — même structure que PopupMood */}
+                        { selectedVibe && (
+                            <div className='bg-primary text-white rounded-b-lg p-4'>
+
+                                { roomsUnavailable.length > 0 && (
+                                    <div className='mb-3'>
+                                        <p className='text-xs text-white/50 mb-1'>Pièces occupées :</p>
+                                        <div className='flex flex-wrap gap-2'>
+                                            { roomsUnavailable.map( room => (
+                                                <span key={ room.id } className='text-xs text-white/40 border border-white/20 px-3 py-1 rounded-full'>
+                                                    { room.label }
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                { filteredRooms.length > 0 ? (
+                                    <>
+                                        <p className='text-xs text-white/70 mb-2'>Dans quelle pièce ?</p>
+                                        <div className='flex flex-wrap gap-2 mb-4'>
+                                            { filteredRooms.map( room => (
+                                                <div
+                                                    key={ room.id }
+                                                    onClick={ () => setSelectedRoom( selectedRoom === room.id ? null : room.id ) }
+                                                    className={ `cursor-pointer text-xs font-bold px-3 py-1.5 rounded-full transition ${ selectedRoom === room.id ? 'bg-secondary-orange' : 'bg-white/10 hover:bg-white/20' }` }
+                                                >
+                                                    { room.label }
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className='flex justify-center'>
+                                            { isActivating ? (
+                                                <ButtonLoader />
+                                            ) : (
+                                                <button
+                                                    onClick={ () => playVibe( selectedVibe, selectedRoom ) }
+                                                    disabled={ !selectedRoom }
+                                                    className='bg-secondary-orange font-bold px-6 py-2 rounded-lg text-sm transition hover:bg-secondary-pink disabled:opacity-40 disabled:cursor-not-allowed'
+                                                >
+                                                    Valider
+                                                </button>
+                                            )}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p className='text-xs text-white/50 text-center py-1'>Aucune pièce disponible pour cette ambiance</p>
+                                )}
+                            </div>
+                        )}
+
                         { activatedId && (
-                            <p className='text-xs text-secondary-orange font-bold mb-2 text-center'>
+                            <p className='text-xs text-secondary-orange font-bold mt-3 text-center'>
                                 ✓ Ambiance activée !
                             </p>
                         )}
-                        { recommendedVibes.map( ( vibe ) => (
-                            <VibeCard
-                                key={ vibe.id }
-                                vibe={ vibe }
-                                onActivate={ handleActivateVibe }
-                                isActivating={ activatingId === vibe.id }
-                            />
-                        ))}
                     </div>
                 )}
 
