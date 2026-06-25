@@ -279,7 +279,7 @@ const PlanningDetail = () => {
 			setLinkRoomOpen( false );
 		}
 	}
-	, [ planningDetail ] );
+	, [ planningDetail, loadingPlanning ] );
   
   return ( (loadingRoom || loadingVibe || isLoading || loadingPlanning) ? <PageLoader /> 
 	:

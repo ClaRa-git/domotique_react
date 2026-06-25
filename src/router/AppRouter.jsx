@@ -34,7 +34,7 @@ const AppRouter = () => {
         // Vérification de la session utilisateur dès le montage du composant
         checkUserSession();
 
-    }, [setUserId, setUsername, setInSession, userId]); // Les dépendances incluent 'userInfo'
+    }, [setUserId, setUsername, setInSession, userId, userInfo]); // Les dépendances incluent 'userInfo'
 
     // Affichage du loader le temps de chargement de la session
     if (inSession === null) return <PageLoader />;

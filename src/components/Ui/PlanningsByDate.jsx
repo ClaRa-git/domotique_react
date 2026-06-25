@@ -77,7 +77,7 @@ const PlanningsByDate = ({ date, callable }) => {
         };
 
         fetchPlanningsByDate();
-    }, [targetDateTime, callable]);
+    }, [targetDateTime, callable, date, daysOfWeek]);
 
     // Fonction pour gérer les labels de récurrence
 	const recurrenceLabels = {
