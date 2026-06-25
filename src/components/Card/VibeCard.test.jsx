@@ -11,7 +11,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import VibeCard from '../src/components/Card/VibeCard';
+import VibeCard from './VibeCard';
 
 // ──────────────────────────────────────────
 // Données de test (jeu d'essai)
