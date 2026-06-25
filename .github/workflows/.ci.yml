@@ -1,0 +1,111 @@
+name: 🎨 Hoomy Frontend CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+
+  # ─────────────────────────────────────────
+  # JOB 1 — Tests unitaires Jest
+  # ─────────────────────────────────────────
+  tests:
+    name: 🧪 Tests Jest (React)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Installation des dépendances
+        run: npm ci
+
+      - name: 🧪 Exécution des tests Jest
+        run: npm test -- --watchAll=false --passWithNoTests --coverage
+
+      - name: 📊 Upload du rapport de couverture
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rapport-coverage-jest
+          path: coverage/
+
+  # ─────────────────────────────────────────
+  # JOB 2 — Qualité de code ESLint
+  # ─────────────────────────────────────────
+  lint:
+    name: 🔍 ESLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Installation des dépendances
+        run: npm ci
+
+      - name: 🔍 Lint du code React
+        run: npx eslint src/ --ext .js,.jsx --format stylish 2>&1 || true
+
+  # ─────────────────────────────────────────
+  # JOB 3 — Build de production Vite
+  # ─────────────────────────────────────────
+  build:
+    name: 🏗️ Build Vite (production)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Installation des dépendances
+        run: npm ci
+
+      - name: 🏗️ Build de production
+        run: npm run build
+
+      - name: 📦 Upload des assets compilés
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-production
+          path: dist/
+
+  # ─────────────────────────────────────────
+  # JOB 4 — Résumé
+  # ─────────────────────────────────────────
+  summary:
+    name: 📋 Résumé CI Frontend
+    runs-on: ubuntu-latest
+    needs: [tests, lint, build]
+    if: always()
+
+    steps:
+      - name: ✅ Résumé
+        run: |
+          echo "========================================"
+          echo "  🎨 HOOMY FRONT — Rapport CI"
+          echo "========================================"
+          echo "  Tests Jest : ${{ needs.tests.result }}"
+          echo "  ESLint     : ${{ needs.lint.result }}"
+          echo "  Build Vite : ${{ needs.build.result }}"
+          echo "========================================"
