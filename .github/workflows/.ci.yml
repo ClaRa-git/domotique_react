@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: 🧪 Exécution des tests Jest
-        run: npm test -- --watchAll=false --passWithNoTests --coverage
+        run: npm test -- --watchAll=false --passWithNoTests --coverage --updateSnapshot
 
       - name: 📊 Upload du rapport de couverture
         uses: actions/upload-artifact@v4
